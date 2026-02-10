@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>CastleCat</title>
+  <style>
+    html {
+      line-height: 1.5;
+      font-family: Georgia, serif;
+      font-size: 20px;
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 1em;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, 'Lucida Console', Consolas, monospace;
+      font-size: 85%;
+      margin: 0;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      background-color: #1a1a1a;
+      border: none;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">CastleCat</h1>
+</header>
+<p><code>{r setup, include=FALSE} library(flexdashboard) library(DT) library(echarts4r) library(readr) library(dplyr) library(fmsb) library(tidyverse) library(xts) library(gapminder)</code></p>
+<h1 id="inicio">Inicio</h1>
+<h2 data-width="600" id="column">Column</h2>
+<div style="font-size: 2em; font-weight: bold; margin-bottom: 0.5em;">
+<p>CastleCat ꩜</p>
+</div>
+<p style="font-style: italic;">
+<p>Un nostálgico RPG al estilo clásico de los años 70, donde encarnarás
+a un gato desesperado por salvar a su amada de las garras de un temido
+dragón.</p>
+</p>
+<hr />
+<div
+style="font-size: 1.5em; font-weight: bold; margin-top: 1em; margin-bottom: 0.3em;">
+<p>Elige tu destino:</p>
+</div>
+<p>
+<span style="color: purple; font-weight: bold;">Guerrero</span>, <span
+style="color: blue; font-weight: bold;">Mago</span> o <span
+style="color: red; font-weight: bold;">Asesino</span>. Adéntrate en una
+mazmorra llena de monstruos y tesoros encantados. Cada habitación puede
+darte una ventaja… o sellar tu destino.<br />
+Usa sabiamente tus armas y estadísticas si quieres llegar vivo al jefe
+final.
+</p>
+<hr />
+<div
+style="font-size: 1.5em; font-weight: bold; margin-top: 1em; margin-bottom: 0.3em;">
+<p>✦•┈๑⋅ Explora nueve pisos y enfrenta jefes ⋅๑┈•✦</p>
+</div>
+<p>
+Despeja tres pisos diferentes, con plantas generadas de forma aleatoria.
+No solo la habilidad será necesaria, también la suerte.
+</p>
+<p>
+<strong>¡Una decisión mal tomada y tu corazón dejará de latir!
+♥</strong>
+</p>
+<hr />
+<div
+style="font-size: 1.5em; font-weight: bold; margin-top: 1em; margin-bottom: 0.3em;">
+<p>Diseñado y programado por:</p>
+</div>
+<p>
+<strong>EternoDev</strong> y <strong>BlueLlama</strong>
+</p>
+<p>
+10/2024 — Alicante (España)
+</p>
+<hr />
+<p>
+<em>CastleCat ©</em>
+</p>
+<h2 data-width="400" id="column-1">Column</h2>
+<div style="font-size: 1.5em; font-weight: bold; margin-bottom: 0.5em;">
+<p>Juego:</p>
+</div>
+<p><img src="1.png" alt="Imagen 1" style="width: 55%; border-radius: 8px; display: block; margin: 0 auto 10px auto;"/>
+<img src="2.png" alt="Imagen 2" style="width: 55%; border-radius: 8px; display: block; margin: 0 auto 10px auto;"/>
+<img src="3.png" alt="Imagen 3" style="width: 55%; border-radius: 8px; display: block; margin: 0 auto 10px auto;"/></p>
+<h1 data-icon="fa-hat-wizard" id="clases">Clases</h1>
+<h2 class="tabset tabset-fade" id="clases-1">Clases</h2>
+<h3 id="guerrero">Guerrero</h3>
+<p style="font-size: 1.3em;">
+<p><strong style="color: purple;">Guerrero:</strong><br>
+<strong>Vida:</strong> 13 <em>(la más alta)</em><br>
+<strong>Mana:</strong> 3 <em>(bajo)</em><br> <strong>Ataque
+mágico:</strong> 1 <em>(bajo)</em><br> <strong>Agilidad:</strong> 1
+<em>(normal)</em></p>
+</p>
+<p>```{r, echo=FALSE} guerrero_stats &lt;- data.frame( Estadística =
+c(“Vida”, “Mana”, “Ataque Mágico”, “Agilidad”, “Vida”), Valor = c(13, 3,
+1, 1, 13) )</p>
+<p>htmltools::div( style = “margin-top: -30px; height: 400px; overflow:
+visible;”, guerrero_stats |&gt; e_charts(Estadística) |&gt;
+e_polar(radius = c(“0%”, “100%”)) |&gt; e_angle_axis( Estadística,
+axisLabel = list(fontFamily = “Cormorant SC”, fontSize = 18) ) |&gt;
+e_radius_axis( min = 0, max = 15, nameTextStyle = list(fontFamily =
+“Cormorant SC”), axisLabel = list(fontFamily = “Cormorant SC”) ) |&gt;
+e_line( Valor, coord_system = “polar”, color = “purple”, lineStyle =
+list(width = 3) ) |&gt; e_area( Valor, coord_system = “polar”, itemStyle
+= list(color = “rgba(128, 0, 128, 0.3)”) ) |&gt; e_legend(show = FALSE)
+|&gt; e_tooltip(trigger = “item”) )</p>
+<pre><code>
+### Mago
+
+&lt;p style=&quot;font-size: 1.3em;&quot;&gt;
+
+&lt;strong style=&quot;color: blue;&quot;&gt;Mago:&lt;/strong&gt;&lt;br&gt; &lt;strong&gt;Vida:&lt;/strong&gt; 8
+&lt;em&gt;(la más baja)&lt;/em&gt;&lt;br&gt; &lt;strong&gt;Mana:&lt;/strong&gt; 10 &lt;em&gt;(muy
+alto)&lt;/em&gt;&lt;br&gt; &lt;strong&gt;Ataque mágico:&lt;/strong&gt; 3 &lt;em&gt;(potente)&lt;/em&gt;&lt;br&gt;
+&lt;strong&gt;Agilidad:&lt;/strong&gt; 1 &lt;em&gt;(normal)&lt;/em&gt;
+
+&lt;/p&gt;
+
+```{r, echo=FALSE}
+mago_stats &lt;- data.frame(
+  Estadística = c(&quot;Vida&quot;, &quot;Mana&quot;, &quot;Ataque Mágico&quot;, &quot;Agilidad&quot;, &quot;Vida&quot;),  # repetir para cerrar círculo
+  Valor = c(8, 10, 3, 1, 8)
+)
+
+htmltools::div(
+  style = &quot;margin-top: -30px; height: 400px; overflow: visible;&quot;,
+mago_stats |&gt;
+  e_charts(Estadística) |&gt;
+  e_polar(radius = c(&quot;0%&quot;, &quot;100%&quot;)) |&gt;
+  e_angle_axis(
+    Estadística, 
+    axisLabel = list(fontFamily = &quot;Cormorant SC&quot;, fontSize = 18)
+  ) |&gt;
+  e_radius_axis(
+    min = 0, max = 15,
+    nameTextStyle = list(fontFamily = &quot;Cormorant SC&quot;),
+    axisLabel = list(fontFamily = &quot;Cormorant SC&quot;)
+  ) |&gt;
+  e_line(
+    Valor, 
+    coord_system = &quot;polar&quot;, 
+    color = &quot;blue&quot;, 
+    lineStyle = list(width = 3)
+  ) |&gt;
+  e_area(
+    Valor, 
+    coord_system = &quot;polar&quot;, 
+    itemStyle = list(color = &quot;rgba(0, 0, 255, 0.3)&quot;)  # azul semitransparente
+  ) |&gt;
+  e_legend(show = FALSE) |&gt;
+  e_tooltip(trigger = &quot;item&quot;)
+)</code></pre>
+<h3 id="asesino">Asesino</h3>
+<p style="font-size: 1.3em;">
+<p><strong style="color: red;">Asesino:</strong><br>
+<strong>Vida:</strong> 11 <em>(media)</em><br> <strong>Mana:</strong> 5
+<em>(moderado)</em><br> <strong>Ataque mágico:</strong> 1
+<em>(bajo)</em><br> <strong>Agilidad:</strong> 3 <em>(alta)</em></p>
+</p>
+<p>```{r, echo=FALSE} asesino_stats &lt;- data.frame( Estadística =
+c(“Vida”, “Mana”, “Ataque Mágico”, “Agilidad”, “Vida”), # repetir “Vida”
+para cerrar círculo Valor = c(11, 5, 1, 3, 11) )</p>
+<p>htmltools::div( style = “margin-top: -30px; height: 400px; overflow:
+visible;”, asesino_stats |&gt; e_charts(Estadística) |&gt;
+e_polar(radius = c(“0%”, “100%”)) |&gt; e_angle_axis( Estadística,
+axisLabel = list(fontFamily = “Cormorant SC”, fontSize = 18) ) |&gt;
+e_radius_axis( min = 0, max = 15, nameTextStyle = list(fontFamily =
+“Cormorant SC”), axisLabel = list(fontFamily = “Cormorant SC”) ) |&gt;
+e_line( Valor, coord_system = “polar”, color = “red”, lineStyle =
+list(width = 3) ) |&gt; e_area( Valor, coord_system = “polar”, itemStyle
+= list(color = “rgba(255, 0, 0, 0.3)”) # rojo semitransparente ) |&gt;
+e_legend(show = FALSE) |&gt; e_tooltip(trigger = “item”) )</p>
+<pre><code>
+# Objetos {data-icon=&quot;fa-shield-halved&quot;}
+
+## Column {.tabset}
+
+### Objetos
+
+```{r echo=FALSE}
+estadisticasCastleCat &lt;- read_csv(&quot;ObjetosEstadisticasCastleCat.csv&quot;)
+DT::renderDataTable(estadisticasCastleCat)</code></pre>
+<h3 id="armas">Armas</h3>
+<p><code>{r echo=FALSE} ataquesCastleCat &lt;- read_csv("ObjetosAtaquesCastleCat.csv") DT::renderDataTable(ataquesCastleCat)</code></p>
+<h3 id="dropeo-botín">Dropeo Botín</h3>
+<p>```{r echo=FALSE} probabilidades &lt;- data.frame( Tipo = c(“Poción”,
+“Arma Física”, “Arma Mágica”), Probabilidad = c(0.50, 0.35, 0.15) )</p>
+<p>colores &lt;- list( list( type = “linear”, x = 0, y = 0, x2 = 1, y2 =
+1, colorStops = list( list(offset = 0, color = “#274472”), list(offset =
+1, color = “#5a7da0”) ) ), list( type = “linear”, x = 0, y = 0, x2 = 1,
+y2 = 1, colorStops = list( list(offset = 0, color = “#a12727”),
+list(offset = 1, color = “#d15a5a”) ) ), list( type = “linear”, x = 0, y
+= 0, x2 = 1, y2 = 1, colorStops = list( list(offset = 0, color =
+“#b89c48”), list(offset = 1, color = “#f1e18c”) ) ) )</p>
+<h1 id="preparar-los-estilos-para-cada-segmento">Preparar los estilos
+para cada segmento</h1>
+<p>item_styles &lt;- lapply(colores, function(c) list(color = c))</p>
+<h1 id="crear-el-gráfico">Crear el gráfico</h1>
+<p>probabilidades |&gt; e_charts(Tipo) |&gt; e_pie(Probabilidad, radius
+= c(“10%”, “70%”), label = list( fontFamily = “Cormorant SC”, fontSize =
+14, formatter = “{b}: {d}%” ), emphasis = list( label = list( fontFamily
+= “Cormorant SC”, fontSize = 16, fontWeight = “bold” ) ), itemStyle =
+item_styles ) |&gt; e_color(c(“#274472”, “#a12727”, “#b89c48”)) |&gt;
+e_title(“Probabilidades de dropeo”, textStyle = list(fontFamily =
+“Cormorant SC”, fontSize = 18)) |&gt; e_tooltip(trigger = “item”,
+textStyle = list(fontFamily = “Cormorant SC”, fontSize = 14)) |&gt;
+e_legend(textStyle = list(fontFamily = “Cormorant SC”, fontSize =
+14))</p>
+<pre><code>
+### Dropeo Botín
+
+```{r echo=FALSE}
+rangos_armas &lt;- data.frame(
+  Rango = c(&quot;S&quot;, &quot;A&quot;, &quot;B&quot;, &quot;C&quot;, &quot;D&quot;, &quot;E&quot;, &quot;F&quot;),
+  Probabilidad = c(0.02, 0.05, 0.10, 0.15, 0.20, 0.23, 0.25)
+)
+
+colores_rangos &lt;- c(
+  &quot;#b89c48&quot;,  # S - dorado medieval
+  &quot;#a12727&quot;,  # A - rojo medieval
+  &quot;#6a3d7c&quot;,  # B - morado medieval
+  &quot;#5a7da0&quot;,  # C - azul claro medieval
+  &quot;#7ba664&quot;,  # D - verde claro medieval
+  &quot;#7d7d7d&quot;,  # E - gris medieval
+  &quot;#a67a4a&quot;   # F - marrón claro medieval
+
+)
+
+rangos_armas |&gt;
+  e_charts(Rango) |&gt;
+  e_pie(Probabilidad, radius = c(&quot;10%&quot;, &quot;70%&quot;),
+        label = list(
+          fontFamily = &quot;Cormorant SC&quot;,
+          fontSize = 14,
+          formatter = &quot;{b}: {d}%&quot;
+        ),
+        emphasis = list(
+          label = list(
+            fontFamily = &quot;Cormorant SC&quot;,
+            fontSize = 16,
+            fontWeight = &quot;bold&quot;
+          )
+        )
+  ) |&gt;
+  e_color(colores_rangos) |&gt;
+  e_title(&quot;Dropeo por rango de armas&quot;,
+          textStyle = list(fontFamily = &quot;Cormorant SC&quot;, fontSize = 18)) |&gt;
+  e_tooltip(trigger = &quot;item&quot;,
+            textStyle = list(fontFamily = &quot;Cormorant SC&quot;, fontSize = 14)) |&gt;
+  e_legend(textStyle = list(fontFamily = &quot;Cormorant SC&quot;, fontSize = 14))</code></pre>
+<h1 class="storyboard" data-icon="fa-solid fa-skull"
+id="enemigos">Enemigos</h1>
+<p>```{r generar-frames-enemigos, results=‘asis’, echo=FALSE} enemigos
+&lt;- read.csv(“enemigos.csv”, stringsAsFactors = FALSE)</p>
+<p>for (i in 1:nrow(enemigos)) { cat(paste0(“###”, enemigos<span
+class="math inline">$Nombre[i], " [NVL: ", enemigos$</span>Id[i]*2,
+“]”), sep = ““)
+cat(paste0(‘<img src="', enemigos$Sprite[i], '" class="enemy-image"/>’))
+cat(paste0(”Nombre — “, enemigos<span class="math inline">$Nombre[i],
+"\n\n"), sep = "")  cat(paste0("Vida — ", enemigos$</span>Vida[i],”“),
+sep =”“) cat(paste0(”Ataque — “, enemigos<span
+class="math inline">$Ataque[i], "\n\n"), sep = "")  if
+(enemigos$</span>Pisobajo[i] == enemigos<span
+class="math inline">$Pisoalto[i])  cat(paste0("Aparece en el piso ",
+enemigos$</span>Pisobajo[i],”.“), sep =”“) else cat(paste0(”Aparece
+entre los pisos “, enemigos<span class="math inline">$Pisobajo[i], " y
+", enemigos$</span>Pisoalto[i],”.“), sep =”“) }</p>
+<pre><code>
+# Jefes {.storyboard data-icon=&quot;fa-solid fa-crown&quot;}
+
+```{r generar-frames-jefes, results=&#39;asis&#39;, echo=FALSE}
+enemigos &lt;- read.csv(&quot;bosses.csv&quot;, stringsAsFactors = FALSE)
+
+for (i in 1:nrow(enemigos)) {
+  cat(paste0(&quot;### &quot;, enemigos$Nombre[i], &quot; [NVL: &quot;, enemigos$Id[i]*3, &quot;]\n\n&quot;), sep = &quot;&quot;)
+  cat(paste0(&#39;&lt;img src=&quot;&#39;, enemigos$Sprite[i], &#39;&quot; class=&quot;enemy-image&quot;/&gt;\n\n&#39;))
+  cat(paste0(&quot;Nombre — &quot;, enemigos$Nombre[i], &quot;\n\n&quot;), sep = &quot;&quot;)
+  cat(paste0(&quot;Vida — &quot;, enemigos$Vida[i], &quot;\n\n&quot;), sep = &quot;&quot;)
+  cat(paste0(&quot;Ataque — &quot;, enemigos$Ataque[i], &quot;\n\n&quot;), sep = &quot;&quot;)
+  cat(paste0(&quot;Es el jefe del piso &quot;, enemigos$Piso[i], &quot;.\n\n&quot;), sep = &quot;&quot;)
+  
+}</code></pre>
+<h1 data-icon="fa-solid fa-book-skull"
+id="resumen-enemigos-y-jefes">Resumen Enemigos y Jefes</h1>
+<h2 id="tablas">Tablas</h2>
+<h3 id="enemigos-1">Enemigos</h3>
+<pre class="{r}"><code>enemigos &lt;- read.csv(&quot;enemigos.csv&quot;, stringsAsFactors = FALSE)
+
+#Oculta Sprites de la Tabla
+DT::datatable( 
+  enemigos,
+  rownames = FALSE,
+  options = list(
+    columnDefs = list(
+      list(targets = which(names(enemigos) == &quot;Sprite&quot;) - 1, visible = FALSE)
+    )
+  )
+)</code></pre>
+<h3 id="jefes">Jefes</h3>
+<pre class="{r}"><code>bosses &lt;- read.csv(&quot;bosses.csv&quot;, stringsAsFactors = FALSE)
+
+#Oculta Sprites de la Tabla
+DT::datatable( 
+  bosses,
+  rownames = FALSE,
+  options = list(
+    columnDefs = list(
+      list(targets = which(names(enemigos) == &quot;Sprite&quot;) - 1, visible = FALSE)
+    )
+  )
+)</code></pre>
+<h2 id="estadísticas">Estadísticas</h2>
+<h3 id="enemigos-2">Enemigos</h3>
+<pre class="{r}"><code>enemigos &lt;- read.csv(&quot;enemigos.csv&quot;, stringsAsFactors = FALSE)
+
+enemigos |&gt; 
+  e_charts(Nombre) |&gt; 
+  e_bar(Ataque, stack = &quot;gr&quot;, name = &quot;Ataque&quot;) |&gt; 
+  e_bar(Vida, stack = &quot;gr&quot;, name = &quot;Vida&quot;) |&gt;
+  e_color(c(&quot;#a12727&quot;, &quot;#d15a5a&quot;)) |&gt;
+  e_x_axis(
+    name = &quot;Nombre&quot;,
+    min = 1,
+    max = 8,
+    splitNumber = 1,
+    nameTextStyle = list(fontFamily = &quot;Cormorant SC&quot;),
+    axisLabel = list(rotate = 45, fontFamily = &quot;Cormorant SC&quot;)
+  ) |&gt;
+  e_y_axis(
+    name = &quot;Estadísticas&quot;,
+    nameTextStyle = list(fontFamily = &quot;Cormorant SC&quot;),
+    axisLabel = list(fontFamily = &quot;Cormorant SC&quot;)
+  ) |&gt;
+  e_legend(
+    right = 0,
+    textStyle = list(fontFamily = &quot;Cormorant SC&quot;)
+  ) |&gt;
+  e_tooltip(
+    trigger = &quot;axis&quot;,
+    textStyle = list(fontFamily = &quot;Cormorant SC&quot;)
+ )
+</code></pre>
+<h3 id="jefes-1">Jefes</h3>
+<pre class="{r}"><code>bosses &lt;- read.csv(&quot;bosses.csv&quot;, stringsAsFactors = FALSE)
+
+bosses |&gt; 
+  e_charts(Nombre) |&gt; 
+  e_bar(Ataque, stack = &quot;gr&quot;, name = &quot;Ataque&quot;) |&gt; 
+  e_bar(Vida, stack = &quot;gr&quot;, name = &quot;Vida&quot;) |&gt;
+  e_color(c(&quot;#274472&quot;, &quot;#5a7da0&quot;)) |&gt;  # nuevos colores: verde oliva y verde oscuro
+  e_x_axis(
+    name = &quot;Nombre&quot;,
+    min = 1,
+    max = 8,
+    splitNumber = 1,
+    nameTextStyle = list(fontFamily = &quot;Cormorant SC&quot;),
+    axisLabel = list(rotate = 45, fontFamily = &quot;Cormorant SC&quot;)
+  ) |&gt;
+  e_y_axis(
+    name = &quot;Estadísticas&quot;,
+    nameTextStyle = list(fontFamily = &quot;Cormorant SC&quot;),
+    axisLabel = list(fontFamily = &quot;Cormorant SC&quot;)
+  ) |&gt;
+  e_legend(
+    right = 0,
+    textStyle = list(fontFamily = &quot;Cormorant SC&quot;)
+  ) |&gt;
+  e_tooltip(
+    trigger = &quot;axis&quot;,
+    textStyle = list(fontFamily = &quot;Cormorant SC&quot;)
+  )
+</code></pre>
+<script defer src="https://static.cloudflareinsights.com/beacon.min.js/vcd15cbe7772f49c399c6a5babf22c1241717689176015" integrity="sha512-ZpsOmlRQV6y907TI0dKBHq9Md29nnaEIPlkf84rnaERnq6zvWvPUqr2ft8M1aS28oN72PdrCzSjY4U6VaAw1EQ==" data-cf-beacon='{"version":"2024.11.0","token":"0357a45f23a943f08700f7f9af191ee6","r":1,"server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
+</body>
+</html>

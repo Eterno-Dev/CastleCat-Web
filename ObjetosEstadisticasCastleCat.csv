@@ -1,0 +1,27 @@
+Nombre del Objeto,Tipo de Objeto,Consumible,Fuerza,Inteligencia,Agilidad,Vida Máxima
+Poción de Vida,Poción,Sí,0,0,0,5
+Poción de Vida Máxima,Poción,Sí,0,0,0,3
+Poción de Fuerza,Poción,Sí,1,0,0,0
+Poción de Inteligencia,Poción,Sí,0,1,0,0
+Poción de Agilidad,Poción,Sí,0,0,1,0
+Espada Fina,Arma Física,No,3,0,0,0
+Cetro de Roble Místico,Arma Mágica,No,0,3,0,0
+Daga de Sombra Rápida,Arma Física,No,0,0,3,0
+Espadón de Bronce,Arma Física,No,4,0,0,0
+Varita de Luz,Arma Mágica,No,0,4,0,0
+Cuchilla de Viento,Arma Física,No,0,0,4,0
+Mazo Rúnico,Arma Física,No,5,0,0,0
+Libro de Hechizos Elementales,Arma Mágica,No,0,5,0,0
+Dardos Envenenados,Arma Física,No,0,0,5,0
+Espada de la Sombra Creciente,Arma Física,No,8,0,0,0
+Cetro de las Mareas,Arma Mágica,No,0,8,0,0
+Cuchilla del Asesino Perdido,Arma Física,No,0,0,8,0
+Martillo del Rompemundos,Arma Física,No,10,0,0,0
+Varita de las Almas Perdidas,Arma Mágica,No,0,10,0,0
+Dardos del Silencio Eterno,Arma Física,No,0,0,10,0
+Espada Ígnea del Dragón,Arma Física,No,15,0,0,0
+Cetro del Archimago Supremo,Arma Mágica,No,0,15,0,0
+Daga de la Tormenta Nocturna,Arma Física,No,0,0,15,0
+Espada de las Llamas Eternas,Arma Física,No,25,0,0,0
+Cetro de la Eternidad Arcana,Arma Mágica,No,0,25,0,0
+Daga de la Velocidad Divina,Arma Física,No,0,0,25,0

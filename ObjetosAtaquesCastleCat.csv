@@ -1,0 +1,22 @@
+Nombre del Objeto,Especialidad,Rango,Nombre del Ataque,Multiplicador,Coste
+Espada Fina,Caballeros,F,Corte Fino,1.5,1
+Cetro de Roble Místico,Magos,F,Invocación de Raíces Antiguas,1.5,1
+Daga de Sombra Rápida,Asesinos,F,Puñalada Sombría,1.5,1
+Espadón de Bronce,Caballeros,E,Golpe Resonante,2,1
+Varita de Luz,Magos,E,Proyectil Lumínico,2,1
+Cuchilla de Viento,Asesinos,E,Corte Aéreo,2,1
+Mazo Rúnico,Caballeros,D,Golpe Ancestral,2.5,1
+Libro de Hechizos Elementales,Magos,D,Reacción Elemental,2.5,1
+Dardos Envenenados,Asesinos,D,Proyectil Letal,2.5,1
+Espada de la Sombra Creciente,Caballeros,C,Tajo Cortasombras,3,1
+Cetro de las Mareas,Magos,C,Gran Ola,3,1
+Cuchilla del Asesino Perdido,Asesinos,C,Puñalada Ambigua,3,1
+Martillo del Rompemundos,Caballeros,B,Golpe Quebrado,3.5,1
+Varita de las Almas Perdidas,Magos,B,Invocación de Almas,3.5,1
+Dardos del Silencio Eterno,Asesinos,B,Ataque Silencioso,3.5,1
+Espada Ígnea del Dragón,Caballeros,A,Colmillo Flamígero,4.5,1
+Cetro del Archimago Supremo,Magos,A,Conocimiento Antiguo,4.5,1
+Daga de la Tormenta Nocturna,Asesinos,A,Mil Cortes de la Noche,4.5,1
+Espada de las Llamas Eternas,Caballeros,S,Que madura eterna,6,1
+Cetro de la Eternidad Arcana,Magos,S,Infinidad Arcana,6,1
+Daga de la Velocidad Divina,Asesinos,S,Corte Atemporal,6,1

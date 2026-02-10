@@ -1,0 +1,10 @@
+Id,Sprite,Nombre,Vida,Ataque,Pisobajo,Pisoalto
+1,sprites/pajaro.png,Pájaro,7,3,1,1
+2,sprites/rata.png,Rata,5,2,1,1
+3,sprites/conejo.png,Conejo,6,2,1,1
+4,sprites/mosca.png,Mosca,12,6,2,4
+5,sprites/abeja.png,Abeja,13,7,2,4
+6,sprites/mosquito.png,Mosquito,10,9,2,4
+7,sprites/murcielago.png,Murciélago,30,20,5,9
+8,sprites/arana.png,Araña,33,23,5,9
+9,sprites/escorpion.png,Escorpión,30,20,5,9

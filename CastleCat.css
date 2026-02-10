@@ -1,0 +1,138 @@
+@import url('https://fonts.googleapis.com/css2?family=Miniver&family=Cormorant+SC:wght@300;400;500;600;700&display=swap');
+
+/* Fuente para todo el cuerpo del dashboard */
+body {
+  font-family: 'Cormorant SC', serif;
+  font-weight: 500;
+  background-color: #1a1a1a;
+  color: #e2d8c3;
+}
+
+/* Títulos y navegación con Miniver */
+h1, h2, h3,
+.navbar-brand,
+.navbar-nav > li > a,
+.nav-tabs > li > a,
+.nav-tabs > li.active > a {
+  font-family: 'Miniver', cursive !important;
+  font-weight: 400;
+  color: #d6b97b;
+  text-shadow: 1px 1px 2px #000;
+}
+
+/* Estilo para la barra de navegación */
+.navbar {
+  background-color: #2d1f1f;
+  border-bottom: 3px solid #5c4433;
+  box-shadow: 0 2px 6px #00000080;
+}
+
+/* Tabs */
+.nav-tabs > li > a {
+  background-color: #2e2e2e;
+  border: none;
+}
+
+.nav-tabs > li.active > a:focus,
+.nav-tabs > li.active > a:hover {
+  background-color: #4a2e2e;
+  color: #f0e6d2;
+}
+
+.nav-tabs > li > a {
+  font-family: 'Miniver', cursive !important;
+  font-weight: 400;
+  font-size: 1.1em;
+  color: #e2d8c3 !important;
+  text-shadow: 1px 1px 1px #000;
+}
+
+/* ✅ Aumentar contraste para pestaña activa */
+.nav-tabs > li.active > a {
+  background-color: #5a3e3e !important;
+  color: #f7e8c6 !important;
+}
+
+/* Tab content panel */
+.tab-content {
+  background-color: #242424;
+  border: 1px solid #5c4433;
+  padding: 15px;
+  border-radius: 6px;
+}
+
+/* DataTables headers */
+table.dataTable thead {
+  background-color: #3a2a2a;
+  color: #e2d8c3;
+}
+
+/* Links */
+a {
+  color: #ad8f73;
+}
+
+/* Gráficas echarts fondo oscuro */
+#htmlwidget_container {
+  background-color: #1a1a1a !important;
+}
+
+/* Evita color azul al seleccionar tab de la barra superior */
+.navbar-nav > .active > a,
+.navbar-nav > li > a:focus,
+.navbar-nav > li > a:hover {
+  background-color: #4a2e2e !important;
+  color: #f0e6d2 !important;
+}
+
+/* Evita color azul al seleccionar tab de la barra superior dentro de .storyboard */
+.storyboard .navbar-nav > .active > a,
+.storyboard .navbar-nav > li > a:focus,
+.storyboard .navbar-nav > li > a:hover {
+  background-color: #4a2e2e !important;
+  color: #f0e6d2 !important;
+}
+
+/* Fondo negro en el área que contiene la imagen y los datos dentro de .storyboard */
+.storyboard .chart-shim {
+  background-color: #000 !important;
+  padding: 20px;
+  border-radius: 8px;
+}
+
+/* Texto más grande dentro del área de enemigo dentro de .storyboard */
+.storyboard .chart-shim p {
+  font-size: 1.3em;
+  color: #e2d8c3;
+}
+
+/* Estilo para los tabs tipo lista horizontal dentro de .storyboard */
+.storyboard ul li {
+  display: inline-flex;              
+  align-items: center;               
+  justify-content: center;           
+  padding: 12px 20px;
+  margin-right: 5px;
+  background-color: #2e2e2e;
+  color: #e2d8c3;
+  font-family: 'Cormorant SC', serif;
+  font-weight: 700;
+  text-align: center;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  min-height: 48px;
+}
+
+/* Cuando el mouse pasa por encima dentro de .storyboard */
+.storyboard ul li:hover {
+  background-color: #4a2e2e;
+  color: #f0e6d2;
+}
+
+/* Cuando el tab está activo dentro de .storyboard */
+.storyboard ul li.active {
+  background-color: #5a3e3e !important;
+  color: #f7e8c6 !important;
+  font-weight: bold;
+}

@@ -1,0 +1,10 @@
+Id,Sprite,Nombre,Vida,Ataque,Piso
+1,sprites/aguila.png,Águila,12,4,1
+2,sprites/caracol.png,Caracol,20,8,2
+3,sprites/pantera.png,Pantera,22,12,3
+4,sprites/lobo.png,Lobo,26,19,4
+5,sprites/reinaserpiente.png,Reina Serpiente,40,22,5
+6,sprites/reyescorpion.png,Rey Escorpión,45,27,6
+7,sprites/oso.png,Oso,50,34,7
+8,sprites/aranagigante.png,Araña Gigante,60,40,8
+9,sprites/shadowlord.png,Shadow Lord,70,50,9
