@@ -4,6 +4,8 @@
 *.tmp
 *~
 CastleCat_test.exe
+*.zip
+build_itch/
 
 # Carpetas de desarrollo y entorno
 .vscode/

@@ -120,7 +120,11 @@
 <body>
     <button id="mute-btn" style="position:absolute; top:12px; right:50px; z-index:1000; background:transparent; color:white; border:none; cursor:pointer; display:flex; align-items:center; justify-content:center; padding:0;" onclick="toggleMute()"><svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="24" height="24"><path stroke-linecap="round" stroke-linejoin="round" d="M19.114 5.636a9 9 0 0 1 0 12.728M16.463 8.288a5.25 5.25 0 0 1 0 7.424M6.75 8.25l4.72-4.72a.75.75 0 0 1 1.28.53v15.88a.75.75 0 0 1-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.009 9.009 0 0 1 2.25 12c0-.83.112-1.633.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75Z" /></svg></button>
     <button id="fs-btn" style="position:absolute; top:12px; right:10px; z-index:1000; background:transparent; color:white; border:none; cursor:pointer; display:flex; align-items:center; justify-content:center; padding:0;" onclick="toggleFS()"><svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="24" height="24"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 3.75v4.5m0-4.5h4.5m-4.5 0L9 9M3.75 20.25v-4.5m0 4.5h4.5m-4.5 0L9 15M20.25 3.75h-4.5m4.5 0v4.5m0-4.5L15 9m5.25 11.25h-4.5m4.5 0v-4.5m0 4.5L15 15" /></svg></button>
-    <audio id="bgm" src="../assets/music.mp3" loop></audio>
+    <audio id="bgm" loop>
+        <source src="music.mp3" type="audio/mpeg">
+        <source src="assets/music.mp3" type="audio/mpeg">
+        <source src="../assets/music.mp3" type="audio/mpeg">
+    </audio>
     <script>
         window.sfxVolume = 0.5;
         window.sfxMuted = false;
@@ -129,7 +133,6 @@
             if (window.sfxMuted) return;
             
             var filename = "";
-            
             if (type === 'hit') {
                 filename = 'sfx_hit_' + (Math.floor(Math.random() * 3) + 1) + '.wav';
             } else if (type === 'chest') {
@@ -146,9 +149,16 @@
                 filename = 'sfx_' + type + '.wav';
             }
             
-            var audio = new Audio("../assets/SFX/" + filename);
-            audio.volume = window.sfxVolume;
-            audio.play().catch(e => console.log('SFX play prevented', e));
+            var pathsToTry = ["SFX/" + filename, "assets/SFX/" + filename, "../assets/SFX/" + filename];
+            function tryPlay(idx) {
+                if (idx >= pathsToTry.length) return;
+                var audio = new Audio(pathsToTry[idx]);
+                audio.volume = window.sfxVolume;
+                audio.play().catch(function(e) {
+                    tryPlay(idx + 1);
+                });
+            }
+            tryPlay(0);
         };
 
         function toggleMute() {
