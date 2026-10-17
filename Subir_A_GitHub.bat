@@ -44,7 +44,7 @@ if %errorlevel% equ 0 (
     echo ========================================================
     echo Tu web y juego estaran activos en breve en GitHub Pages:
     echo   Web principal: https://eterno-dev.github.io/CastleCat-Web/
-    echo   Juego Web:     https://eterno-dev.github.io/CastleCat-Web/game/
+    echo   Juego Web:     https://eterno-dev.github.io/CastleCat-Web/game/temp/
 ) else (
     echo/
     echo ========================================================
