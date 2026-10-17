@@ -2,6 +2,7 @@
 *.o
 *.obj
 *.tmp
+*~
 CastleCat_test.exe
 
 # Carpetas de desarrollo y entorno

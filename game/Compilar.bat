@@ -1,5 +1,6 @@
 @echo off
 setlocal
+cd /d "%~dp0"
 
 echo ========================================================
 echo   Compilando CastleCat en WebAssembly (Emscripten)
@@ -23,10 +24,10 @@ pause
 exit /b 1
 
 :found_emcc
-if not exist "game" mkdir "game"
+if not exist "temp" mkdir "temp"
 
-echo [*] Compilando src\Main.c a game\index.html ...
-call "%EMCC_CMD%" src\Main.c -o game\index.html -s ASYNCIFY -s "EXPORTED_RUNTIME_METHODS=['ccall','cwrap']" --shell-file web\shell.html
+echo [*] Compilando src\Main.c a temp\index.html ...
+call "%EMCC_CMD%" src\Main.c -o temp\index.html -s ASYNCIFY -s "EXPORTED_RUNTIME_METHODS=['ccall','cwrap']" --shell-file web\shell.html
 if %errorlevel% neq 0 (
     echo/
     echo [ERROR] La compilacion con emcc ha fallado. Revisa el codigo en C.
@@ -35,21 +36,21 @@ if %errorlevel% neq 0 (
 )
 
 echo/
-echo [OK] Compilacion Exitosa: game\index.html, game\index.js, game\index.wasm generados.
+echo [OK] Compilacion Exitosa: temp\index.html, temp\index.js, temp\index.wasm generados.
 echo/
 echo ========================================================
-echo   Aplicando Parches de Sistema (game\index.js)
+echo   Aplicando Parches de Sistema (temp\index.js)
 echo ========================================================
 echo/
 
-node web\parche_emscripten.js game\index.js
+node web\parche_emscripten.js temp\index.js
 
 echo/
 echo ========================================================
 echo   PROCESO TERMINADO CON EXITO
 echo ========================================================
-echo Para jugar en tu navegador inicia un servidor local y abre:
-echo   http://localhost:8080/game/
+echo Para jugar en tu navegador inicia un servidor local desde la raiz y abre:
+echo   http://localhost:8080/game/temp/
 echo.
 echo Servidor sugerido:
 echo   python -m http.server 8080

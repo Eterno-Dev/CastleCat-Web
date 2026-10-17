@@ -28,39 +28,43 @@ En el reino de **Nekovania**, algunos ciudadanos desaparecen sin dejar rastro en
 CastleCat-Web/
 ├── index.html               # Web oficial y panel interactivo en GitHub Pages
 ├── CastleCat.css            # Estilos de la web oficial
-├── sprites/                 # Sprites e ilustraciones de los monstruos y héroes
-├── bosses.csv, ...          # Tablas de datos y estadísticas del juego
+├── styles.html              # Tipografías y estilos embebidos
+├── sprites/                 # Sprites e ilustraciones (enemigos, jefes, iconos 1-4)
+├── data/                    # Tablas de datos y estadísticas CSV (bosses, enemigos, etc.)
 ├── .gitignore               # Configuración de exclusiones para Git
 ├── README.md                # Documentación del proyecto
-├── Compilar.bat             # Script para compilar a WebAssembly (Emscripten)
-├── Compilar_Nativo.bat      # Script para compilar a binario Windows (GCC)
-├── CastleCat.exe            # Binario nativo para jugar en consola
+├── Subir_A_GitHub.bat       # Script para enviar cambios a GitHub
 │
-├── game/                    # Versión WebAssembly jugable en el navegador
-│   ├── index.html           # Interfaz de juego web con terminal ANSI integrada
-│   ├── index.js             # Runtime JavaScript de WebAssembly
-│   └── index.wasm           # Binario WebAssembly compilado
-│
-├── assets/                  # Recursos de audio compartidos
-│   ├── music.mp3            # Banda sonora retro 8-bit
-│   └── SFX/                 # Efectos de sonido (wav)
-│
-├── src/                     # Código fuente en C
-│   ├── Main.c               # Bucle principal del juego y lógica de estados
-│   ├── ComandosBasicos.c    # Entrada de teclado, delays typewriter y utilidades
-│   ├── Combate.c            # Motor de combate por turnos y cálculo de daño
-│   ├── Enemigos.c           # Catálogo de enemigos comunes, jefes y arte ASCII
-│   ├── FinDelJuego.c        # Escenas de victoria, muerte y créditos
-│   ├── Habilidades.c        # Definición de skills, multiplicadores y maná
-│   ├── Infor.c              # Renderizado de barras de vida/maná y stats
-│   ├── Intro.c              # Menú principal, selector de héroe y narrativa
-│   ├── Mapa.c               # Generación procedural del mapa y movimiento
-│   └── ObjetosyTesoros.c    # Sistema de ítems, armas e inventario
-│
-└── web/                     # Herramientas y plantillas para WebAssembly
-    ├── shell.html           # Shell HTML con terminal ANSI y reproductor de audio
-    ├── parche_emscripten.js # Inyector para sincronización de E/S en tiempo real
-    └── generate_temp_sfx.js # Utilidad de audio SFX
+└── game/                    # Proyecto completo del juego en C y WebAssembly
+    ├── Compilar.bat         # Compila el juego a WebAssembly en game/temp/
+    ├── Compilar_Nativo.bat  # Compila el juego a ejecutable Windows en game/temp/
+    │
+    ├── src/                 # Código fuente en C
+    │   ├── Main.c           # Bucle principal del juego y lógica de estados
+    │   ├── ComandosBasicos.c# Entrada de teclado, delays typewriter y utilidades
+    │   ├── Combate.c        # Motor de combate por turnos y cálculo de daño
+    │   ├── Enemigos.c       # Catálogo de enemigos comunes, jefes y arte ASCII
+    │   ├── FinDelJuego.c    # Escenas de victoria, muerte y créditos
+    │   ├── Habilidades.c    # Definición de skills, multiplicadores y maná
+    │   ├── Infor.c          # Renderizado de barras de vida/maná y stats
+    │   ├── Intro.c          # Menú principal, selector de héroe y narrativa
+    │   ├── Mapa.c           # Generación procedural del mapa y movimiento
+    │   └── ObjetosyTesoros.c# Sistema de ítems, armas e inventario
+    │
+    ├── assets/              # Recursos de audio
+    │   ├── music.mp3        # Banda sonora retro 8-bit
+    │   └── SFX/             # Efectos de sonido (wav)
+    │
+    ├── web/                 # Herramientas y plantillas para WebAssembly
+    │   ├── shell.html       # Shell HTML con terminal ANSI y reproductor de audio
+    │   ├── parche_emscripten.js # Inyector para sincronización de E/S en tiempo real
+    │   └── generate_temp_sfx.js # Utilidad de audio SFX
+    │
+    └── temp/                # Archivos generados y ejecutables de compilación
+        ├── CastleCat.exe    # Binario nativo para consola Windows
+        ├── index.html       # Interfaz WebAssembly con terminal ANSI
+        ├── index.js         # Runtime JavaScript de Emscripten
+        └── index.wasm       # Binario WebAssembly
 ```
 
 ---
@@ -69,26 +73,24 @@ CastleCat-Web/
 
 ### 🌐 1. Versión Web (WebAssembly con Emscripten)
 
-1. Ejecuta:
+1. Entra en la carpeta `game/` y ejecuta:
    ```cmd
    Compilar.bat
    ```
-2. Generará `game/index.html`, `game/index.js` y `game/index.wasm`.
-3. Para jugar en tu navegador, inicia un servidor local y accede a `/game/`:
+2. Los archivos compilados se generarán limpiamente en `game/temp/`.
+3. Para probar el juego en tu navegador, inicia un servidor local desde la raíz:
    ```bash
    python -m http.server 8080
-   # Abre en tu navegador: http://localhost:8080/game/
+   # Abre en tu navegador: http://localhost:8080/game/temp/
    ```
-4. En **GitHub Pages**, el juego estará disponible en `https://eterno-dev.github.io/CastleCat-Web/game/`, mientras que la portada y estadísticas seguirán en la raíz.
 
 ### 💻 2. Versión Nativa (Windows)
 
-1. Asegúrate de tener un compilador de C como **GCC / MinGW / Clang**.
-2. Ejecuta:
+1. Entra en la carpeta `game/` y ejecuta:
    ```cmd
    Compilar_Nativo.bat
    ```
-3. Se generará el ejecutable `CastleCat.exe` que podrás jugar directamente en tu terminal de Windows.
+2. Se generará `game/temp/CastleCat.exe` que podrás jugar directamente en tu consola de Windows.
 
 ---
 

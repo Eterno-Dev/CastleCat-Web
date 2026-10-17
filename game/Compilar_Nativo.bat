@@ -1,4 +1,6 @@
 @echo off
+cd /d "%~dp0"
+
 echo ========================================================
 echo   Compilando CastleCat en Nativo (Windows - gcc)
 echo ========================================================
@@ -11,8 +13,10 @@ if errorlevel 1 (
     exit /b 1
 )
 
-echo [*] Compilando src\Main.c a CastleCat.exe ...
-gcc -O2 src\Main.c -o CastleCat.exe
+if not exist "temp" mkdir "temp"
+
+echo [*] Compilando src\Main.c a temp\CastleCat.exe ...
+gcc -O2 src\Main.c -o temp\CastleCat.exe
 
 if errorlevel 1 (
     echo/
@@ -22,6 +26,6 @@ if errorlevel 1 (
 )
 
 echo/
-echo [OK] Compilacion Exitosa: CastleCat.exe generado.
+echo [OK] Compilacion Exitosa: temp\CastleCat.exe generado.
 echo/
 pause
