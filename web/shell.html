@@ -1,0 +1,386 @@
+<!doctype html>
+<html lang="en-us">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>Castle Cat - Web Version</title>
+    <style>
+        body {
+            font-family: 'Courier New', monospace;
+            background-color: #111;
+            color: #eee;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+
+        #console {
+            width: 100vw;
+            height: 100vh;
+            padding: 20px;
+            box-sizing: border-box;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            font-size: 16px;
+            line-height: 1.1;
+        }
+
+        /* ANSI Colors */
+        .ansi-30 {
+            color: #000000;
+        }
+
+        .ansi-31 {
+            color: #ff5555;
+        }
+
+        .ansi-32 {
+            color: #55ff55;
+        }
+
+        .ansi-33 {
+            color: #ffff55;
+        }
+
+        .ansi-34 {
+            color: #5555ff;
+        }
+
+        .ansi-35 {
+            color: #ff55ff;
+        }
+
+        .ansi-36 {
+            color: #55ffff;
+        }
+
+        .ansi-37 {
+            color: #ffffff;
+        }
+
+        .ansi-40 {
+            background-color: #000000;
+        }
+
+        .ansi-44 {
+            background-color: #0000AA;
+        }
+
+        .ansi-47 {
+            background-color: #AAAAAA;
+        }
+
+        .ansi-41 {
+            background-color: #ff5555;
+        }
+
+        .ansi-42 {
+            background-color: #55ff55;
+        }
+
+        .ansi-43 {
+            background-color: #ffff55;
+        }
+
+        .ansi-45 {
+            background-color: #ff55ff;
+        }
+
+        .ansi-46 {
+            background-color: #55ffff;
+        }
+
+        .ansi-1 {
+            font-weight: bold;
+        }
+
+        .ansi-4 {
+            text-decoration: underline;
+        }
+
+        /* Loading Overlay */
+        #loading {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #000;
+            color: #0f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            z-index: 100;
+        }
+    </style>
+</head>
+
+<body>
+    <button id="mute-btn" style="position:absolute; top:12px; right:50px; z-index:1000; background:transparent; color:white; border:none; cursor:pointer; display:flex; align-items:center; justify-content:center; padding:0;" onclick="toggleMute()"><svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="24" height="24"><path stroke-linecap="round" stroke-linejoin="round" d="M19.114 5.636a9 9 0 0 1 0 12.728M16.463 8.288a5.25 5.25 0 0 1 0 7.424M6.75 8.25l4.72-4.72a.75.75 0 0 1 1.28.53v15.88a.75.75 0 0 1-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.009 9.009 0 0 1 2.25 12c0-.83.112-1.633.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75Z" /></svg></button>
+    <button id="fs-btn" style="position:absolute; top:12px; right:10px; z-index:1000; background:transparent; color:white; border:none; cursor:pointer; display:flex; align-items:center; justify-content:center; padding:0;" onclick="toggleFS()"><svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="24" height="24"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 3.75v4.5m0-4.5h4.5m-4.5 0L9 9M3.75 20.25v-4.5m0 4.5h4.5m-4.5 0L9 15M20.25 3.75h-4.5m4.5 0v4.5m0-4.5L15 9m5.25 11.25h-4.5m4.5 0v-4.5m0 4.5L15 15" /></svg></button>
+    <audio id="bgm" src="../assets/music.mp3" loop></audio>
+    <script>
+        window.sfxVolume = 0.5;
+        window.sfxMuted = false;
+        
+        window.playSound = function(type) {
+            if (window.sfxMuted) return;
+            
+            var filename = "";
+            
+            if (type === 'hit') {
+                filename = 'sfx_hit_' + (Math.floor(Math.random() * 3) + 1) + '.wav';
+            } else if (type === 'chest') {
+                filename = 'sfx_chest_' + (Math.floor(Math.random() * 3) + 1) + '.wav';
+            } else if (type === 'atk_basic') {
+                filename = 'sfx_atk_basic_' + (Math.floor(Math.random() * 3) + 1) + '.wav';
+            } else if (type === 'atk_str') {
+                filename = 'sfx_atk_str_' + (Math.floor(Math.random() * 2) + 1) + '.wav';
+            } else if (type === 'atk_mag') {
+                filename = 'sfx_atk_mag_' + (Math.floor(Math.random() * 2) + 1) + '.wav';
+            } else if (type === 'atk_agi') {
+                filename = 'sfx_atk_agi_' + (Math.floor(Math.random() * 2) + 1) + '.wav';
+            } else {
+                filename = 'sfx_' + type + '.wav';
+            }
+            
+            var audio = new Audio("../assets/SFX/" + filename);
+            audio.volume = window.sfxVolume;
+            audio.play().catch(e => console.log('SFX play prevented', e));
+        };
+
+        function toggleMute() {
+            var bgm = document.getElementById('bgm');
+            var btn = document.getElementById('mute-btn');
+            bgm.muted = !bgm.muted;
+            window.sfxMuted = bgm.muted;
+            
+            if (bgm.muted) {
+                btn.innerHTML = '<svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="24" height="24"><path stroke-linecap="round" stroke-linejoin="round" d="M11.25 15.352 15 11.603m0 0 3.75-3.75M15 11.603l3.75 3.75m-3.75-3.75-3.75-3.75M6.75 8.25l4.72-4.72a.75.75 0 0 1 1.28.53v15.88a.75.75 0 0 1-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.009 9.009 0 0 1 2.25 12c0-.83.112-1.633.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75Z" /></svg>';
+            } else {
+                btn.innerHTML = '<svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="24" height="24"><path stroke-linecap="round" stroke-linejoin="round" d="M19.114 5.636a9 9 0 0 1 0 12.728M16.463 8.288a5.25 5.25 0 0 1 0 7.424M6.75 8.25l4.72-4.72a.75.75 0 0 1 1.28.53v15.88a.75.75 0 0 1-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.009 9.009 0 0 1 2.25 12c0-.83.112-1.633.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75Z" /></svg>';
+            }
+            // Ensure audio is playing if they unmute via button and haven't pressed keys yet
+            if (!bgm.paused === false && !bgm.muted) {
+                bgm.play().catch(e => {});
+            }
+        }
+        
+        function toggleFS() {
+            var bgm = document.getElementById('bgm');
+            if (bgm.paused) bgm.play().catch(e => console.log('Audio autoplay prevented'));
+            var btn = document.getElementById('fs-btn');
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(err => console.log(err));
+                btn.innerHTML = '<svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="24" height="24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" /></svg>';
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                    btn.innerHTML = '<svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="24" height="24"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 3.75v4.5m0-4.5h4.5m-4.5 0L9 9M3.75 20.25v-4.5m0 4.5h4.5m-4.5 0L9 15M20.25 3.75h-4.5m4.5 0v4.5m0-4.5L15 9m5.25 11.25h-4.5m4.5 0v-4.5m0 4.5L15 15" /></svg>';
+                }
+            }
+        }
+        
+        // Start audio on first keydown if not already playing
+        window.addEventListener('keydown', function() {
+            var bgm = document.getElementById('bgm');
+            if (bgm.paused) bgm.play().catch(e => {});
+        }, { once: true });
+    </script>
+    <div id="loading">Loading Castle Cat...</div>
+    <div id="console"></div>
+
+    <script type='text/javascript'>
+        var consoleDiv = document.getElementById('console');
+        var loadingDiv = document.getElementById('loading');
+
+        // ANSI parsing state
+        var currentStyle = "";
+
+        function ansiToHtml(text) {
+            // Basic ANSI parser for the specific codes used in this game
+            // \033[1;31m -> bold red
+            // \033[0m -> reset
+
+            var html = "";
+            var parts = text.split(/\033\[/);
+
+            for (var i = 0; i < parts.length; i++) {
+                if (i === 0) {
+                    html += parts[i];
+                    continue;
+                }
+
+                var part = parts[i];
+                var endCode = part.indexOf('m');
+
+                if (endCode !== -1) {
+                    var codes = part.substring(0, endCode).split(';');
+                    var content = part.substring(endCode + 1);
+
+                    // Process codes
+                    for (var j = 0; j < codes.length; j++) {
+                        var code = parseInt(codes[j]);
+                        if (code === 0) {
+                            html += "</span>";
+                            currentStyle = ""; // Reset
+                        } else {
+                        }
+                    }
+
+                    // Re-implementing a simple stateful parser is better
+                } else {
+                    html += part;
+                }
+            }
+            return text; // Placeholder if complex
+        }
+
+        // Stateful ANSI Parser
+        // We will parse the text and maintain a list of active classes
+        var activeClasses = [];
+
+        function parseAnsi(text) {
+            if (!text) return "";
+
+            // Replace special HTML chars
+            text = text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+
+            var parts = text.split(/\033\[([0-9;]*)m/);
+            var result = "";
+
+            for (var i = 0; i < parts.length; i++) {
+                var part = parts[i];
+
+                if (i % 2 === 0) {
+                    // Text content
+                    if (part) {
+                        var classes = activeClasses.length > 0 ? ' class="' + activeClasses.join(' ') + '"' : '';
+                        result += '<span' + classes + '>' + part + '</span>';
+                    }
+                } else {
+                    // Code segment (captured group)
+                    if (part === "" || part === "0") {
+                        // Reset
+                        activeClasses = [];
+                    } else {
+                        var codes = part.split(';');
+                        for (var c = 0; c < codes.length; c++) {
+                            var code = parseInt(codes[c]);
+                            if (code === 0) activeClasses = [];
+                            else if (code === 1) activeClasses.push('ansi-1'); // Bold
+                            else if (code === 4) activeClasses.push('ansi-4'); // Underline
+                            else if (code >= 30 && code <= 37) {
+                                // Remove existing fg colors
+                                activeClasses = activeClasses.filter(cls => !cls.startsWith('ansi-3'));
+                                activeClasses.push('ansi-' + code);
+                            }
+                            else if (code >= 40 && code <= 47) {
+                                // Remove existing bg colors
+                                activeClasses = activeClasses.filter(cls => !cls.startsWith('ansi-4'));
+                                activeClasses.push('ansi-' + code);
+                            }
+                        }
+                    }
+                }
+            }
+            return result;
+        }
+        window.parseAnsi = parseAnsi;
+
+        var Module = {
+            preRun: [],
+            postRun: [function () {
+                loadingDiv.style.display = 'none';
+            }],
+            print: (function () {
+                return function (text) {
+                    if (arguments.length > 1) text = Array.prototype.slice.call(arguments).join(' ');
+
+                    if (text === '\b \b' || text === '\b') {
+                        var walker = document.createTreeWalker(consoleDiv, NodeFilter.SHOW_TEXT, null, false);
+                        var node;
+                        var textNodes = [];
+                        while(node = walker.nextNode()) {
+                            textNodes.push(node);
+                        }
+                        
+                        var deletedChar = false;
+                        for (var i = textNodes.length - 1; i >= 0; i--) {
+                            var n = textNodes[i];
+                            var content = n.textContent;
+                            
+                            while (content.length > 0) {
+                                var lastChar = content[content.length - 1];
+                                content = content.substring(0, content.length - 1);
+                                n.textContent = content;
+                                
+                                if (lastChar !== '\n' && lastChar !== '\r') {
+                                    deletedChar = true;
+                                    break;
+                                }
+                            }
+                            if (deletedChar) break;
+                        }
+                        return;
+                    }
+
+                    if (text && text.includes('Introduce el nombre')) {
+                        window.aboutToType = true;
+                    }
+
+                    // === LÓGICA DE EXCEPCIÓN PARA EL NOMBRE ===
+                    var shouldAddNewline = true;
+                    if (window.aboutToType && text === '- ') window.isTypingName = true;
+                    
+                    if (window.isTypingName) {
+                        shouldAddNewline = false;
+                        if (text === '' || text === '\n') {
+                            window.isTypingName = false;
+                            shouldAddNewline = true;
+                        }
+                    }
+
+                    // Output to console using insertAdjacentHTML to avoid creating block elements for every char
+                    consoleDiv.insertAdjacentHTML('beforeend', parseAnsi(text) + (shouldAddNewline ? '\n' : ''));
+
+                    // Auto-scroll
+                    consoleDiv.scrollTop = consoleDiv.scrollHeight;
+                };
+            })(),
+            printErr: function (text) {
+                if (arguments.length > 1) text = Array.prototype.slice.call(arguments).join(' ');
+                console.error(text);
+            },
+            canvas: (function () {
+                return null;
+            })(),
+            setStatus: function (text) {
+                if (text) {
+                    loadingDiv.innerText = text;
+                    loadingDiv.style.display = 'flex';
+                } else {
+                    loadingDiv.style.display = 'none';
+                }
+            },
+            clearConsole: function () {
+                consoleDiv.innerHTML = "";
+                activeClasses = []; // Reset ANSI state
+            },
+            totalDependencies: 0,
+            monitorRunDependencies: function (left) {
+                this.totalDependencies = Math.max(this.totalDependencies, left);
+                Module.setStatus(left ? 'Preparing... (' + (this.totalDependencies - left) + '/' + this.totalDependencies + ')' : 'All downloads complete.');
+            }
+        };
+
+        window.onerror = function (event) {
+            // Ignore errors for now or handle gracefully
+        };
+    </script>
+    {{{ SCRIPT }}}
+</body>
+
+</html>

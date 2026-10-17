@@ -1,0 +1,21 @@
+# Compilación nativa y temporales
+*.o
+*.obj
+*.tmp
+CastleCat_test.exe
+
+# Carpetas de desarrollo y entorno
+.vscode/
+.vs/
+.idea/
+*.suo
+*.user
+
+# Archivos del sistema
+desktop.ini
+Thumbs.db
+.DS_Store
+
+# Node (en caso de usar paquetes)
+node_modules/
+npm-debug.log*
