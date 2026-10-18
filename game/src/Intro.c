@@ -169,11 +169,11 @@ void menuOpciones()
             printf("  \033[1;37mFiltro Retro:\033[0m       [");
         }
         if (filtroRetro == 1) {
-            printf("\033[1;32m ACTIVADO  \033[0m]\n\n");
+            printf("\033[1;32m  ACTIVADO  \033[0m]\n\n");
         } else if (filtroRetro == 2) {
-            printf("\033[1;34m DINÁMICO  \033[0m]\n\n");
+            printf("\033[1;34m  DINÁMICO  \033[0m]\n\n");
         } else {
-            printf("\033[1;30mDESACTIVADO\033[0m]\n\n");
+            printf("\033[1;30m DESACTIVADO \033[0m]\n\n");
         }
         
         printf("\033[1mDetalles:\033[0m\n");
