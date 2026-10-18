@@ -30,32 +30,34 @@
             overflow-y: auto;
             white-space: pre-wrap;
             font-family: 'CastlePixel', monospace !important;
-            font-size: 20px !important;
+            font-size: 22px !important;
             line-height: 1.15 !important;
-            letter-spacing: 0.5px;
+            letter-spacing: 0px !important;
             -webkit-font-smoothing: none !important;
             -moz-osx-font-smoothing: none !important;
             font-smooth: never !important;
             text-rendering: geometricPrecision;
             image-rendering: pixelated;
-            filter: contrast(1.12) brightness(1.04);
-            text-shadow: 1px 1px 0px rgba(0, 0, 0, 0.9);
+            filter: contrast(1.28) brightness(1.05);
+            text-shadow: 1px 1px 0px #000;
         }
 
-        /* Reglas individuales para pantalla completa */
+        /* Reglas individuales para pantalla completa (escalado 2x exacto a 32px) */
         :fullscreen #console,
         :-webkit-full-screen #console,
         :-moz-full-screen #console,
         body.fullscreen-mode #console,
         html.fullscreen-mode #console {
-            font-size: 28px !important;
+            font-size: 32px !important;
             line-height: 1.25 !important;
+            letter-spacing: 0px !important;
         }
 
         @media (display-mode: fullscreen) {
             #console {
-                font-size: 28px !important;
+                font-size: 32px !important;
                 line-height: 1.25 !important;
+                letter-spacing: 0px !important;
             }
         }
 
@@ -348,8 +350,8 @@
                 radial-gradient(circle at center, transparent 65%, rgba(0, 0, 0, 0.6) 100%),
                 repeating-linear-gradient(
                     0deg,
-                    rgba(0, 0, 0, 0.08) 0px,
-                    rgba(0, 0, 0, 0.08) 1px,
+                    rgba(0, 0, 0, 0.12) 0px,
+                    rgba(0, 0, 0, 0.12) 1px,
                     transparent 1px,
                     transparent 2px
                 );
