@@ -98,7 +98,7 @@ void menuOpciones()
     static int sonidoGeneral = 100;
     static int volumenMusica = 50;
     static int volumenSFX = 60;
-    static int filtroRetro = 0; // 0 = Desactivado, 1 = Activado, 2 = Dinámico, 3 = Pixelado
+    static int filtroRetro = 3; // 0 = Desactivado, 1 = Activado, 2 = Dinámico, 3 = Pixelado (por defecto 3)
     int opcion = 0; // 0 = Sonido General, 1 = Musica, 2 = SFX, 3 = Filtro Retro
 
     #ifdef __EMSCRIPTEN__
@@ -124,7 +124,7 @@ void menuOpciones()
         return 60;
     });
     int curRetro = EM_ASM_INT({
-        return (typeof getRetroMode === 'function') ? getRetroMode() : 0;
+        return (typeof getRetroMode === 'function') ? getRetroMode() : 3;
     });
     sonidoGeneral = (curMaster / 10) * 10;
     volumenMusica = (curBgm / 10) * 10;

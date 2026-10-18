@@ -381,7 +381,7 @@
     </style>
 </head>
 
-<body>
+<body class="retro-pixel">
     <div id="top-bar">
         <button id="tab-btn" class="tab-badge" onclick="handleTabAction()" style="display: none;">
             <span class="tab-cap">TAB</span><span id="tab-label">Saltar</span>
@@ -498,8 +498,12 @@
                 window.setRetroMode(savedMode);
             } else if (localStorage.getItem('castlecat_retro_filter') === '1') {
                 window.setRetroMode(localStorage.getItem('castlecat_retro_animated') === '1' ? 2 : 1);
+            } else {
+                window.setRetroMode(3); // Por defecto: Pixel Art activo
             }
-        } catch(e){}
+        } catch(e){
+            window.setRetroMode(3);
+        }
 
         // Set initial BGM volume to 50%
         var bgmInit = document.getElementById('bgm');
