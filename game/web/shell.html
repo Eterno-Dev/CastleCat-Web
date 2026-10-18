@@ -598,6 +598,14 @@
         updateFullscreenUI();
         
         window.glitchPlayed = false;
+        var glitchImg = new Image();
+        glitchImg.onerror = function() {
+            if (glitchImg.src.indexOf('assets/') === -1) {
+                glitchImg.src = 'assets/glitch.png';
+            }
+        };
+        glitchImg.src = 'glitch.png';
+
         function triggerGlitchIntro() {
             if (window.glitchPlayed) return;
             window.glitchPlayed = true;
@@ -615,8 +623,9 @@
             overlay.style.overflow = 'hidden';
 
             var canvas = document.createElement('canvas');
-            canvas.width = 320;
-            canvas.height = 180;
+            var w = 480, h = 270;
+            canvas.width = w;
+            canvas.height = h;
             canvas.style.width = '100vw';
             canvas.style.height = '100vh';
             canvas.style.display = 'block';
@@ -624,7 +633,7 @@
             overlay.appendChild(canvas);
             document.body.appendChild(overlay);
 
-            // Reproducir sonido de glitch
+            // Reproducir sonido de glitch potente y autentico
             window.playSound('glitch');
 
             var ctx = canvas.getContext('2d');
@@ -636,12 +645,12 @@
                 if (elapsed >= 500) {
                     if (animId) cancelAnimationFrame(animId);
                     overlay.style.opacity = '0';
-                    overlay.style.transition = 'opacity 0.05s ease-out';
+                    overlay.style.transition = 'opacity 0.03s linear';
                     setTimeout(function() {
                         if (overlay && overlay.parentNode) {
                             overlay.parentNode.removeChild(overlay);
                         }
-                    }, 50);
+                    }, 40);
 
                     // Arrancar música BGM inmediatamente tras el glitch
                     var bgm = document.getElementById('bgm');
@@ -655,34 +664,89 @@
                 }
 
                 if (ctx) {
-                    var w = 320, h = 180;
-                    var imgData = ctx.createImageData(w, h);
-                    var buf = new Uint32Array(imgData.data.buffer);
-                    for (var y = 0; y < h; y++) {
-                        var isBand = Math.random() < 0.38;
-                        var bVal = isBand ? (Math.random() < 0.6 ? Math.floor(Math.random() * 255) : 0) : 0;
-                        var bandNoise = Math.random() < 0.75;
-                        for (var x = 0; x < w; x++) {
-                            var val = 0;
-                            if (isBand) {
-                                val = bandNoise ? (Math.random() < 0.5 ? bVal : 0) : bVal;
-                            } else if (Math.random() < 0.18) {
-                                val = Math.floor(Math.random() * 255);
-                            }
-                            buf[y * w + x] = (255 << 24) | (val << 16) | (val << 8) | val;
-                        }
-                    }
-                    ctx.putImageData(imgData, 0, 0);
+                    // 1. Fondo base negro
+                    ctx.fillStyle = '#050505';
+                    ctx.fillRect(0, 0, w, h);
 
-                    // Franjas horizontales de glitch brillante
-                    for (var i = 0; i < 5; i++) {
-                        if (Math.random() < 0.75) {
-                            var sy = Math.floor(Math.random() * h);
-                            var sh = Math.floor(Math.random() * 8 + 1);
-                            ctx.fillStyle = 'rgba(255, 255, 255, ' + (0.5 + Math.random() * 0.5) + ')';
-                            ctx.fillRect(0, sy, w, sh);
+                    var hasImg = glitchImg.complete && glitchImg.naturalWidth > 0;
+
+                    // 2. Si la textura real de glitch está lista, rebanar tiras con desplazamiento horizontal y aberración cromática
+                    if (hasImg) {
+                        var stripCount = Math.floor(Math.random() * 12) + 14;
+                        for (var s = 0; s < stripCount; s++) {
+                            var sy = Math.floor(Math.random() * glitchImg.naturalHeight);
+                            var sh = Math.floor(Math.random() * 32) + 3;
+                            if (sy + sh > glitchImg.naturalHeight) sh = glitchImg.naturalHeight - sy;
+                            
+                            var dy = sy + (Math.random() - 0.5) * 16;
+                            var dx = (Math.random() - 0.5) * 70;
+                            var dw = w + (Math.random() - 0.5) * 50;
+
+                            // Efecto RGB Split / Aberración cromática en algunas bandas
+                            if (Math.random() < 0.35) {
+                                ctx.save();
+                                ctx.globalAlpha = 0.8;
+                                ctx.drawImage(glitchImg, 0, sy, glitchImg.naturalWidth, sh, dx - 6, dy, dw, sh);
+                                ctx.fillStyle = 'rgba(255, 0, 40, 0.35)';
+                                ctx.globalCompositeOperation = 'source-atop';
+                                ctx.fillRect(dx - 6, dy, dw, sh);
+                                ctx.restore();
+
+                                ctx.save();
+                                ctx.globalAlpha = 0.8;
+                                ctx.drawImage(glitchImg, 0, sy, glitchImg.naturalWidth, sh, dx + 6, dy, dw, sh);
+                                ctx.fillStyle = 'rgba(0, 230, 255, 0.35)';
+                                ctx.globalCompositeOperation = 'source-atop';
+                                ctx.fillRect(dx + 6, dy, dw, sh);
+                                ctx.restore();
+                            } else {
+                                ctx.drawImage(glitchImg, 0, sy, glitchImg.naturalWidth, sh, dx, dy, dw, sh);
+                            }
                         }
                     }
+
+                    // 3. Bloques de corrupción VRAM (estilo exacto de datos digitales corrompidos)
+                    var blockCount = Math.floor(Math.random() * 16) + 10;
+                    for (var b = 0; b < blockCount; b++) {
+                        var bx = Math.floor(Math.random() * w);
+                        var by = Math.floor(Math.random() * h);
+                        var bw = Math.floor(Math.random() * 180) + 12;
+                        var bh = Math.floor(Math.random() * 7) + 1;
+                        var r = Math.random();
+                        if (r < 0.35) {
+                            ctx.fillStyle = '#ffffff';
+                        } else if (r < 0.55) {
+                            ctx.fillStyle = 'rgba(255, 255, 255, 0.55)';
+                        } else if (r < 0.75) {
+                            ctx.fillStyle = '#000000';
+                        } else if (r < 0.88) {
+                            ctx.fillStyle = 'rgba(0, 255, 240, 0.85)';
+                        } else {
+                            ctx.fillStyle = 'rgba(255, 20, 110, 0.85)';
+                        }
+                        ctx.fillRect(bx, by, bw, bh);
+                    }
+
+                    // 4. Líneas finas horizontales de desgarro de sincronía (tear lines)
+                    for (var t = 0; t < 4; t++) {
+                        var ty = Math.floor(Math.random() * h);
+                        ctx.fillStyle = (Math.random() < 0.5) ? 'rgba(255, 255, 255, 0.95)' : 'rgba(0, 255, 255, 0.8)';
+                        ctx.fillRect(0, ty, w, Math.random() < 0.4 ? 2 : 1);
+                    }
+
+                    // 5. Destello de inversión de fotograma único (pérdida de sync analógica / digital)
+                    if ((elapsed > 80 && elapsed < 120) || (elapsed > 260 && elapsed < 295)) {
+                        ctx.save();
+                        ctx.globalCompositeOperation = 'difference';
+                        ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+                        ctx.fillRect(0, 0, w, h);
+                        ctx.restore();
+                    }
+
+                    // 6. Jitter de pantalla (vibración errática de sincronismo)
+                    var jx = (Math.random() - 0.5) * 8;
+                    var jy = (Math.random() - 0.5) * 4;
+                    overlay.style.transform = 'translate(' + jx.toFixed(1) + 'px, ' + jy.toFixed(1) + 'px)';
                 }
                 animId = requestAnimationFrame(glitchLoop);
             }

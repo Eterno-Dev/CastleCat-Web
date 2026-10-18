@@ -45,9 +45,10 @@ node game\web\parche_emscripten.js "%DEST_DIR%\index.js"
 echo [*] 3/5 Generando terminal.html ...
 copy /y "%DEST_DIR%\index.html" "%DEST_DIR%\terminal.html" >nul
 
-echo [*] 4/5 Copiando assets de audio (Musica, Efectos, SFX) ...
+echo [*] 4/5 Copiando assets de audio y visuales (Musica, Efectos, SFX, Texturas) ...
 copy /y "game\assets\*.mp3" "%DEST_DIR%\" >nul 2>nul
 copy /y "game\assets\*.wav" "%DEST_DIR%\" >nul 2>nul
+copy /y "game\assets\*.png" "%DEST_DIR%\" >nul 2>nul
 copy /y "game\assets\SFX\*.wav" "%DEST_DIR%\" >nul 2>nul
 
 :: Generar aliases en minusculas para servidores web sensibles a mayusculas (Linux / Itch.io)
@@ -66,6 +67,7 @@ xcopy /e /i /y "game\assets\SFX" "%DEST_DIR%\sfx" >nul
 if not exist "%DEST_DIR%\assets" mkdir "%DEST_DIR%\assets"
 copy /y "game\assets\*.mp3" "%DEST_DIR%\assets\" >nul 2>nul
 copy /y "game\assets\*.wav" "%DEST_DIR%\assets\" >nul 2>nul
+copy /y "game\assets\*.png" "%DEST_DIR%\assets\" >nul 2>nul
 copy /y "game\assets\SFX\*.wav" "%DEST_DIR%\assets\" >nul 2>nul
 if not exist "%DEST_DIR%\assets\SFX" mkdir "%DEST_DIR%\assets\SFX"
 xcopy /e /i /y "game\assets\SFX" "%DEST_DIR%\assets\SFX" >nul
