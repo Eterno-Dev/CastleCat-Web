@@ -633,15 +633,15 @@
 
             function glitchLoop() {
                 var elapsed = performance.now() - startTime;
-                if (elapsed >= 1000) {
+                if (elapsed >= 500) {
                     if (animId) cancelAnimationFrame(animId);
                     overlay.style.opacity = '0';
-                    overlay.style.transition = 'opacity 0.06s ease-out';
+                    overlay.style.transition = 'opacity 0.05s ease-out';
                     setTimeout(function() {
                         if (overlay && overlay.parentNode) {
                             overlay.parentNode.removeChild(overlay);
                         }
-                    }, 70);
+                    }, 50);
 
                     // Arrancar música BGM inmediatamente tras el glitch
                     var bgm = document.getElementById('bgm');
