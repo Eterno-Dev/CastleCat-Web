@@ -83,6 +83,18 @@ void temblorPantallaMuerte(void) {
     int getch(void) {
         last_key = 0;
         while (last_key == 0) {
+            #ifdef __EMSCRIPTEN__
+            int sliderChanged = EM_ASM_INT({
+                if (typeof window !== 'undefined' && window.inOptionsMenu && window.volumeSliderChanged) {
+                    window.volumeSliderChanged = false;
+                    return 1;
+                }
+                return 0;
+            });
+            if (sliderChanged) {
+                return 999;
+            }
+            #endif
             emscripten_sleep(10);
         }
         int key = last_key;

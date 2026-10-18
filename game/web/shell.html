@@ -551,6 +551,9 @@
             v = Math.max(0, Math.min(1, v));
             window.masterVolume = v;
             window.sfxMuted = (v <= 0);
+            if (window.inOptionsMenu) {
+                window.volumeSliderChanged = true;
+            }
             applyAudioVolumes();
             tryStartAudio();
         }
@@ -589,11 +592,13 @@
                 var target = previousVolume > 0 ? previousVolume : 1.0;
                 window.sfxMuted = false;
                 window.masterVolume = target;
+                if (window.inOptionsMenu) window.volumeSliderChanged = true;
                 applyAudioVolumes();
                 tryStartAudio();
             } else {
                 if (window.masterVolume > 0) previousVolume = window.masterVolume;
                 window.sfxMuted = true;
+                if (window.inOptionsMenu) window.volumeSliderChanged = true;
                 applyAudioVolumes();
             }
         }

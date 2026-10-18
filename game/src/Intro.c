@@ -14,7 +14,7 @@ void tituloJuego(bool info)
     {
         printf("CASTLE CAT, un lugar donde la fantasía y la aventura se abren camino en el interior de las mazmorras,\n"); 
         printf("donde solo los mejores héroes son capaces de sobrevivir. Sino eres el más fuerte entonces mueres.\n");   
-        printf("Basado en los RPG's de los (70's) creado por Angel Roig, Pau Cremades y José Fernando Pérez.\n\n");
+        printf("Basado en los RPG's de los (70's) creado por \033[1;33mETERNODEV\033[0m y \033[1;36mBLUEEGOBLIN\033[0m.\n\n");
     }
     
 }
@@ -67,7 +67,7 @@ void creditosJuego()
     printf("╚════════════════╝\033[0m\n");
     printf("\033[1mCreado y programado por:\n\033[0m");
     printP("- \033[1;33mETERNODEV\033[0m\n");
-    printP("- \033[1;36mBLUELLAMA\033[0m\n\n");
+    printP("- \033[1;36mBLUEEGOBLIN\033[0m\n\n");
     
     printf("\033[1mAgradecimientos:\n\033[0m");
     printf("- José Fernando Pérez\n");
@@ -102,6 +102,7 @@ void menuOpciones()
     int opcion = 0; // 0 = Sonido General, 1 = Musica, 2 = SFX, 3 = Filtro Retro
 
     #ifdef __EMSCRIPTEN__
+    EM_ASM({ if (typeof window !== 'undefined') window.inOptionsMenu = true; });
     // Sincronizar con el estado web al entrar
     int curMaster = EM_ASM_INT({
         if (typeof window !== 'undefined' && typeof window.masterVolume === 'number') {
@@ -145,9 +146,9 @@ void menuOpciones()
         #endif
 
         limpiarPantalla();
-        printf("\033[1;36m╔═════════════════════╗\n");
-        printf("║      OPCIONES       ║\n");
-        printf("╚═════════════════════╝\033[0m\n\n");
+        printf("\033[1;36m╔══════════════════════╗\n");
+        printf("║       OPCIONES       ║\n");
+        printf("╚══════════════════════╝\033[0m\n\n");
         
         // 0: Sonido General
         if (opcion == 0) {
@@ -209,9 +210,8 @@ void menuOpciones()
         }
         
         printf("\033[1mDetalles:\033[0m\n");
-        printf(" Pista 8-bits retro creada por \033[1;36mBLUELLAMA\033[0m.\n");
+        printf(" Pista 8-bits retro creada por \033[1;36mBLUEEGOBLIN\033[0m.\n");
         printf(" Efectos de sonido creados por \033[1;33mETERNODEV\033[0m.\n");
-        printf(" Filtro visual CRT inspirado en monitores arcade retro.\n");
         printP("\nPulsa \033[40mENTER\033[0;1;37m para salir.\n");
 
         int tecla = getch();
@@ -357,6 +357,9 @@ void menuOpciones()
             enMenu = false;
         }
     }
+    #ifdef __EMSCRIPTEN__
+    EM_ASM({ if (typeof window !== 'undefined') window.inOptionsMenu = false; });
+    #endif
 }
 
 void menuMusica()
