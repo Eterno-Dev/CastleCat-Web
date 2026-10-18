@@ -15,7 +15,10 @@ void combate(int* hp, int* hpEne, int* hpMaxEne, int* hpMax, int* mana, int* mpM
 
         fflush(stdout);
 
+        setModoMenuTab(1);
         int key = getch();
+        setModoMenuTab(0);
+
         if (key == 224) {
             key = getch();
             if (key == 72) {
@@ -32,6 +35,7 @@ void combate(int* hp, int* hpEne, int* hpMaxEne, int* hpMax, int* mana, int* mpM
             opcionActiva = (opcionActiva + 1) % 3;
             reproducirSonido("next_option");
         } else if (key == 9) { // Solo TAB: volver al menú y guardar
+            setModoMenuTab(0);
             g_solicitarMenu = 1;
             return;
         }

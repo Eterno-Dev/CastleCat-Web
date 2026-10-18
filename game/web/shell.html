@@ -389,11 +389,11 @@
         window.sfxMuted = false;
         var previousVolume = 0.5;
 
-        // Gestión de botón interactivo TAB (Saltar historia / Abrir menú)
         window.tabMode = 'hidden';
         window.canSkipNarrative = false;
         window.skipNarrative = false;
         window.inGameplay = false;
+        window.puedeMenuTab = false;
 
         window.setTabMode = function(mode) {
             window.tabMode = mode;
@@ -425,7 +425,7 @@
                 if (typeof window.playSound === 'function') {
                     window.playSound('confirm');
                 }
-            } else if (window.tabMode === 'menu' || window.tabMode === 'exit') {
+            } else if ((window.tabMode === 'menu' || window.tabMode === 'exit') && window.puedeMenuTab) {
                 if (typeof Module !== 'undefined' && Module._triggerMenuTab) {
                     Module._triggerMenuTab();
                 } else if (typeof triggerMenuTab === 'function') {
@@ -1052,7 +1052,7 @@
                     if (typeof window.playSound === 'function') {
                         window.playSound('confirm');
                     }
-                } else if (window.inGameplay) {
+                } else if (window.inGameplay && window.puedeMenuTab) {
                     if (typeof Module !== 'undefined' && Module._triggerMenuTab) {
                         Module._triggerMenuTab();
                     } else if (typeof triggerMenuTab === 'function') {

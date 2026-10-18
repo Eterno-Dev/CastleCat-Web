@@ -247,6 +247,7 @@ int main()
 
         // Bucle de juego de la partida activa
         setModoJuego(1);
+        setModoMenuTab(0);
         while (ok == 0 && g_solicitarMenu == 0)
         {
             if(plantaCastillo == 1)
@@ -424,12 +425,15 @@ int main()
             }
 
             if (g_solicitarMenu) {
+                setModoMenuTab(0);
                 g_hayPartida = 1;
                 break;
             }
 
             if (ok == 0) {
+                setModoMenuTab(0);
                 inventarioJugador(statsItem, &hp, &hpMax, &atkIn, &atkMagIn, &agiIn, &defIn, nomJugador);
+                setModoMenuTab(0);
                 limpiarPantalla();
             }
         }

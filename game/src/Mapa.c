@@ -89,6 +89,7 @@ void moverseMapa(int map[7][7], int pos[7][7], int x, int y)
     }
 
     // Esperar tecla válida
+    setModoMenuTab(1);
     do {
         tecla = getch();
 
@@ -104,12 +105,14 @@ void moverseMapa(int map[7][7], int pos[7][7], int x, int y)
         }
 
         if (tecla == 9) { // Solo TAB: volver al menú y guardar
+            setModoMenuTab(0);
             g_solicitarMenu = 1;
             return;
         }
 
     } while (tecla != 'w' && tecla != 'a' && tecla != 's' && tecla != 'd' &&
              tecla != 'W' && tecla != 'A' && tecla != 'S' && tecla != 'D');
+    setModoMenuTab(0);
 
     // Aplicar movimiento
     switch(tecla) {

@@ -318,6 +318,7 @@ void menuMusica()
 int menuIntro()
 {
     int opcion = 0;
+    setModoMenuTab(0);
 
     while (1)
     {
@@ -648,7 +649,7 @@ void introHistoriaJuego(char *nombreJugador, int *jugadorClase)
     printR("decide desafiar la peligrosa mazmorra.\n");
     printR("\033[1mTiene su objetivo muy claro: \033[33msalvará a su amada\033[0m de las \033[35mfauces del dragón.\033[0m\n\n");
     
-    printP("\033[1m¿Tendrá habilidad suficiente para sobrevivir en el castillo?\033[0m\n\n");
+    printP("\033[1m¿Tendrá habilidad suficiente para sobrevivir en el castillo?\033[0m\n");
 
     enterContinuar();
     setModoNarrativa(0);

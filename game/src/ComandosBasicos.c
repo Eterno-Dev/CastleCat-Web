@@ -57,10 +57,12 @@ void setModoNarrativa(int activo) {
                 if (typeof setTabMode === 'function') setTabMode('skip');
             } else {
                 window.skipNarrative = false;
-                if (typeof setTabMode === 'function') setTabMode(window.inGameplay ? 'menu' : 'hidden');
+                if (typeof setTabMode === 'function') setTabMode(window.puedeMenuTab ? 'menu' : 'hidden');
             }
         }
     }, activo);
+#else
+    (void)activo;
 #endif
 }
 
@@ -69,11 +71,29 @@ void setModoJuego(int activo) {
     EM_ASM({
         if (typeof window !== 'undefined') {
             window.inGameplay = ($0 === 1);
+            if ($0 === 0) {
+                window.puedeMenuTab = false;
+                if (typeof setTabMode === 'function') setTabMode('hidden');
+            }
+        }
+    }, activo);
+#else
+    (void)activo;
+#endif
+}
+
+void setModoMenuTab(int activo) {
+#ifdef __EMSCRIPTEN__
+    EM_ASM({
+        if (typeof window !== 'undefined') {
+            window.puedeMenuTab = ($0 === 1);
             if (typeof setTabMode === 'function' && !window.canSkipNarrative) {
                 setTabMode($0 === 1 ? 'menu' : 'hidden');
             }
         }
     }, activo);
+#else
+    (void)activo;
 #endif
 }
 
@@ -83,6 +103,10 @@ void setModoJuego(int activo) {
 
 EMSCRIPTEN_KEEPALIVE
 void triggerMenuTab(void) {
+    int puede = EM_ASM_INT({
+        return (typeof window !== 'undefined' && window.puedeMenuTab) ? 1 : 0;
+    });
+    if (!puede) return;
     g_solicitarMenu = 1;
     last_key = 9;
 }
