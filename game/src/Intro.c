@@ -95,11 +95,10 @@ void creditosJuego()
 void menuOpciones()
 {
     bool enMenu = true;
-    static int sonidoGeneral = 100;
+    static int sonidoGeneral = 50;
     static int volumenMusica = 50;
     static int volumenSFX = 60;
-    static int filtroRetro = 3; // 0 = Desactivado, 1 = Activado, 2 = Dinámico, 3 = Pixelado (por defecto 3)
-    int opcion = 0; // 0 = Sonido General, 1 = Musica, 2 = SFX, 3 = Filtro Retro
+    int opcion = 0; // 0 = Sonido General, 1 = Musica, 2 = SFX
 
     #ifdef __EMSCRIPTEN__
     EM_ASM({ if (typeof window !== 'undefined') window.inOptionsMenu = true; });
@@ -109,7 +108,7 @@ void menuOpciones()
             if (window.sfxMuted) return 0;
             return Math.round(window.masterVolume * 100);
         }
-        return 100;
+        return 50;
     });
     int curBgm = EM_ASM_INT({
         if (typeof window !== 'undefined' && typeof window.musicTrackVolume === 'number') {
@@ -123,13 +122,9 @@ void menuOpciones()
         }
         return 60;
     });
-    int curRetro = EM_ASM_INT({
-        return (typeof getRetroMode === 'function') ? getRetroMode() : 3;
-    });
     sonidoGeneral = (curMaster / 10) * 10;
     volumenMusica = (curBgm / 10) * 10;
     volumenSFX = (curSfx / 10) * 10;
-    filtroRetro = curRetro;
     #endif
 
     while (enMenu)
@@ -140,7 +135,7 @@ void menuOpciones()
                 if (window.sfxMuted) return 0;
                 return Math.round(window.masterVolume * 100);
             }
-            return 100;
+            return 50;
         });
         sonidoGeneral = (liveMaster / 10) * 10;
         #endif
@@ -150,7 +145,7 @@ void menuOpciones()
         printf("║       OPCIONES       ║\n");
         printf("╚══════════════════════╝\033[0m\n\n");
         
-        // 0: Sonido General
+        // 0: Sonido General (Barras moradas por defecto)
         if (opcion == 0) {
             printf("\033[1;37m> \033[1;31mSonido General:\033[0m     [");
         } else {
@@ -165,7 +160,7 @@ void menuOpciones()
         }
         printf("] %d%%\n\n", sonidoGeneral);
 
-        // 1: Volumen Música
+        // 1: Volumen Música (Barras verdes)
         if (opcion == 1) {
             printf("\033[1;37m> \033[1;31mVolumen Música:\033[0m     [");
         } else {
@@ -173,14 +168,14 @@ void menuOpciones()
         }
         for (int i = 0; i < 10; i++) {
             if (i < volumenMusica / 10) {
-                printf("\033[1;35m|\033[0m"); // Morado
+                printf("\033[1;32m|\033[0m"); // Verde
             } else {
                 printf("\033[1;30m|\033[0m");
             }
         }
         printf("] %d%%\n\n", volumenMusica);
 
-        // 2: Volumen Efectos
+        // 2: Volumen Efectos (Barras verdes)
         if (opcion == 2) {
             printf("\033[1;37m> \033[1;31mVolumen Efectos:\033[0m    [");
         } else {
@@ -188,28 +183,12 @@ void menuOpciones()
         }
         for (int i = 0; i < 10; i++) {
             if (i < volumenSFX / 10) {
-                printf("\033[1;35m|\033[0m"); // Morado
+                printf("\033[1;32m|\033[0m"); // Verde
             } else {
                 printf("\033[1;30m|\033[0m");
             }
         }
         printf("] %d%%\n\n", volumenSFX);
-
-        // 3: Filtro Retro (0: Desactivado, 1: Activado, 2: Dinámico, 3: Pixelado)
-        if (opcion == 3) {
-            printf("\033[1;37m> \033[1;31mFiltro Retro:\033[0m       [");
-        } else {
-            printf("  \033[1;37mFiltro Retro:\033[0m       [");
-        }
-        if (filtroRetro == 1) {
-            printf("\033[1;32m  ACTIVADO  \033[0m]\n\n");
-        } else if (filtroRetro == 2) {
-            printf("\033[1;34m  DINÁMICO  \033[0m]\n\n");
-        } else if (filtroRetro == 3) {
-            printf("\033[1;35m  PIXELADO  \033[0m]\n\n");
-        } else {
-            printf("\033[1;30m DESACTIVADO \033[0m]\n\n");
-        }
         
         printf("\033[1mDetalles:\033[0m\n");
         printf(" Pista 8-bits retro creada por \033[1;36mBLUEEGOBLIN\033[0m.\n");
@@ -224,7 +203,7 @@ void menuOpciones()
             if (tecla == 72) { // Up
                 if (opcion > 0) { opcion--; reproducirSonido("next_option"); }
             } else if (tecla == 80) { // Down
-                if (opcion < 3) { opcion++; reproducirSonido("next_option"); }
+                if (opcion < 2) { opcion++; reproducirSonido("next_option"); }
             } else if (tecla == 77) { // Right
                 if (opcion == 0) {
                     if (sonidoGeneral < 100) sonidoGeneral += 10;
@@ -243,12 +222,6 @@ void menuOpciones()
                     reproducirSonido("volume");
                     #ifdef __EMSCRIPTEN__
                     EM_ASM({ if (typeof setSfxVolume === 'function') setSfxVolume($0 / 100.0); }, volumenSFX);
-                    #endif
-                } else if (opcion == 3) {
-                    filtroRetro = (filtroRetro + 1) % 4;
-                    reproducirSonido("confirm");
-                    #ifdef __EMSCRIPTEN__
-                    EM_ASM({ if (typeof setRetroMode === 'function') setRetroMode($0); }, filtroRetro);
                     #endif
                 }
             } else if (tecla == 75) { // Left
@@ -270,12 +243,6 @@ void menuOpciones()
                     #ifdef __EMSCRIPTEN__
                     EM_ASM({ if (typeof setSfxVolume === 'function') setSfxVolume($0 / 100.0); }, volumenSFX);
                     #endif
-                } else if (opcion == 3) {
-                    filtroRetro = (filtroRetro - 1 + 4) % 4;
-                    reproducirSonido("confirm");
-                    #ifdef __EMSCRIPTEN__
-                    EM_ASM({ if (typeof setRetroMode === 'function') setRetroMode($0); }, filtroRetro);
-                    #endif
                 }
             }
         }
@@ -285,7 +252,7 @@ void menuOpciones()
         }
         else if (tecla == 's' || tecla == 'S') 
         {
-            if (opcion < 3) { opcion++; reproducirSonido("next_option"); }
+            if (opcion < 2) { opcion++; reproducirSonido("next_option"); }
         }
         else if (tecla == 'd' || tecla == 'D') 
         {
@@ -306,12 +273,6 @@ void menuOpciones()
                 reproducirSonido("volume");
                 #ifdef __EMSCRIPTEN__
                 EM_ASM({ if (typeof setSfxVolume === 'function') setSfxVolume($0 / 100.0); }, volumenSFX);
-                #endif
-            } else if (opcion == 3) {
-                filtroRetro = (filtroRetro + 1) % 4;
-                reproducirSonido("confirm");
-                #ifdef __EMSCRIPTEN__
-                EM_ASM({ if (typeof setRetroMode === 'function') setRetroMode($0); }, filtroRetro);
                 #endif
             }
         }
@@ -334,22 +295,6 @@ void menuOpciones()
                 reproducirSonido("volume");
                 #ifdef __EMSCRIPTEN__
                 EM_ASM({ if (typeof setSfxVolume === 'function') setSfxVolume($0 / 100.0); }, volumenSFX);
-                #endif
-            } else if (opcion == 3) {
-                filtroRetro = (filtroRetro - 1 + 4) % 4;
-                reproducirSonido("confirm");
-                #ifdef __EMSCRIPTEN__
-                EM_ASM({ if (typeof setRetroMode === 'function') setRetroMode($0); }, filtroRetro);
-                #endif
-            }
-        }
-        else if (tecla == ' ')
-        {
-            if (opcion == 3) {
-                filtroRetro = (filtroRetro + 1) % 4;
-                reproducirSonido("confirm");
-                #ifdef __EMSCRIPTEN__
-                EM_ASM({ if (typeof setRetroMode === 'function') setRetroMode($0); }, filtroRetro);
                 #endif
             }
         }
@@ -687,16 +632,12 @@ void introHistoriaJuego(char *nombreJugador, int *jugadorClase)
     /* Se introduce la clase Jugador */
     claseJugador(jugadorClase, nombreJugador);
     
-    /* --- SECCIÓN 1: PRÓLOGO / HISTORIA INICIAL --- */
+    /* --- SECCIÓN 1: HISTORIA INICIAL --- */
     limpiarPantalla();
     setModoNarrativa(1);
 
-    printf("\033[1;36m╔══════════════════════════════════════════════════════════╗\n");
-    printf("║                   PRÓLOGO: LA HISTORIA                   ║\n");
-    printf("╚══════════════════════════════════════════════════════════╝\033[0m\n\n");
-
     /* Se Narra la Historia Inicial */
-    printR("\033[1m- En el reino de \033[34m'Nekovania'\033[0m, de tanto en tanto, los ciudadanos desaparecen sin dejar rastro.\033[0m\n");
+    printR("\n\033[1m- En el reino de \033[34m'Nekovania'\033[0m, de tanto en tanto, los ciudadanos desaparecen sin dejar rastro.\033[0m\n");
     printR("Las viejas leyendas hablan de un\033[33m dragón colosal\033[0m\033[0m, \033[1mel \033[35m'Shadow Lord'\033[0m\033[1m, cuyo poder ha hecho morir\na los más fieros héroes. ");
     printR("Desde su castillo, el\033[33m Castle Cat\033[0m, secuestra a ciudadanos inocentes.\n\n");
     
@@ -709,13 +650,15 @@ void introHistoriaJuego(char *nombreJugador, int *jugadorClase)
     
     printP("\033[1m¿Tendrá habilidad suficiente para sobrevivir en el castillo?\033[0m\n\n");
 
+    printf("\033[1;31m╔══════════════════════════════════════════════════════════╗\n");
+    printf("║                  ¡LA AVENTURA COMIENZA!                  ║\n");
+    printf("╚══════════════════════════════════════════════════════════╝\033[0m\n\n");
+
     enterContinuar();
     setModoNarrativa(0);
 
     /* --- SECCIÓN 2: EL CASTILLO --- */
     limpiarPantalla();
     dibujoCastillo();
-
-    printP("\033[1m¡\033[31mLa aventura comienza ahora\033[0m\033[1m!\033[0m\n");
     enterContinuar();
 }

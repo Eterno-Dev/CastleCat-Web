@@ -14,7 +14,7 @@
         }
 
         body {
-            font-family: 'Courier New', monospace;
+            font-family: 'CastlePixel', monospace;
             background-color: #111;
             color: #eee;
             margin: 0;
@@ -29,37 +29,34 @@
             box-sizing: border-box;
             overflow-y: auto;
             white-space: pre-wrap;
-            font-size: 16px;
-            line-height: 1.1;
+            font-family: 'CastlePixel', monospace !important;
+            font-size: 20px !important;
+            line-height: 1.15 !important;
+            letter-spacing: 0.5px;
+            -webkit-font-smoothing: none !important;
+            -moz-osx-font-smoothing: none !important;
+            font-smooth: never !important;
+            text-rendering: geometricPrecision;
+            image-rendering: pixelated;
+            filter: contrast(1.12) brightness(1.04);
+            text-shadow: 1px 1px 0px rgba(0, 0, 0, 0.9);
         }
 
-        /* Reglas individuales para pantalla completa (evita descarte de selectores por el navegador) */
-        :fullscreen #console {
-            font-size: 25px !important;
-            line-height: 1.25 !important;
-        }
-
-        :-webkit-full-screen #console {
-            font-size: 25px !important;
-            line-height: 1.25 !important;
-        }
-
-        :-moz-full-screen #console {
-            font-size: 25px !important;
+        /* Reglas individuales para pantalla completa */
+        :fullscreen #console,
+        :-webkit-full-screen #console,
+        :-moz-full-screen #console,
+        body.fullscreen-mode #console,
+        html.fullscreen-mode #console {
+            font-size: 28px !important;
             line-height: 1.25 !important;
         }
 
         @media (display-mode: fullscreen) {
             #console {
-                font-size: 25px !important;
+                font-size: 28px !important;
                 line-height: 1.25 !important;
             }
-        }
-
-        body.fullscreen-mode #console,
-        html.fullscreen-mode #console {
-            font-size: 25px !important;
-            line-height: 1.25 !important;
         }
 
         @keyframes screen-shake {
@@ -205,32 +202,32 @@
             user-select: none;
         }
 
-        /* Botón interactivo TAB con tipografía del juego (Monocromo limpio y texto grande) */
+        /* Botón interactivo TAB con tipografía del juego (Sin recuadro exterior) */
         .tab-badge {
-            font-family: 'Courier New', monospace;
-            font-size: 14px;
+            font-family: 'CastlePixel', monospace;
+            font-size: 16px;
             font-weight: bold;
             display: none;
             align-items: center;
-            gap: 7px;
-            background: rgba(18, 18, 18, 0.9);
-            padding: 4px 10px;
-            border-radius: 4px;
-            border: 1px solid #555555;
+            gap: 8px;
+            background: transparent;
+            padding: 0;
+            border: none;
             color: #ffffff;
             cursor: pointer;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.5);
-            transition: all 0.15s ease;
+            box-shadow: none;
+            transition: transform 0.15s ease;
             outline: none;
             user-select: none;
             animation: tabMonochromePulse 1.4s infinite ease-in-out;
+            -webkit-font-smoothing: none;
         }
 
         .tab-cap {
             display: inline-block;
-            font-size: 12px;
+            font-size: 13px;
             font-weight: 900;
-            padding: 2px 6px;
+            padding: 2px 7px;
             background: #2e2e2e;
             color: #ffffff;
             border: 1px solid #777777;
@@ -239,9 +236,7 @@
         }
 
         .tab-badge:hover {
-            background: rgba(40, 40, 40, 0.95);
-            border-color: #aaaaaa;
-            transform: scale(1.03);
+            transform: scale(1.08);
         }
 
         .tab-skip-mode {
@@ -294,71 +289,8 @@
             box-shadow: 0 0 3px rgba(0,0,0,0.6);
         }
 
-        /* Filtro Retro CRT / Scanlines sutiles */
-        body.retro-filter::after {
-            content: " ";
-            display: block;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            background: repeating-linear-gradient(
-                0deg,
-                rgba(0, 0, 0, 0.16),
-                rgba(0, 0, 0, 0.16) 1px,
-                transparent 1px,
-                transparent 3px
-            );
-            pointer-events: none;
-            z-index: 999;
-            box-shadow: inset 0 0 60px rgba(0, 0, 0, 0.4);
-        }
-
-        @keyframes scanlines-drift {
-            0% { background-position: 0 0; }
-            100% { background-position: 0 30px; }
-        }
-
-        body.retro-filter.retro-animated::after {
-            animation: scanlines-drift 3.5s linear infinite;
-        }
-
-        body.retro-filter #console {
-            text-shadow: 0 0 1px rgba(255, 255, 255, 0.35);
-        }
-
-        /* Filtro Retro Pixelado (Efecto Pixel Art Auténtico) */
-        body.retro-pixel #console {
-            font-family: 'CastlePixel', 'Courier New', monospace !important;
-            font-size: 20px !important;
-            line-height: 1.15 !important;
-            letter-spacing: 0.5px;
-            -webkit-font-smoothing: none !important;
-            -moz-osx-font-smoothing: none !important;
-            font-smooth: never !important;
-            text-rendering: geometricPrecision;
-            image-rendering: pixelated;
-            filter: contrast(1.12) brightness(1.04);
-            text-shadow: 1px 1px 0px rgba(0, 0, 0, 0.9);
-        }
-
-        body.retro-pixel.fullscreen-mode #console,
-        html.fullscreen-mode body.retro-pixel #console,
-        :fullscreen body.retro-pixel #console,
-        :-webkit-full-screen body.retro-pixel #console,
-        :-moz-full-screen body.retro-pixel #console {
-            font-size: 28px !important;
-            line-height: 1.25 !important;
-        }
-
-        body.retro-pixel .tab-badge {
-            font-family: 'CastlePixel', 'Courier New', monospace;
-            font-size: 15px;
-            -webkit-font-smoothing: none;
-        }
-
-        body.retro-pixel::after {
+        /* Efecto ambiental Retro Arcade CRT (Viñeta y fósforo sutil) */
+        body::after {
             content: " ";
             display: block;
             position: fixed;
@@ -381,7 +313,7 @@
     </style>
 </head>
 
-<body class="retro-pixel">
+<body>
     <div id="top-bar">
         <button id="tab-btn" class="tab-badge" onclick="handleTabAction()" style="display: none;">
             <span class="tab-cap">TAB</span><span id="tab-label">Saltar</span>
@@ -390,7 +322,7 @@
             <button id="mute-btn" style="background:transparent; color:#ccc; border:none; cursor:pointer; display:flex; align-items:center; justify-content:center; padding:0;" onclick="toggleMute()" title="Silenciar / Activar">
                 <svg id="vol-icon" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="18" height="18"><path stroke-linecap="round" stroke-linejoin="round" d="M19.114 5.636a9 9 0 0 1 0 12.728M16.463 8.288a5.25 5.25 0 0 1 0 7.424M6.75 8.25l4.72-4.72a.75.75 0 0 1 1.28.53v15.88a.75.75 0 0 1-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.009 9.009 0 0 1 2.25 12c0-.83.112-1.633.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75Z" /></svg>
             </button>
-            <input type="range" id="vol-slider" min="0" max="1" step="0.05" value="1.0" title="Sonido General" oninput="setWebVolume(this.value)">
+            <input type="range" id="vol-slider" min="0" max="1" step="0.05" value="0.5" title="Sonido General" oninput="setWebVolume(this.value)">
         </div>
         <button id="fs-btn" style="background:transparent; color:white; border:none; cursor:pointer; display:flex; align-items:center; justify-content:center; padding:0;" onclick="toggleFS()"><svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="24" height="24"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 3.75v4.5m0-4.5h4.5m-4.5 0L9 9M3.75 20.25v-4.5m0 4.5h4.5m-4.5 0L9 15M20.25 3.75h-4.5m4.5 0v4.5m0-4.5L15 9m5.25 11.25h-4.5m4.5 0v-4.5m0 4.5L15 15" /></svg></button>
     </div>
@@ -403,12 +335,12 @@
         <source src="../assets/music.mp3" type="audio/mpeg">
     </audio>
     <script>
-        window.masterVolume = 1.0;
+        window.masterVolume = 0.5;
         window.musicTrackVolume = 0.5;
         window.sfxTrackVolume = 0.6;
         window.sfxVolume = 0.6;
         window.sfxMuted = false;
-        var previousVolume = 1.0;
+        var previousVolume = 0.5;
 
         // Gestión de botón interactivo TAB (Saltar historia / Abrir menú)
         window.tabMode = 'hidden';
@@ -887,8 +819,8 @@
             overlay.style.overflow = 'hidden';
 
             var canvas = document.createElement('canvas');
-            // Grano grueso de alta visibilidad exactamente como la imagen de referencia
-            var w = 384, h = 216;
+            // Grano un tercio más grande (288x162) para mayor presencia pixel art
+            var w = 288, h = 162;
             canvas.width = w;
             canvas.height = h;
             canvas.style.position = 'absolute';
