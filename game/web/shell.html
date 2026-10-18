@@ -320,6 +320,39 @@
         body.retro-filter #console {
             text-shadow: 0 0 1px rgba(255, 255, 255, 0.35);
         }
+
+        /* Filtro Retro Pixelado (Efecto Pixel Art / Malla de Píxeles) */
+        body.retro-pixel::after {
+            content: " ";
+            display: block;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background:
+                repeating-linear-gradient(
+                    0deg,
+                    rgba(0, 0, 0, 0.28) 0px,
+                    rgba(0, 0, 0, 0.28) 1px,
+                    transparent 1px,
+                    transparent 3px
+                ),
+                repeating-linear-gradient(
+                    90deg,
+                    rgba(0, 0, 0, 0.28) 0px,
+                    rgba(0, 0, 0, 0.28) 1px,
+                    transparent 1px,
+                    transparent 3px
+                );
+            pointer-events: none;
+            z-index: 999;
+            box-shadow: inset 0 0 60px rgba(0, 0, 0, 0.45);
+        }
+
+        body.retro-pixel #console {
+            text-shadow: 0 0 1px rgba(255, 255, 255, 0.25);
+        }
     </style>
 </head>
 
@@ -395,22 +428,24 @@
         // Gestión de Filtro Retro CRT (0 = Desactivado, 1 = Activado, 2 = Dinámico)
         window.setRetroMode = function(mode) {
             mode = parseInt(mode);
-            if (mode === 2) { // Dinámico (con líneas animadas sutiles)
+            document.body.classList.remove('retro-filter', 'retro-animated', 'retro-pixel');
+            if (mode === 3) { // Pixelado (Efecto Pixel Art)
+                document.body.classList.add('retro-pixel');
+                try { localStorage.setItem('castlecat_retro_mode', '3'); } catch(e){}
+            } else if (mode === 2) { // Dinámico (con líneas animadas sutiles)
                 document.body.classList.add('retro-filter');
                 document.body.classList.add('retro-animated');
                 try { localStorage.setItem('castlecat_retro_mode', '2'); } catch(e){}
             } else if (mode === 1) { // Activado (estático)
                 document.body.classList.add('retro-filter');
-                document.body.classList.remove('retro-animated');
                 try { localStorage.setItem('castlecat_retro_mode', '1'); } catch(e){}
             } else { // Desactivado
-                document.body.classList.remove('retro-filter');
-                document.body.classList.remove('retro-animated');
                 try { localStorage.setItem('castlecat_retro_mode', '0'); } catch(e){}
             }
         };
 
         window.getRetroMode = function() {
+            if (document.body.classList.contains('retro-pixel')) return 3;
             if (document.body.classList.contains('retro-animated')) return 2;
             if (document.body.classList.contains('retro-filter')) return 1;
             return 0;

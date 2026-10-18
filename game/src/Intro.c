@@ -98,7 +98,7 @@ void menuOpciones()
     static int sonidoGeneral = 100;
     static int volumenMusica = 50;
     static int volumenSFX = 60;
-    static int filtroRetro = 0; // 0 = Desactivado, 1 = Activado (estático), 2 = Dinámico (animado)
+    static int filtroRetro = 0; // 0 = Desactivado, 1 = Activado, 2 = Dinámico, 3 = Pixelado
     int opcion = 0; // 0 = Sonido General, 1 = Musica, 2 = SFX, 3 = Filtro Retro
 
     #ifdef __EMSCRIPTEN__
@@ -195,7 +195,7 @@ void menuOpciones()
         }
         printf("] %d%%\n\n", volumenSFX);
 
-        // 3: Filtro Retro (0: Desactivado en gris, 1: Activado en verde, 2: Dinámico en azul)
+        // 3: Filtro Retro (0: Desactivado, 1: Activado, 2: Dinámico, 3: Pixelado)
         if (opcion == 3) {
             printf("\033[1;37m> \033[1;31mFiltro Retro:\033[0m       [");
         } else {
@@ -205,6 +205,8 @@ void menuOpciones()
             printf("\033[1;32m  ACTIVADO  \033[0m]\n\n");
         } else if (filtroRetro == 2) {
             printf("\033[1;34m  DINÁMICO  \033[0m]\n\n");
+        } else if (filtroRetro == 3) {
+            printf("\033[1;35m  PIXELADO  \033[0m]\n\n");
         } else {
             printf("\033[1;30m DESACTIVADO \033[0m]\n\n");
         }
@@ -243,7 +245,7 @@ void menuOpciones()
                     EM_ASM({ if (typeof setSfxVolume === 'function') setSfxVolume($0 / 100.0); }, volumenSFX);
                     #endif
                 } else if (opcion == 3) {
-                    filtroRetro = (filtroRetro + 1) % 3;
+                    filtroRetro = (filtroRetro + 1) % 4;
                     reproducirSonido("confirm");
                     #ifdef __EMSCRIPTEN__
                     EM_ASM({ if (typeof setRetroMode === 'function') setRetroMode($0); }, filtroRetro);
@@ -269,7 +271,7 @@ void menuOpciones()
                     EM_ASM({ if (typeof setSfxVolume === 'function') setSfxVolume($0 / 100.0); }, volumenSFX);
                     #endif
                 } else if (opcion == 3) {
-                    filtroRetro = (filtroRetro - 1 + 3) % 3;
+                    filtroRetro = (filtroRetro - 1 + 4) % 4;
                     reproducirSonido("confirm");
                     #ifdef __EMSCRIPTEN__
                     EM_ASM({ if (typeof setRetroMode === 'function') setRetroMode($0); }, filtroRetro);
@@ -306,7 +308,7 @@ void menuOpciones()
                 EM_ASM({ if (typeof setSfxVolume === 'function') setSfxVolume($0 / 100.0); }, volumenSFX);
                 #endif
             } else if (opcion == 3) {
-                filtroRetro = (filtroRetro + 1) % 3;
+                filtroRetro = (filtroRetro + 1) % 4;
                 reproducirSonido("confirm");
                 #ifdef __EMSCRIPTEN__
                 EM_ASM({ if (typeof setRetroMode === 'function') setRetroMode($0); }, filtroRetro);
@@ -334,7 +336,7 @@ void menuOpciones()
                 EM_ASM({ if (typeof setSfxVolume === 'function') setSfxVolume($0 / 100.0); }, volumenSFX);
                 #endif
             } else if (opcion == 3) {
-                filtroRetro = (filtroRetro - 1 + 3) % 3;
+                filtroRetro = (filtroRetro - 1 + 4) % 4;
                 reproducirSonido("confirm");
                 #ifdef __EMSCRIPTEN__
                 EM_ASM({ if (typeof setRetroMode === 'function') setRetroMode($0); }, filtroRetro);
@@ -344,7 +346,7 @@ void menuOpciones()
         else if (tecla == ' ')
         {
             if (opcion == 3) {
-                filtroRetro = (filtroRetro + 1) % 3;
+                filtroRetro = (filtroRetro + 1) % 4;
                 reproducirSonido("confirm");
                 #ifdef __EMSCRIPTEN__
                 EM_ASM({ if (typeof setRetroMode === 'function') setRetroMode($0); }, filtroRetro);
