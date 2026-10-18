@@ -47,9 +47,45 @@ void temblorPantallaMuerte(void) {
 #endif
 }
 
+void setModoNarrativa(int activo) {
+#ifdef __EMSCRIPTEN__
+    EM_ASM({
+        if (typeof window !== 'undefined') {
+            window.canSkipNarrative = ($0 === 1);
+            if ($0 === 1) {
+                window.skipNarrative = false;
+                if (typeof setTabMode === 'function') setTabMode('skip');
+            } else {
+                window.skipNarrative = false;
+                if (typeof setTabMode === 'function') setTabMode(window.inGameplay ? 'menu' : 'hidden');
+            }
+        }
+    }, activo);
+#endif
+}
+
+void setModoJuego(int activo) {
+#ifdef __EMSCRIPTEN__
+    EM_ASM({
+        if (typeof window !== 'undefined') {
+            window.inGameplay = ($0 === 1);
+            if (typeof setTabMode === 'function' && !window.canSkipNarrative) {
+                setTabMode($0 === 1 ? 'menu' : 'hidden');
+            }
+        }
+    }, activo);
+#endif
+}
+
 #ifdef __EMSCRIPTEN__
     // Global variable to store the last key pressed
     volatile int last_key = 0;
+
+EMSCRIPTEN_KEEPALIVE
+void triggerMenuTab(void) {
+    g_solicitarMenu = 1;
+    last_key = 9;
+}
 
     // Callback function for keydown events
     EM_BOOL key_callback(int eventType, const EmscriptenKeyboardEvent *e, void *userData) {
@@ -60,6 +96,11 @@ void temblorPantallaMuerte(void) {
             last_key = 8; // Backspace
         } else if (strcmp(e->key, "Tab") == 0) {
             last_key = 9; // Tab
+            EM_ASM({
+                if (typeof window !== 'undefined' && window.canSkipNarrative) {
+                    window.skipNarrative = true;
+                }
+            });
         } else if (strcmp(e->key, "Escape") == 0) {
             last_key = 27; // Escape
         } else if (strcmp(e->key, "ArrowUp") == 0) {
@@ -105,8 +146,26 @@ void temblorPantallaMuerte(void) {
     // Function to wait specifically for Enter
     void waitForEnter() {
        int key = 0;
+       #ifdef __EMSCRIPTEN__
+       int skip = EM_ASM_INT({
+           return (typeof window !== 'undefined' && window.skipNarrative) ? 1 : 0;
+       });
+       if (skip) {
+           reproducirSonido("confirm");
+           last_key = 0;
+           return;
+       }
+       #endif
        do {
            key = getch();
+           #ifdef __EMSCRIPTEN__
+           int skipNow = EM_ASM_INT({
+               return (typeof window !== 'undefined' && window.skipNarrative) ? 1 : 0;
+           });
+           if (skipNow || key == 9) { // TAB o click en botón saltar
+               break;
+           }
+           #endif
        } while (key != 13 && key != 10);
        reproducirSonido("confirm");
        // Clear any buffered input
@@ -185,6 +244,15 @@ void temblorPantallaMuerte(void) {
 
 #ifdef __EMSCRIPTEN__
 void typeWriterEffect(const char *dialog, int delay_ms) {
+    int skipInit = EM_ASM_INT({
+        return (typeof window !== 'undefined' && window.skipNarrative) ? 1 : 0;
+    });
+    if (skipInit) {
+        printf("%s", dialog);
+        fflush(stdout);
+        return;
+    }
+
     char buffer[4096] = {0};
     int b_idx = 0;
     int i = 0;
@@ -217,6 +285,27 @@ void typeWriterEffect(const char *dialog, int delay_ms) {
         }
         buffer[b_idx] = '\0';
         
+        int skip = EM_ASM_INT({
+            return (typeof window !== 'undefined' && window.skipNarrative) ? 1 : 0;
+        });
+
+        if (skip) {
+            i += char_len;
+            while (dialog[i] != '\0' && b_idx < 4094) {
+                buffer[b_idx++] = dialog[i++];
+            }
+            buffer[b_idx] = '\0';
+            EM_ASM({
+                var text = UTF8ToString($0);
+                if (window.typeWriterNode) {
+                    window.typeWriterNode.innerHTML = window.parseAnsi ? window.parseAnsi(text) : text;
+                    var c = document.getElementById('console');
+                    c.scrollTop = c.scrollHeight;
+                }
+            }, buffer);
+            break;
+        }
+
         // Update DOM Node
         EM_ASM({
             var text = UTF8ToString($0);

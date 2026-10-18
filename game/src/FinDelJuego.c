@@ -2,6 +2,8 @@ void muerteJugador(char nombreJugador[], int claseJugador, int plantaCastillo)
 {
     reproducirSonido("death");
     temblorPantallaMuerte();
+    setModoJuego(0);
+    setModoNarrativa(1);
     printP("\033[31m!  H A S   M U E R T O  !\033[0m\n\n");
     printP("En ese preciso momento ");
     printf("\033[1m'%s'\033[0m", nombreJugador);
@@ -10,6 +12,7 @@ void muerteJugador(char nombreJugador[], int claseJugador, int plantaCastillo)
     printP("El rostro de su amada cruzó por su mente una última vez, y una lágrima silenciosa recorrió su mejilla.\n");
 
     printP("\033[1m\"Lo siento... No pude salvarte.\"\033[0m\n\n");
+    setModoNarrativa(0);
 
     printf("                              _____  _____\n");
     printf("                             <     `/     |\n");
@@ -141,6 +144,8 @@ void finDelJuego(char nombreJugador[], int claseJugador, int plantaCastillo, int
 {
     int frameAnimacion = 1, i;
 
+    setModoJuego(0);
+    setModoNarrativa(1);
     printP("\033[1mCon un último golpe certero, ");
     printf("\033[34m'%s'\033[0m", nombreJugador);
     printP(" atravesó el corazón del \033[35m'Shadow Lord'\033[0m.\033[0m\n");
@@ -153,6 +158,7 @@ void finDelJuego(char nombreJugador[], int claseJugador, int plantaCastillo, int
     
     printP("\033[33mLa maldición del 'Castle Cat' había terminado.\033[0m\n");
     printP("Juntos regresaron a \033[31m'Nekovania'\033[0m, donde el pueblo los recibió como héroes.\n\n");
+    setModoNarrativa(0);
 
     for(i = 0; i <= 3; i++)
     {     

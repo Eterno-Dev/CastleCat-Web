@@ -179,6 +179,7 @@ int main()
     /* BUCLE PRINCIPAL DEL JUEGO CON MENÚ Y GUARDADO */
     while (1)
     {
+        setModoJuego(0);
         int accion = menuIntro();
 
         if (accion == 2) // JUGAR o NUEVA PARTIDA
@@ -245,6 +246,7 @@ int main()
         }
 
         // Bucle de juego de la partida activa
+        setModoJuego(1);
         while (ok == 0 && g_solicitarMenu == 0)
         {
             if(plantaCastillo == 1)

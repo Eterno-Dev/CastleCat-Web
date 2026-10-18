@@ -31,7 +31,7 @@ set "DEST_DIR=%~dp0build_itch"
 if not exist "%DEST_DIR%" mkdir "%DEST_DIR%"
 
 echo [*] 1/5 Compilando src\Main.c con Emscripten hacia build_itch\index.html ...
-call "%EMCC_CMD%" game\src\Main.c -o "%DEST_DIR%\index.html" -s ASYNCIFY -s "EXPORTED_RUNTIME_METHODS=['ccall','cwrap']" --shell-file game\web\shell.html
+call "%EMCC_CMD%" game\src\Main.c -o "%DEST_DIR%\index.html" -s ASYNCIFY -s "EXPORTED_FUNCTIONS=['_main','_triggerMenuTab']" -s "EXPORTED_RUNTIME_METHODS=['ccall','cwrap']" --shell-file game\web\shell.html
 if %errorlevel% neq 0 (
     echo/
     echo [ERROR] La compilacion con emcc ha fallado. Revisa tu codigo en C.

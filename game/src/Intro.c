@@ -685,10 +685,15 @@ void introHistoriaJuego(char *nombreJugador, int *jugadorClase)
     /* Se introduce la clase Jugador */
     claseJugador(jugadorClase, nombreJugador);
     
-    tituloJuego(false);
+    /* --- SECCIÓN 1: PRÓLOGO / HISTORIA INICIAL --- */
+    limpiarPantalla();
+    setModoNarrativa(1);
 
-    /* Se Narra la Historia Inicial */
-    /*printR("\n\033[1m- En el reino de \033[34m'Nekovania'\033[0m, algunos ciudadanos desaparecen sin dejar rastro.\033[0m\n");
+    printf("\033[1;36m╔══════════════════════════════════════════════════════════╗\n");
+    printf("║                   PRÓLOGO: LA HISTORIA                   ║\n");
+    printf("╚══════════════════════════════════════════════════════════╝\033[0m\n\n");
+
+    printR("\033[1m- En el reino de \033[34m'Nekovania'\033[0m, algunos ciudadanos desaparecen sin dejar rastro.\033[0m\n");
     printR("Habla la leyenda de un\033[33m dragón colosal\033[0m, \033[1mel \033[35m'Shadow Meow'\033[0m\033[1m, que ha vencido grandes héroes.\n");
     printR("Desde su castillo, el\033[33m Castle Cat\033[0m, secuestra a los inocentes.\n\n");
 
@@ -701,16 +706,15 @@ void introHistoriaJuego(char *nombreJugador, int *jugadorClase)
     printR("decide enfrentar la mazmorra.\n");
     printR("\033[1mCon el único objetivo de \033[33msalvar a su amada\033[0m del \033[35mtemible dragón.\033[0m\n\n");
 
-    printP("\033[1m¿Podrá sobrevivir en el castillo?\033[0m\n\n");*/
+    printP("\033[1m¿Podrá sobrevivir en el castillo?\033[0m\n\n");
 
-    /* Se Dibuja el Castillo */
+    enterContinuar();
+    setModoNarrativa(0);
+
+    /* --- SECCIÓN 2: EL CASTILLO --- */
+    limpiarPantalla();
     dibujoCastillo();
 
     printP("\033[1m¡\033[31mLa aventura comienza ahora\033[0m\033[1m!\033[0m\n");
-
-    
-    /* Se Pulsa Enter para Comezar la Aventura */
     enterContinuar();
-
-
 }
