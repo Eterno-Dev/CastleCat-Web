@@ -650,10 +650,6 @@ void introHistoriaJuego(char *nombreJugador, int *jugadorClase)
     
     printP("\033[1m¿Tendrá habilidad suficiente para sobrevivir en el castillo?\033[0m\n\n");
 
-    printf("\033[1;31m╔══════════════════════════════════════════════════════════╗\n");
-    printf("║                  ¡LA AVENTURA COMIENZA!                  ║\n");
-    printf("╚══════════════════════════════════════════════════════════╝\033[0m\n\n");
-
     enterContinuar();
     setModoNarrativa(0);
 

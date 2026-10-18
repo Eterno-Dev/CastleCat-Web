@@ -202,20 +202,21 @@
             user-select: none;
         }
 
-        /* Botón interactivo TAB con tipografía del juego (Sin recuadro exterior) */
+        /* Botón interactivo TAB con tipografía del juego (Sin recuadro exterior, con [TAB]) */
         .tab-badge {
             font-family: 'CastlePixel', monospace;
             font-size: 16px;
             font-weight: bold;
             display: none;
             align-items: center;
-            gap: 8px;
+            gap: 7px;
             background: transparent;
             padding: 0;
             border: none;
             color: #ffffff;
             cursor: pointer;
             box-shadow: none;
+            margin-right: 20px;
             transition: transform 0.15s ease;
             outline: none;
             user-select: none;
@@ -225,14 +226,10 @@
 
         .tab-cap {
             display: inline-block;
-            font-size: 13px;
-            font-weight: 900;
-            padding: 2px 7px;
-            background: #2e2e2e;
+            font-size: 16px;
+            font-weight: bold;
             color: #ffffff;
-            border: 1px solid #777777;
-            border-radius: 3px;
-            letter-spacing: 0.8px;
+            letter-spacing: 0.5px;
         }
 
         .tab-badge:hover {
@@ -316,7 +313,7 @@
 <body>
     <div id="top-bar">
         <button id="tab-btn" class="tab-badge" onclick="handleTabAction()" style="display: none;">
-            <span class="tab-cap">TAB</span><span id="tab-label">Saltar</span>
+            <span class="tab-cap">[TAB]</span> <span id="tab-label">Saltar</span>
         </button>
         <div id="vol-control">
             <button id="mute-btn" style="background:transparent; color:#ccc; border:none; cursor:pointer; display:flex; align-items:center; justify-content:center; padding:0;" onclick="toggleMute()" title="Silenciar / Activar">
@@ -355,12 +352,12 @@
             if (mode === 'skip') {
                 btn.style.display = 'inline-flex';
                 btn.className = 'tab-badge tab-skip-mode';
-                btn.innerHTML = '<span class="tab-cap">TAB</span><span>Saltar</span>';
+                btn.innerHTML = '<span class="tab-cap">[TAB]</span> <span id="tab-label">Saltar</span>';
                 btn.title = "Pulsa TAB o haz clic para saltar la historia";
             } else if (mode === 'menu') {
                 btn.style.display = 'inline-flex';
                 btn.className = 'tab-badge tab-menu-mode';
-                btn.innerHTML = '<span class="tab-cap">TAB</span><span>Menú</span>';
+                btn.innerHTML = '<span class="tab-cap">[TAB]</span> <span id="tab-label">Menú</span>';
                 btn.title = "Pulsa TAB o haz clic para abrir el menú";
             } else {
                 btn.style.display = 'none';
