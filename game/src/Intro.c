@@ -98,7 +98,8 @@ void menuOpciones()
     static int volumenGlobal = 50;
     static int volumenSFX = 50;
     static int filtroRetro = 0;
-    int opcion = 0; // 0 = Musica, 1 = SFX, 2 = Filtro Retro, 3 = Guardar y Salir
+    static int filtroAnimado = 0;
+    int opcion = 0; // 0 = Musica, 1 = SFX, 2 = Filtro Retro, 3 = Lineas Animadas, 4 = Guardar y Salir
 
     #ifdef __EMSCRIPTEN__
     // Sincronizar con el estado web al entrar
@@ -120,9 +121,13 @@ void menuOpciones()
     int curRetro = EM_ASM_INT({
         return (typeof isRetroFilterEnabled === 'function' && isRetroFilterEnabled()) ? 1 : 0;
     });
+    int curAnim = EM_ASM_INT({
+        return (typeof isRetroAnimationEnabled === 'function' && isRetroAnimationEnabled()) ? 1 : 0;
+    });
     volumenGlobal = (curBgm / 10) * 10;
     volumenSFX = (curSfx / 10) * 10;
     filtroRetro = curRetro;
+    filtroAnimado = curAnim;
     #endif
 
     while (enMenu)
@@ -174,8 +179,20 @@ void menuOpciones()
             printf("\033[1;30mDESACTIVADO\033[0m]\n\n");
         }
 
-        // 3: Guardar y Salir
+        // 3: Líneas Animadas
         if (opcion == 3) {
+            printf("\033[1;37m> \033[1;31mLíneas Animadas:\033[0m    [");
+        } else {
+            printf("  \033[1;37mLíneas Animadas:\033[0m    [");
+        }
+        if (filtroAnimado && filtroRetro) {
+            printf("\033[1;32m ACTIVADO \033[0m]\n\n");
+        } else {
+            printf("\033[1;30mDESACTIVADO\033[0m]\n\n");
+        }
+
+        // 4: Guardar y Salir
+        if (opcion == 4) {
             printf("\033[1;37m> \033[1;31mGuardar y Volver\033[0m\n\n");
         } else {
             printf("  \033[1;37mGuardar y Volver\033[0m\n\n");
@@ -184,7 +201,7 @@ void menuOpciones()
         printf("\033[1mDetalles:\033[0m\n");
         printf(" Pista 8-bits retro creada por \033[1;36mBLUELLAMA\033[0m.\n");
         printf(" Efectos de sonido creados por \033[1;33mETERNODEV\033[0m.\n");
-        printf(" Filtro visual CRT inspirado en monitores arcade retro.\n");
+        printf(" Filtro visual CRT animado inspirado en monitores arcade retro.\n");
         printP("\nUsa \033[40m← / →\033[0;1;37m para regular o cambiar. Pulsa \033[40mENTER\033[0;1;37m o \033[40mESC\033[0;1;37m para salir.\n");
 
         int tecla = getch();
@@ -195,7 +212,7 @@ void menuOpciones()
             if (tecla == 72) { // Up
                 if (opcion > 0) { opcion--; reproducirSonido("next_option"); }
             } else if (tecla == 80) { // Down
-                if (opcion < 3) { opcion++; reproducirSonido("next_option"); }
+                if (opcion < 4) { opcion++; reproducirSonido("next_option"); }
             } else if (tecla == 77) { // Right
                 if (opcion == 0) {
                     if (volumenGlobal < 100) volumenGlobal += 10;
@@ -214,6 +231,18 @@ void menuOpciones()
                     reproducirSonido("confirm");
                     #ifdef __EMSCRIPTEN__
                     EM_ASM({ if (typeof setRetroFilter === 'function') setRetroFilter($0); }, filtroRetro);
+                    #endif
+                } else if (opcion == 3) {
+                    filtroAnimado = !filtroAnimado;
+                    if (filtroAnimado && !filtroRetro) {
+                        filtroRetro = 1;
+                        #ifdef __EMSCRIPTEN__
+                        EM_ASM({ if (typeof setRetroFilter === 'function') setRetroFilter(1); });
+                        #endif
+                    }
+                    reproducirSonido("confirm");
+                    #ifdef __EMSCRIPTEN__
+                    EM_ASM({ if (typeof setRetroAnimation === 'function') setRetroAnimation($0); }, filtroAnimado);
                     #endif
                 }
             } else if (tecla == 75) { // Left
@@ -235,6 +264,18 @@ void menuOpciones()
                     #ifdef __EMSCRIPTEN__
                     EM_ASM({ if (typeof setRetroFilter === 'function') setRetroFilter($0); }, filtroRetro);
                     #endif
+                } else if (opcion == 3) {
+                    filtroAnimado = !filtroAnimado;
+                    if (filtroAnimado && !filtroRetro) {
+                        filtroRetro = 1;
+                        #ifdef __EMSCRIPTEN__
+                        EM_ASM({ if (typeof setRetroFilter === 'function') setRetroFilter(1); });
+                        #endif
+                    }
+                    reproducirSonido("confirm");
+                    #ifdef __EMSCRIPTEN__
+                    EM_ASM({ if (typeof setRetroAnimation === 'function') setRetroAnimation($0); }, filtroAnimado);
+                    #endif
                 }
             }
         }
@@ -244,7 +285,7 @@ void menuOpciones()
         }
         else if (tecla == 's' || tecla == 'S') 
         {
-            if (opcion < 3) { opcion++; reproducirSonido("next_option"); }
+            if (opcion < 4) { opcion++; reproducirSonido("next_option"); }
         }
         else if (tecla == 'd' || tecla == 'D') 
         {
@@ -265,6 +306,18 @@ void menuOpciones()
                 reproducirSonido("confirm");
                 #ifdef __EMSCRIPTEN__
                 EM_ASM({ if (typeof setRetroFilter === 'function') setRetroFilter($0); }, filtroRetro);
+                #endif
+            } else if (opcion == 3) {
+                filtroAnimado = !filtroAnimado;
+                if (filtroAnimado && !filtroRetro) {
+                    filtroRetro = 1;
+                    #ifdef __EMSCRIPTEN__
+                    EM_ASM({ if (typeof setRetroFilter === 'function') setRetroFilter(1); });
+                    #endif
+                }
+                reproducirSonido("confirm");
+                #ifdef __EMSCRIPTEN__
+                EM_ASM({ if (typeof setRetroAnimation === 'function') setRetroAnimation($0); }, filtroAnimado);
                 #endif
             }
         }
@@ -288,6 +341,18 @@ void menuOpciones()
                 #ifdef __EMSCRIPTEN__
                 EM_ASM({ if (typeof setRetroFilter === 'function') setRetroFilter($0); }, filtroRetro);
                 #endif
+            } else if (opcion == 3) {
+                filtroAnimado = !filtroAnimado;
+                if (filtroAnimado && !filtroRetro) {
+                    filtroRetro = 1;
+                    #ifdef __EMSCRIPTEN__
+                    EM_ASM({ if (typeof setRetroFilter === 'function') setRetroFilter(1); });
+                    #endif
+                }
+                reproducirSonido("confirm");
+                #ifdef __EMSCRIPTEN__
+                EM_ASM({ if (typeof setRetroAnimation === 'function') setRetroAnimation($0); }, filtroAnimado);
+                #endif
             }
         }
         else if (tecla == ' ')
@@ -298,6 +363,18 @@ void menuOpciones()
                 #ifdef __EMSCRIPTEN__
                 EM_ASM({ if (typeof setRetroFilter === 'function') setRetroFilter($0); }, filtroRetro);
                 #endif
+            } else if (opcion == 3) {
+                filtroAnimado = !filtroAnimado;
+                if (filtroAnimado && !filtroRetro) {
+                    filtroRetro = 1;
+                    #ifdef __EMSCRIPTEN__
+                    EM_ASM({ if (typeof setRetroFilter === 'function') setRetroFilter(1); });
+                    #endif
+                }
+                reproducirSonido("confirm");
+                #ifdef __EMSCRIPTEN__
+                EM_ASM({ if (typeof setRetroAnimation === 'function') setRetroAnimation($0); }, filtroAnimado);
+                #endif
             }
         }
         else if (tecla == 13 || tecla == 10) 
@@ -307,6 +384,18 @@ void menuOpciones()
                 reproducirSonido("confirm");
                 #ifdef __EMSCRIPTEN__
                 EM_ASM({ if (typeof setRetroFilter === 'function') setRetroFilter($0); }, filtroRetro);
+                #endif
+            } else if (opcion == 3) {
+                filtroAnimado = !filtroAnimado;
+                if (filtroAnimado && !filtroRetro) {
+                    filtroRetro = 1;
+                    #ifdef __EMSCRIPTEN__
+                    EM_ASM({ if (typeof setRetroFilter === 'function') setRetroFilter(1); });
+                    #endif
+                }
+                reproducirSonido("confirm");
+                #ifdef __EMSCRIPTEN__
+                EM_ASM({ if (typeof setRetroAnimation === 'function') setRetroAnimation($0); }, filtroAnimado);
                 #endif
             } else {
                 reproducirSonido("confirm");

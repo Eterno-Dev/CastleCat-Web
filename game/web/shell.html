@@ -249,6 +249,39 @@
             box-shadow: inset 0 0 60px rgba(0, 0, 0, 0.4);
         }
 
+        @keyframes scanlines-drift {
+            0% { background-position: 0 0; }
+            100% { background-position: 0 30px; }
+        }
+
+        @keyframes crt-sweep {
+            0% { transform: translateY(-100%); }
+            100% { transform: translateY(100vh); }
+        }
+
+        body.retro-filter.retro-animated::after {
+            animation: scanlines-drift 3.5s linear infinite;
+        }
+
+        body.retro-filter.retro-animated::before {
+            content: " ";
+            display: block;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 140px;
+            background: linear-gradient(
+                to bottom,
+                rgba(255, 255, 255, 0),
+                rgba(255, 255, 255, 0.035) 50%,
+                rgba(255, 255, 255, 0)
+            );
+            animation: crt-sweep 6s linear infinite;
+            pointer-events: none;
+            z-index: 999;
+        }
+
         body.retro-filter #console {
             text-shadow: 0 0 1px rgba(255, 255, 255, 0.35);
         }
@@ -276,7 +309,7 @@
         window.sfxMuted = false;
         var previousVolume = 0.5;
 
-        // Gestión de Filtro Retro CRT
+        // Gestión de Filtro Retro CRT y Animación
         window.setRetroFilter = function(enabled) {
             if (enabled) {
                 document.body.classList.add('retro-filter');
@@ -287,13 +320,30 @@
             }
         };
 
+        window.setRetroAnimation = function(enabled) {
+            if (enabled) {
+                document.body.classList.add('retro-animated');
+                try { localStorage.setItem('castlecat_retro_animated', '1'); } catch(e){}
+            } else {
+                document.body.classList.remove('retro-animated');
+                try { localStorage.setItem('castlecat_retro_animated', '0'); } catch(e){}
+            }
+        };
+
         window.isRetroFilterEnabled = function() {
             return document.body.classList.contains('retro-filter');
+        };
+
+        window.isRetroAnimationEnabled = function() {
+            return document.body.classList.contains('retro-animated');
         };
 
         try {
             if (localStorage.getItem('castlecat_retro_filter') === '1') {
                 document.body.classList.add('retro-filter');
+            }
+            if (localStorage.getItem('castlecat_retro_animated') === '1') {
+                document.body.classList.add('retro-animated');
             }
         } catch(e){}
 
