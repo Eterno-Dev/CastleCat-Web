@@ -676,6 +676,14 @@ void usarItemInventario(TItem statsItem[], int accederObj, int *hp, int *hpMax, 
 {
     if(statsItem[accederObj].itemConsumible == true)
     {
+        if (strstr(statsItem[accederObj].nombreObjeto, "Plátano") != NULL ||
+            strstr(statsItem[accederObj].nombreObjeto, "Platano") != NULL ||
+            strstr(statsItem[accederObj].nombreObjeto, "banana") != NULL ||
+            strstr(statsItem[accederObj].nombreObjeto, "Banana") != NULL) {
+            reproducirSonido("platano");
+        } else {
+            reproducirSonido("potion");
+        }
         printf("\nHas Gastado x1: \033[0;1m%s\033[0m\n", statsItem[accederObj].nombreObjeto);
         statsItem[accederObj].numItemsInventario--;
         *hpMax = *hpMax + statsItem[accederObj].otorgarExtraVidaMax;

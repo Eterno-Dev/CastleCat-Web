@@ -382,28 +382,45 @@
                     filename = 'sfx_atk_mag_' + (Math.floor(Math.random() * 2) + 1) + '.wav';
                 } else if (type === 'atk_agi') {
                     filename = 'sfx_atk_agi_' + (Math.floor(Math.random() * 2) + 1) + '.wav';
+                } else if (type === 'potion') {
+                    filename = 'sfx_potion.wav';
+                } else if (type === 'platano' || type === 'banana') {
+                    filename = 'sfx_platano.wav';
+                } else if (type === 'glitch') {
+                    filename = 'sfx_glitch.wav';
                 } else {
                     filename = 'sfx_' + type + '.wav';
                 }
                 pathsToTry = [
+                    filename,
                     "SFX/" + filename,
                     "sfx/" + filename,
+                    "assets/" + filename,
                     "assets/SFX/" + filename,
                     "assets/sfx/" + filename,
-                    "../assets/SFX/" + filename,
-                    filename
+                    "../assets/SFX/" + filename
                 ];
             }
             
             function tryPlay(idx) {
                 if (idx >= pathsToTry.length) return;
                 var audio = new Audio();
+                var failed = false;
+                audio.onerror = function() {
+                    if (!failed) {
+                        failed = true;
+                        tryPlay(idx + 1);
+                    }
+                };
                 audio.src = pathsToTry[idx];
                 audio.volume = (typeof window.sfxVolume === 'number') ? window.sfxVolume : 0.5;
                 var p = audio.play();
                 if (p && typeof p.catch === 'function') {
                     p.catch(function(e) {
-                        tryPlay(idx + 1);
+                        if (!failed) {
+                            failed = true;
+                            tryPlay(idx + 1);
+                        }
                     });
                 }
             }
@@ -580,8 +597,104 @@
         window.addEventListener('load', updateFullscreenUI);
         updateFullscreenUI();
         
+        window.glitchPlayed = false;
+        function triggerGlitchIntro() {
+            if (window.glitchPlayed) return;
+            window.glitchPlayed = true;
+
+            var overlay = document.createElement('div');
+            overlay.id = 'glitch-overlay';
+            overlay.style.position = 'fixed';
+            overlay.style.top = '0';
+            overlay.style.left = '0';
+            overlay.style.width = '100vw';
+            overlay.style.height = '100vh';
+            overlay.style.zIndex = '99999';
+            overlay.style.backgroundColor = '#000';
+            overlay.style.pointerEvents = 'none';
+            overlay.style.overflow = 'hidden';
+
+            var canvas = document.createElement('canvas');
+            canvas.width = 320;
+            canvas.height = 180;
+            canvas.style.width = '100vw';
+            canvas.style.height = '100vh';
+            canvas.style.display = 'block';
+            canvas.style.imageRendering = 'pixelated';
+            overlay.appendChild(canvas);
+            document.body.appendChild(overlay);
+
+            // Reproducir sonido de glitch
+            window.playSound('glitch');
+
+            var ctx = canvas.getContext('2d');
+            var startTime = performance.now();
+            var animId;
+
+            function glitchLoop() {
+                var elapsed = performance.now() - startTime;
+                if (elapsed >= 1000) {
+                    if (animId) cancelAnimationFrame(animId);
+                    overlay.style.opacity = '0';
+                    overlay.style.transition = 'opacity 0.06s ease-out';
+                    setTimeout(function() {
+                        if (overlay && overlay.parentNode) {
+                            overlay.parentNode.removeChild(overlay);
+                        }
+                    }, 70);
+
+                    // Arrancar música BGM inmediatamente tras el glitch
+                    var bgm = document.getElementById('bgm');
+                    var slider = document.getElementById('vol-slider');
+                    var curVol = slider ? parseFloat(slider.value) : 0.5;
+                    if (bgm && !bgm.muted && window.sfxVolume > 0) {
+                        bgm.volume = curVol;
+                        bgm.play().catch(function(e) {});
+                    }
+                    return;
+                }
+
+                if (ctx) {
+                    var w = 320, h = 180;
+                    var imgData = ctx.createImageData(w, h);
+                    var buf = new Uint32Array(imgData.data.buffer);
+                    for (var y = 0; y < h; y++) {
+                        var isBand = Math.random() < 0.38;
+                        var bVal = isBand ? (Math.random() < 0.6 ? Math.floor(Math.random() * 255) : 0) : 0;
+                        var bandNoise = Math.random() < 0.75;
+                        for (var x = 0; x < w; x++) {
+                            var val = 0;
+                            if (isBand) {
+                                val = bandNoise ? (Math.random() < 0.5 ? bVal : 0) : bVal;
+                            } else if (Math.random() < 0.18) {
+                                val = Math.floor(Math.random() * 255);
+                            }
+                            buf[y * w + x] = (255 << 24) | (val << 16) | (val << 8) | val;
+                        }
+                    }
+                    ctx.putImageData(imgData, 0, 0);
+
+                    // Franjas horizontales de glitch brillante
+                    for (var i = 0; i < 5; i++) {
+                        if (Math.random() < 0.75) {
+                            var sy = Math.floor(Math.random() * h);
+                            var sh = Math.floor(Math.random() * 8 + 1);
+                            ctx.fillStyle = 'rgba(255, 255, 255, ' + (0.5 + Math.random() * 0.5) + ')';
+                            ctx.fillRect(0, sy, w, sh);
+                        }
+                    }
+                }
+                animId = requestAnimationFrame(glitchLoop);
+            }
+            glitchLoop();
+        }
+
         // Start audio on first interaction if not already playing
         function tryStartAudio() {
+            if (!window.glitchPlayed) {
+                triggerGlitchIntro();
+                return;
+            }
             var bgm = document.getElementById('bgm');
             var slider = document.getElementById('vol-slider');
             var curVol = slider ? parseFloat(slider.value) : 0.5;
@@ -705,6 +818,7 @@
             preRun: [],
             postRun: [function () {
                 loadingDiv.style.display = 'none';
+                triggerGlitchIntro();
             }],
             print: (function () {
                 return function (text) {

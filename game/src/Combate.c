@@ -37,19 +37,21 @@ void combate(int* hp, int* hpEne, int* hpMaxEne, int* hpMax, int* mana, int* mpM
         }
         
         if (key == 13 || key == 10) { // Enter
-            reproducirSonido("confirm");
             resp = opcionActiva;
             if (id[resp] == 0 && resp > 0) {
+                reproducirSonido("confirm");
                 printf("\n\033[1;31mTe falta equipar el arma para poder realizar el ataque.\033[0m\n");
                 enterContinuar();
             } else if (asignarHabilidades(id[resp], nombre, descrip, &tipox, &mult, &coste)) {
                 if (coste > *mana) {
+                    reproducirSonido("confirm");
                     printf("\n\033[1;31mNo tienes suficiente mana para usar esta habilidad (%i/%i).\033[0m\n", *mana, coste);
                     enterContinuar();
                 } else {
                     ok = 1;
                 }
             } else {
+                 reproducirSonido("confirm");
                  printf("\n\033[1;31mHabilidad no disponible.\033[0m\n");
                  enterContinuar();
             }
@@ -64,6 +66,8 @@ void combate(int* hp, int* hpEne, int* hpMaxEne, int* hpMax, int* mana, int* mpM
         reproducirSonido("atk_mag");
     } else if (tipox == 3) {
         reproducirSonido("atk_agi");
+    } else {
+        reproducirSonido("atk_basic");
     }
 
 	switch (tipox) {

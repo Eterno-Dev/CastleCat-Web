@@ -48,6 +48,7 @@ copy /y "%DEST_DIR%\index.html" "%DEST_DIR%\terminal.html" >nul
 echo [*] 4/5 Copiando assets de audio (Musica, Efectos, SFX) ...
 copy /y "game\assets\*.mp3" "%DEST_DIR%\" >nul 2>nul
 copy /y "game\assets\*.wav" "%DEST_DIR%\" >nul 2>nul
+copy /y "game\assets\SFX\*.wav" "%DEST_DIR%\" >nul 2>nul
 
 :: Generar aliases en minusculas para servidores web sensibles a mayusculas (Linux / Itch.io)
 if exist "%DEST_DIR%\Music.mp3" copy /y "%DEST_DIR%\Music.mp3" "%DEST_DIR%\music.mp3" >nul 2>nul
@@ -64,6 +65,8 @@ xcopy /e /i /y "game\assets\SFX" "%DEST_DIR%\sfx" >nul
 :: Tambien asegurar subcarpeta assets/
 if not exist "%DEST_DIR%\assets" mkdir "%DEST_DIR%\assets"
 copy /y "game\assets\*.mp3" "%DEST_DIR%\assets\" >nul 2>nul
+copy /y "game\assets\*.wav" "%DEST_DIR%\assets\" >nul 2>nul
+copy /y "game\assets\SFX\*.wav" "%DEST_DIR%\assets\" >nul 2>nul
 if not exist "%DEST_DIR%\assets\SFX" mkdir "%DEST_DIR%\assets\SFX"
 xcopy /e /i /y "game\assets\SFX" "%DEST_DIR%\assets\SFX" >nul
 if not exist "%DEST_DIR%\assets\sfx" mkdir "%DEST_DIR%\assets\sfx"
