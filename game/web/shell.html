@@ -209,7 +209,7 @@
             width: 13px;
             height: 13px;
             border-radius: 50%;
-            background: #ff5555;
+            background: #ffffff;
             cursor: pointer;
             box-shadow: 0 0 3px rgba(0,0,0,0.6);
             transition: transform 0.1s;
@@ -222,10 +222,35 @@
             width: 13px;
             height: 13px;
             border-radius: 50%;
-            background: #ff5555;
+            background: #ffffff;
             cursor: pointer;
             border: none;
             box-shadow: 0 0 3px rgba(0,0,0,0.6);
+        }
+
+        /* Filtro Retro CRT / Scanlines sutiles */
+        body.retro-filter::after {
+            content: " ";
+            display: block;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: repeating-linear-gradient(
+                0deg,
+                rgba(0, 0, 0, 0.16),
+                rgba(0, 0, 0, 0.16) 1px,
+                transparent 1px,
+                transparent 3px
+            );
+            pointer-events: none;
+            z-index: 999;
+            box-shadow: inset 0 0 60px rgba(0, 0, 0, 0.4);
+        }
+
+        body.retro-filter #console {
+            text-shadow: 0 0 1px rgba(255, 255, 255, 0.35);
         }
     </style>
 </head>
@@ -250,6 +275,27 @@
         window.sfxVolume = 0.5;
         window.sfxMuted = false;
         var previousVolume = 0.5;
+
+        // Gestión de Filtro Retro CRT
+        window.setRetroFilter = function(enabled) {
+            if (enabled) {
+                document.body.classList.add('retro-filter');
+                try { localStorage.setItem('castlecat_retro_filter', '1'); } catch(e){}
+            } else {
+                document.body.classList.remove('retro-filter');
+                try { localStorage.setItem('castlecat_retro_filter', '0'); } catch(e){}
+            }
+        };
+
+        window.isRetroFilterEnabled = function() {
+            return document.body.classList.contains('retro-filter');
+        };
+
+        try {
+            if (localStorage.getItem('castlecat_retro_filter') === '1') {
+                document.body.classList.add('retro-filter');
+            }
+        } catch(e){}
 
         // Set initial BGM volume to 50%
         var bgmInit = document.getElementById('bgm');

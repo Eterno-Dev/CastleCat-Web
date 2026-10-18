@@ -1,6 +1,6 @@
 #include <stdbool.h>
 
-int menuIntro();
+void menuOpciones();
 void menuMusica();
 
 /* Título y Creditos */
@@ -91,25 +91,52 @@ void creditosJuego()
     enterContinuar();
 }
 
-/* Menu de Musica */
-void menuMusica()
+/* Menu de Opciones */
+void menuOpciones()
 {
     bool enMenu = true;
     static int volumenGlobal = 50;
     static int volumenSFX = 50;
-    int opcion = 0; // 0 = Musica, 1 = SFX
+    static int filtroRetro = 0;
+    int opcion = 0; // 0 = Musica, 1 = SFX, 2 = Filtro Retro, 3 = Guardar y Salir
+
+    #ifdef __EMSCRIPTEN__
+    // Sincronizar con el estado web al entrar
+    int curBgm = EM_ASM_INT({
+        var audio = document.getElementById('bgm');
+        if (audio) {
+            if (audio.muted) return 0;
+            return Math.round(audio.volume * 100);
+        }
+        return 50;
+    });
+    int curSfx = EM_ASM_INT({
+        if (typeof window !== 'undefined' && typeof window.sfxVolume === 'number') {
+            if (window.sfxMuted) return 0;
+            return Math.round(window.sfxVolume * 100);
+        }
+        return 50;
+    });
+    int curRetro = EM_ASM_INT({
+        return (typeof isRetroFilterEnabled === 'function' && isRetroFilterEnabled()) ? 1 : 0;
+    });
+    volumenGlobal = (curBgm / 10) * 10;
+    volumenSFX = (curSfx / 10) * 10;
+    filtroRetro = curRetro;
+    #endif
 
     while (enMenu)
     {
         limpiarPantalla();
         printf("\033[1;36m╔═════════════════════╗\n");
-        printf("║  AJUSTES DE SONIDO  ║\n");
+        printf("║      OPCIONES       ║\n");
         printf("╚═════════════════════╝\033[0m\n\n");
         
+        // 0: Volumen Música
         if (opcion == 0) {
-            printf("\033[1;37m> \033[1;31mVolumen Música:\033[0m [");
+            printf("\033[1;37m> \033[1;31mVolumen Música:\033[0m     [");
         } else {
-            printf("  \033[1;37mVolumen Música:\033[0m [");
+            printf("  \033[1;37mVolumen Música:\033[0m     [");
         }
         for (int i = 0; i < 10; i++) {
             if (i < volumenGlobal / 10) {
@@ -120,10 +147,11 @@ void menuMusica()
         }
         printf("] %d%%\n\n", volumenGlobal);
 
+        // 1: Volumen Efectos
         if (opcion == 1) {
-            printf("\033[1;37m> \033[1;31mVolumen Efectos:\033[0m [");
+            printf("\033[1;37m> \033[1;31mVolumen Efectos:\033[0m    [");
         } else {
-            printf("  \033[1;37mVolumen Efectos:\033[0m [");
+            printf("  \033[1;37mVolumen Efectos:\033[0m    [");
         }
         for (int i = 0; i < 10; i++) {
             if (i < volumenSFX / 10) {
@@ -133,11 +161,31 @@ void menuMusica()
             }
         }
         printf("] %d%%\n\n", volumenSFX);
+
+        // 2: Filtro Retro CRT
+        if (opcion == 2) {
+            printf("\033[1;37m> \033[1;31mFiltro Retro (CRT):\033[0m [");
+        } else {
+            printf("  \033[1;37mFiltro Retro (CRT):\033[0m [");
+        }
+        if (filtroRetro) {
+            printf("\033[1;32m ACTIVADO \033[0m]\n\n");
+        } else {
+            printf("\033[1;30mDESACTIVADO\033[0m]\n\n");
+        }
+
+        // 3: Guardar y Salir
+        if (opcion == 3) {
+            printf("\033[1;37m> \033[1;31mGuardar y Volver\033[0m\n\n");
+        } else {
+            printf("  \033[1;37mGuardar y Volver\033[0m\n\n");
+        }
         
         printf("\033[1mDetalles:\033[0m\n");
         printf(" Pista 8-bits retro creada por \033[1;36mBLUELLAMA\033[0m.\n");
         printf(" Efectos de sonido creados por \033[1;33mETERNODEV\033[0m.\n");
-        printP("\nPulsa \033[40mENTER\033[0;1;37m para salir.\n");
+        printf(" Filtro visual CRT inspirado en monitores arcade retro.\n");
+        printP("\nUsa \033[40m← / →\033[0;1;37m para regular o cambiar. Pulsa \033[40mENTER\033[0;1;37m o \033[40mESC\033[0;1;37m para salir.\n");
 
         int tecla = getch();
 
@@ -147,15 +195,47 @@ void menuMusica()
             if (tecla == 72) { // Up
                 if (opcion > 0) { opcion--; reproducirSonido("next_option"); }
             } else if (tecla == 80) { // Down
-                if (opcion < 1) { opcion++; reproducirSonido("next_option"); }
+                if (opcion < 3) { opcion++; reproducirSonido("next_option"); }
             } else if (tecla == 77) { // Right
-                if (opcion == 0) { if (volumenGlobal < 100) volumenGlobal += 10; }
-                else { if (volumenSFX < 100) volumenSFX += 10; }
-                reproducirSonido("volume");
+                if (opcion == 0) {
+                    if (volumenGlobal < 100) volumenGlobal += 10;
+                    reproducirSonido("volume");
+                    #ifdef __EMSCRIPTEN__
+                    EM_ASM({ if (typeof setWebVolume === 'function') setWebVolume($0 / 100.0); }, volumenGlobal);
+                    #endif
+                } else if (opcion == 1) {
+                    if (volumenSFX < 100) volumenSFX += 10;
+                    reproducirSonido("volume");
+                    #ifdef __EMSCRIPTEN__
+                    EM_ASM({ if (typeof window !== 'undefined') window.sfxVolume = $0 / 100.0; }, volumenSFX);
+                    #endif
+                } else if (opcion == 2) {
+                    filtroRetro = !filtroRetro;
+                    reproducirSonido("confirm");
+                    #ifdef __EMSCRIPTEN__
+                    EM_ASM({ if (typeof setRetroFilter === 'function') setRetroFilter($0); }, filtroRetro);
+                    #endif
+                }
             } else if (tecla == 75) { // Left
-                if (opcion == 0) { if (volumenGlobal > 0) volumenGlobal -= 10; }
-                else { if (volumenSFX > 0) volumenSFX -= 10; }
-                reproducirSonido("volume");
+                if (opcion == 0) {
+                    if (volumenGlobal > 0) volumenGlobal -= 10;
+                    reproducirSonido("volume");
+                    #ifdef __EMSCRIPTEN__
+                    EM_ASM({ if (typeof setWebVolume === 'function') setWebVolume($0 / 100.0); }, volumenGlobal);
+                    #endif
+                } else if (opcion == 1) {
+                    if (volumenSFX > 0) volumenSFX -= 10;
+                    reproducirSonido("volume");
+                    #ifdef __EMSCRIPTEN__
+                    EM_ASM({ if (typeof window !== 'undefined') window.sfxVolume = $0 / 100.0; }, volumenSFX);
+                    #endif
+                } else if (opcion == 2) {
+                    filtroRetro = !filtroRetro;
+                    reproducirSonido("confirm");
+                    #ifdef __EMSCRIPTEN__
+                    EM_ASM({ if (typeof setRetroFilter === 'function') setRetroFilter($0); }, filtroRetro);
+                    #endif
+                }
             }
         }
         else if (tecla == 'w' || tecla == 'W') 
@@ -164,42 +244,86 @@ void menuMusica()
         }
         else if (tecla == 's' || tecla == 'S') 
         {
-            if (opcion < 1) { opcion++; reproducirSonido("next_option"); }
+            if (opcion < 3) { opcion++; reproducirSonido("next_option"); }
         }
         else if (tecla == 'd' || tecla == 'D') 
         {
-            if (opcion == 0) { if (volumenGlobal < 100) volumenGlobal += 10; }
-            else { if (volumenSFX < 100) volumenSFX += 10; }
-            reproducirSonido("volume");
+            if (opcion == 0) {
+                if (volumenGlobal < 100) volumenGlobal += 10;
+                reproducirSonido("volume");
+                #ifdef __EMSCRIPTEN__
+                EM_ASM({ if (typeof setWebVolume === 'function') setWebVolume($0 / 100.0); }, volumenGlobal);
+                #endif
+            } else if (opcion == 1) {
+                if (volumenSFX < 100) volumenSFX += 10;
+                reproducirSonido("volume");
+                #ifdef __EMSCRIPTEN__
+                EM_ASM({ if (typeof window !== 'undefined') window.sfxVolume = $0 / 100.0; }, volumenSFX);
+                #endif
+            } else if (opcion == 2) {
+                filtroRetro = !filtroRetro;
+                reproducirSonido("confirm");
+                #ifdef __EMSCRIPTEN__
+                EM_ASM({ if (typeof setRetroFilter === 'function') setRetroFilter($0); }, filtroRetro);
+                #endif
+            }
         }
         else if (tecla == 'a' || tecla == 'A') 
         {
-            if (opcion == 0) { if (volumenGlobal > 0) volumenGlobal -= 10; }
-            else { if (volumenSFX > 0) volumenSFX -= 10; }
-            reproducirSonido("volume");
+            if (opcion == 0) {
+                if (volumenGlobal > 0) volumenGlobal -= 10;
+                reproducirSonido("volume");
+                #ifdef __EMSCRIPTEN__
+                EM_ASM({ if (typeof setWebVolume === 'function') setWebVolume($0 / 100.0); }, volumenGlobal);
+                #endif
+            } else if (opcion == 1) {
+                if (volumenSFX > 0) volumenSFX -= 10;
+                reproducirSonido("volume");
+                #ifdef __EMSCRIPTEN__
+                EM_ASM({ if (typeof window !== 'undefined') window.sfxVolume = $0 / 100.0; }, volumenSFX);
+                #endif
+            } else if (opcion == 2) {
+                filtroRetro = !filtroRetro;
+                reproducirSonido("confirm");
+                #ifdef __EMSCRIPTEN__
+                EM_ASM({ if (typeof setRetroFilter === 'function') setRetroFilter($0); }, filtroRetro);
+                #endif
+            }
         }
-        else if (tecla == 13 || tecla == 9 || tecla == 27) 
+        else if (tecla == ' ')
+        {
+            if (opcion == 2) {
+                filtroRetro = !filtroRetro;
+                reproducirSonido("confirm");
+                #ifdef __EMSCRIPTEN__
+                EM_ASM({ if (typeof setRetroFilter === 'function') setRetroFilter($0); }, filtroRetro);
+                #endif
+            }
+        }
+        else if (tecla == 13 || tecla == 10) 
+        {
+            if (opcion == 2) {
+                filtroRetro = !filtroRetro;
+                reproducirSonido("confirm");
+                #ifdef __EMSCRIPTEN__
+                EM_ASM({ if (typeof setRetroFilter === 'function') setRetroFilter($0); }, filtroRetro);
+                #endif
+            } else {
+                reproducirSonido("confirm");
+                enMenu = false;
+            }
+        }
+        else if (tecla == 9 || tecla == 27) 
         {
             reproducirSonido("confirm");
             enMenu = false;
         }
-
-        #ifdef __EMSCRIPTEN__
-        EM_ASM({
-            var audio = document.getElementById('bgm');
-            var vol = $0 / 100.0;
-            if (audio) {
-                audio.volume = vol;
-            }
-            if (typeof window !== 'undefined') {
-                window.sfxVolume = $1 / 100.0;
-            }
-            if (typeof updateVolumeUI === 'function') {
-                updateVolumeUI(vol);
-            }
-        }, volumenGlobal, volumenSFX);
-        #endif
     }
+}
+
+void menuMusica()
+{
+    menuOpciones();
 }
 
 /* Menu del Juego */
@@ -218,14 +342,14 @@ int menuIntro()
             opciones[2] = "CONTROLES";
             opciones[3] = "RÉCORDS";
             opciones[4] = "CREDITOS";
-            opciones[5] = "MÚSICA";
+            opciones[5] = "OPCIONES";
             totalOpciones = 6;
         } else {
             opciones[0] = "JUGAR";
             opciones[1] = "CONTROLES";
             opciones[2] = "RÉCORDS";
             opciones[3] = "CREDITOS";
-            opciones[4] = "MÚSICA";
+            opciones[4] = "OPCIONES";
             totalOpciones = 5;
         }
 
@@ -305,8 +429,8 @@ int menuIntro()
                     printP("\033[1m\033[31mCargando...\033[0m\n");
                     creditosJuego();
                 } else if (opcion == 5) {
-                    printP("\033[1m\033[31mCargando Música...\033[0m\n");
-                    menuMusica();
+                    printP("\033[1m\033[31mCargando Opciones...\033[0m\n");
+                    menuOpciones();
                 }
             } else {
                 if (opcion == 0) {
@@ -323,8 +447,8 @@ int menuIntro()
                     printP("\033[1m\033[31mCargando...\033[0m\n");
                     creditosJuego();
                 } else if (opcion == 4) {
-                    printP("\033[1m\033[31mCargando Música...\033[0m\n");
-                    menuMusica();
+                    printP("\033[1m\033[31mCargando Opciones...\033[0m\n");
+                    menuOpciones();
                 }
             }
         }
