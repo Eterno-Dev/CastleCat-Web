@@ -95,75 +95,107 @@ void creditosJuego()
 void menuOpciones()
 {
     bool enMenu = true;
-    static int volumenGlobal = 50;
-    static int volumenSFX = 50;
+    static int sonidoGeneral = 100;
+    static int volumenMusica = 50;
+    static int volumenSFX = 60;
     static int filtroRetro = 0; // 0 = Desactivado, 1 = Activado (estático), 2 = Dinámico (animado)
-    int opcion = 0; // 0 = Musica, 1 = SFX, 2 = Filtro Retro
+    int opcion = 0; // 0 = Sonido General, 1 = Musica, 2 = SFX, 3 = Filtro Retro
 
     #ifdef __EMSCRIPTEN__
     // Sincronizar con el estado web al entrar
+    int curMaster = EM_ASM_INT({
+        if (typeof window !== 'undefined' && typeof window.masterVolume === 'number') {
+            if (window.sfxMuted) return 0;
+            return Math.round(window.masterVolume * 100);
+        }
+        return 100;
+    });
     int curBgm = EM_ASM_INT({
-        var audio = document.getElementById('bgm');
-        if (audio) {
-            if (audio.muted) return 0;
-            return Math.round(audio.volume * 100);
+        if (typeof window !== 'undefined' && typeof window.musicTrackVolume === 'number') {
+            return Math.round(window.musicTrackVolume * 100);
         }
         return 50;
     });
     int curSfx = EM_ASM_INT({
-        if (typeof window !== 'undefined' && typeof window.sfxVolume === 'number') {
-            if (window.sfxMuted) return 0;
-            return Math.round(window.sfxVolume * 100);
+        if (typeof window !== 'undefined' && typeof window.sfxTrackVolume === 'number') {
+            return Math.round(window.sfxTrackVolume * 100);
         }
-        return 50;
+        return 60;
     });
     int curRetro = EM_ASM_INT({
         return (typeof getRetroMode === 'function') ? getRetroMode() : 0;
     });
-    volumenGlobal = (curBgm / 10) * 10;
+    sonidoGeneral = (curMaster / 10) * 10;
+    volumenMusica = (curBgm / 10) * 10;
     volumenSFX = (curSfx / 10) * 10;
     filtroRetro = curRetro;
     #endif
 
     while (enMenu)
     {
+        #ifdef __EMSCRIPTEN__
+        int liveMaster = EM_ASM_INT({
+            if (typeof window !== 'undefined' && typeof window.masterVolume === 'number') {
+                if (window.sfxMuted) return 0;
+                return Math.round(window.masterVolume * 100);
+            }
+            return 100;
+        });
+        sonidoGeneral = (liveMaster / 10) * 10;
+        #endif
+
         limpiarPantalla();
         printf("\033[1;36m╔═════════════════════╗\n");
         printf("║      OPCIONES       ║\n");
         printf("╚═════════════════════╝\033[0m\n\n");
         
-        // 0: Volumen Música
+        // 0: Sonido General
         if (opcion == 0) {
+            printf("\033[1;37m> \033[1;31mSonido General:\033[0m     [");
+        } else {
+            printf("  \033[1;37mSonido General:\033[0m     [");
+        }
+        for (int i = 0; i < 10; i++) {
+            if (i < sonidoGeneral / 10) {
+                printf("\033[1;35m|\033[0m"); // Morado
+            } else {
+                printf("\033[1;30m|\033[0m");
+            }
+        }
+        printf("] %d%%\n\n", sonidoGeneral);
+
+        // 1: Volumen Música
+        if (opcion == 1) {
             printf("\033[1;37m> \033[1;31mVolumen Música:\033[0m     [");
         } else {
             printf("  \033[1;37mVolumen Música:\033[0m     [");
         }
         for (int i = 0; i < 10; i++) {
-            if (i < volumenGlobal / 10) {
-                printf("\033[1;32m|\033[0m");
+            if (i < volumenMusica / 10) {
+                printf("\033[1;35m|\033[0m"); // Morado
             } else {
                 printf("\033[1;30m|\033[0m");
             }
         }
-        printf("] %d%%\n\n", volumenGlobal);
+        printf("] %d%%\n\n", volumenMusica);
 
-        // 1: Volumen Efectos
-        if (opcion == 1) {
+        // 2: Volumen Efectos
+        if (opcion == 2) {
             printf("\033[1;37m> \033[1;31mVolumen Efectos:\033[0m    [");
         } else {
             printf("  \033[1;37mVolumen Efectos:\033[0m    [");
         }
         for (int i = 0; i < 10; i++) {
             if (i < volumenSFX / 10) {
-                printf("\033[1;32m|\033[0m");
+                printf("\033[1;35m|\033[0m"); // Morado
             } else {
                 printf("\033[1;30m|\033[0m");
             }
         }
         printf("] %d%%\n\n", volumenSFX);
 
-        // 2: Filtro Retro (0: Desactivado en gris, 1: Activado en verde, 2: Dinámico en azul)
-        if (opcion == 2) {
+        // 3: Filtro Retro (0: Desactivado en gris, 1: Activado en verde, 2: Dinámico en azul)
+        if (opcion == 3) {
             printf("\033[1;37m> \033[1;31mFiltro Retro:\033[0m       [");
         } else {
             printf("  \033[1;37mFiltro Retro:\033[0m       [");
@@ -190,21 +222,27 @@ void menuOpciones()
             if (tecla == 72) { // Up
                 if (opcion > 0) { opcion--; reproducirSonido("next_option"); }
             } else if (tecla == 80) { // Down
-                if (opcion < 2) { opcion++; reproducirSonido("next_option"); }
+                if (opcion < 3) { opcion++; reproducirSonido("next_option"); }
             } else if (tecla == 77) { // Right
                 if (opcion == 0) {
-                    if (volumenGlobal < 100) volumenGlobal += 10;
+                    if (sonidoGeneral < 100) sonidoGeneral += 10;
                     reproducirSonido("volume");
                     #ifdef __EMSCRIPTEN__
-                    EM_ASM({ if (typeof setWebVolume === 'function') setWebVolume($0 / 100.0); }, volumenGlobal);
+                    EM_ASM({ if (typeof setWebVolume === 'function') setWebVolume($0 / 100.0); }, sonidoGeneral);
                     #endif
                 } else if (opcion == 1) {
+                    if (volumenMusica < 100) volumenMusica += 10;
+                    reproducirSonido("volume");
+                    #ifdef __EMSCRIPTEN__
+                    EM_ASM({ if (typeof setMusicVolume === 'function') setMusicVolume($0 / 100.0); }, volumenMusica);
+                    #endif
+                } else if (opcion == 2) {
                     if (volumenSFX < 100) volumenSFX += 10;
                     reproducirSonido("volume");
                     #ifdef __EMSCRIPTEN__
-                    EM_ASM({ if (typeof window !== 'undefined') window.sfxVolume = $0 / 100.0; }, volumenSFX);
+                    EM_ASM({ if (typeof setSfxVolume === 'function') setSfxVolume($0 / 100.0); }, volumenSFX);
                     #endif
-                } else if (opcion == 2) {
+                } else if (opcion == 3) {
                     filtroRetro = (filtroRetro + 1) % 3;
                     reproducirSonido("confirm");
                     #ifdef __EMSCRIPTEN__
@@ -213,18 +251,24 @@ void menuOpciones()
                 }
             } else if (tecla == 75) { // Left
                 if (opcion == 0) {
-                    if (volumenGlobal > 0) volumenGlobal -= 10;
+                    if (sonidoGeneral > 0) sonidoGeneral -= 10;
                     reproducirSonido("volume");
                     #ifdef __EMSCRIPTEN__
-                    EM_ASM({ if (typeof setWebVolume === 'function') setWebVolume($0 / 100.0); }, volumenGlobal);
+                    EM_ASM({ if (typeof setWebVolume === 'function') setWebVolume($0 / 100.0); }, sonidoGeneral);
                     #endif
                 } else if (opcion == 1) {
+                    if (volumenMusica > 0) volumenMusica -= 10;
+                    reproducirSonido("volume");
+                    #ifdef __EMSCRIPTEN__
+                    EM_ASM({ if (typeof setMusicVolume === 'function') setMusicVolume($0 / 100.0); }, volumenMusica);
+                    #endif
+                } else if (opcion == 2) {
                     if (volumenSFX > 0) volumenSFX -= 10;
                     reproducirSonido("volume");
                     #ifdef __EMSCRIPTEN__
-                    EM_ASM({ if (typeof window !== 'undefined') window.sfxVolume = $0 / 100.0; }, volumenSFX);
+                    EM_ASM({ if (typeof setSfxVolume === 'function') setSfxVolume($0 / 100.0); }, volumenSFX);
                     #endif
-                } else if (opcion == 2) {
+                } else if (opcion == 3) {
                     filtroRetro = (filtroRetro - 1 + 3) % 3;
                     reproducirSonido("confirm");
                     #ifdef __EMSCRIPTEN__
@@ -239,23 +283,29 @@ void menuOpciones()
         }
         else if (tecla == 's' || tecla == 'S') 
         {
-            if (opcion < 2) { opcion++; reproducirSonido("next_option"); }
+            if (opcion < 3) { opcion++; reproducirSonido("next_option"); }
         }
         else if (tecla == 'd' || tecla == 'D') 
         {
             if (opcion == 0) {
-                if (volumenGlobal < 100) volumenGlobal += 10;
+                if (sonidoGeneral < 100) sonidoGeneral += 10;
                 reproducirSonido("volume");
                 #ifdef __EMSCRIPTEN__
-                EM_ASM({ if (typeof setWebVolume === 'function') setWebVolume($0 / 100.0); }, volumenGlobal);
+                EM_ASM({ if (typeof setWebVolume === 'function') setWebVolume($0 / 100.0); }, sonidoGeneral);
                 #endif
             } else if (opcion == 1) {
+                if (volumenMusica < 100) volumenMusica += 10;
+                reproducirSonido("volume");
+                #ifdef __EMSCRIPTEN__
+                EM_ASM({ if (typeof setMusicVolume === 'function') setMusicVolume($0 / 100.0); }, volumenMusica);
+                #endif
+            } else if (opcion == 2) {
                 if (volumenSFX < 100) volumenSFX += 10;
                 reproducirSonido("volume");
                 #ifdef __EMSCRIPTEN__
-                EM_ASM({ if (typeof window !== 'undefined') window.sfxVolume = $0 / 100.0; }, volumenSFX);
+                EM_ASM({ if (typeof setSfxVolume === 'function') setSfxVolume($0 / 100.0); }, volumenSFX);
                 #endif
-            } else if (opcion == 2) {
+            } else if (opcion == 3) {
                 filtroRetro = (filtroRetro + 1) % 3;
                 reproducirSonido("confirm");
                 #ifdef __EMSCRIPTEN__
@@ -266,18 +316,24 @@ void menuOpciones()
         else if (tecla == 'a' || tecla == 'A') 
         {
             if (opcion == 0) {
-                if (volumenGlobal > 0) volumenGlobal -= 10;
+                if (sonidoGeneral > 0) sonidoGeneral -= 10;
                 reproducirSonido("volume");
                 #ifdef __EMSCRIPTEN__
-                EM_ASM({ if (typeof setWebVolume === 'function') setWebVolume($0 / 100.0); }, volumenGlobal);
+                EM_ASM({ if (typeof setWebVolume === 'function') setWebVolume($0 / 100.0); }, sonidoGeneral);
                 #endif
             } else if (opcion == 1) {
+                if (volumenMusica > 0) volumenMusica -= 10;
+                reproducirSonido("volume");
+                #ifdef __EMSCRIPTEN__
+                EM_ASM({ if (typeof setMusicVolume === 'function') setMusicVolume($0 / 100.0); }, volumenMusica);
+                #endif
+            } else if (opcion == 2) {
                 if (volumenSFX > 0) volumenSFX -= 10;
                 reproducirSonido("volume");
                 #ifdef __EMSCRIPTEN__
-                EM_ASM({ if (typeof window !== 'undefined') window.sfxVolume = $0 / 100.0; }, volumenSFX);
+                EM_ASM({ if (typeof setSfxVolume === 'function') setSfxVolume($0 / 100.0); }, volumenSFX);
                 #endif
-            } else if (opcion == 2) {
+            } else if (opcion == 3) {
                 filtroRetro = (filtroRetro - 1 + 3) % 3;
                 reproducirSonido("confirm");
                 #ifdef __EMSCRIPTEN__
@@ -287,7 +343,7 @@ void menuOpciones()
         }
         else if (tecla == ' ')
         {
-            if (opcion == 2) {
+            if (opcion == 3) {
                 filtroRetro = (filtroRetro + 1) % 3;
                 reproducirSonido("confirm");
                 #ifdef __EMSCRIPTEN__

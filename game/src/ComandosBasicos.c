@@ -489,7 +489,7 @@ void mostrarRecords(void) {
         printf("─────────────────────────────────────────────────────\n");
         printf("          \033[1;37mNO HAY PUNTUACIONES REGISTRADAS\033[0m\n");
         printf("       ¡Juega una partida para dejar tu marca!\n");
-        printf("─────────────────────────────────────────────────────\n\n");
+        printf("─────────────────────────────────────────────────────\n");
     } else {
         printf("\033[1mPOS   NOMBRE              CLASE        PLANTA     PUNTOS\033[0m\n");
         printf("─────────────────────────────────────────────────────\n");
@@ -506,7 +506,7 @@ void mostrarRecords(void) {
                 printf("\033[0;2m#%d\033[0m    %-19s %-12s P.%-4d \033[1;32m%7d\033[0m\n", i + 1, g_records[i].nombre, cNom, g_records[i].planta, g_records[i].puntuacion);
             }
         }
-        printf("─────────────────────────────────────────────────────\n\n");
+        printf("─────────────────────────────────────────────────────\n");
     }
     enterContinuar();
 }

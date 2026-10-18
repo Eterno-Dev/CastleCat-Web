@@ -269,7 +269,7 @@
         <button id="mute-btn" style="background:transparent; color:#ccc; border:none; cursor:pointer; display:flex; align-items:center; justify-content:center; padding:0;" onclick="toggleMute()" title="Silenciar / Activar">
             <svg id="vol-icon" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="18" height="18"><path stroke-linecap="round" stroke-linejoin="round" d="M19.114 5.636a9 9 0 0 1 0 12.728M16.463 8.288a5.25 5.25 0 0 1 0 7.424M6.75 8.25l4.72-4.72a.75.75 0 0 1 1.28.53v15.88a.75.75 0 0 1-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.009 9.009 0 0 1 2.25 12c0-.83.112-1.633.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75Z" /></svg>
         </button>
-        <input type="range" id="vol-slider" min="0" max="1" step="0.05" value="0.5" title="Ajustar volumen" oninput="setWebVolume(this.value)">
+        <input type="range" id="vol-slider" min="0" max="1" step="0.05" value="1.0" title="Sonido General" oninput="setWebVolume(this.value)">
     </div>
     <button id="fs-btn" style="position:absolute; top:12px; right:10px; z-index:1000; background:transparent; color:white; border:none; cursor:pointer; display:flex; align-items:center; justify-content:center; padding:0;" onclick="toggleFS()"><svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="24" height="24"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 3.75v4.5m0-4.5h4.5m-4.5 0L9 9M3.75 20.25v-4.5m0 4.5h4.5m-4.5 0L9 15M20.25 3.75h-4.5m4.5 0v4.5m0-4.5L15 9m5.25 11.25h-4.5m4.5 0v-4.5m0 4.5L15 15" /></svg></button>
     <audio id="bgm" loop>
@@ -281,9 +281,12 @@
         <source src="../assets/music.mp3" type="audio/mpeg">
     </audio>
     <script>
-        window.sfxVolume = 0.5;
+        window.masterVolume = 1.0;
+        window.musicTrackVolume = 0.5;
+        window.sfxTrackVolume = 0.6;
+        window.sfxVolume = 0.6;
         window.sfxMuted = false;
-        var previousVolume = 0.5;
+        var previousVolume = 1.0;
 
         // Gestión de Filtro Retro CRT (0 = Desactivado, 1 = Activado, 2 = Dinámico)
         window.setRetroMode = function(mode) {
@@ -373,7 +376,7 @@
         function getGlitchBuffer(ctx) {
             if (!ctx) return null;
             if (soundBuffers['glitch']) return soundBuffers['glitch'];
-            var dur = 0.50;
+            var dur = 0.35;
             var sr = ctx.sampleRate || 44100;
             var len = Math.floor(sr * dur);
             var buf = ctx.createBuffer(1, len, sr);
@@ -528,19 +531,44 @@
             }
         };
 
-        function setWebVolume(val) {
-            var v = parseFloat(val);
-            if (isNaN(v)) v = 0.5;
+        function applyAudioVolumes() {
+            var effectiveBgm = window.sfxMuted ? 0 : (window.masterVolume * window.musicTrackVolume);
+            var effectiveSfx = window.sfxMuted ? 0 : (window.masterVolume * window.sfxTrackVolume);
+
             var bgm = document.getElementById('bgm');
             if (bgm) {
-                bgm.volume = v;
-                if (v > 0) bgm.muted = false;
+                bgm.volume = Math.max(0, Math.min(1, effectiveBgm));
+                if (effectiveBgm > 0 && !window.sfxMuted) bgm.muted = false;
+                else if (window.sfxMuted) bgm.muted = true;
             }
-            window.sfxVolume = v;
+            window.sfxVolume = Math.max(0, Math.min(1, effectiveSfx));
+            updateVolumeUI(window.masterVolume);
+        }
+
+        function setWebVolume(val) {
+            var v = parseFloat(val);
+            if (isNaN(v)) v = 1.0;
+            v = Math.max(0, Math.min(1, v));
+            window.masterVolume = v;
             window.sfxMuted = (v <= 0);
-            updateVolumeUI(v);
+            applyAudioVolumes();
             tryStartAudio();
         }
+        window.setWebVolume = setWebVolume;
+
+        window.setMasterVolume = function(val) {
+            setWebVolume(val);
+        };
+        window.setMusicVolume = function(val) {
+            var v = parseFloat(val);
+            if (!isNaN(v)) window.musicTrackVolume = Math.max(0, Math.min(1, v));
+            applyAudioVolumes();
+        };
+        window.setSfxVolume = function(val) {
+            var v = parseFloat(val);
+            if (!isNaN(v)) window.sfxTrackVolume = Math.max(0, Math.min(1, v));
+            applyAudioVolumes();
+        };
 
         function updateVolumeUI(v) {
             var btn = document.getElementById('mute-btn');
@@ -557,27 +585,16 @@
         }
 
         function toggleMute() {
-            var bgm = document.getElementById('bgm');
-            if (window.sfxMuted || (bgm && bgm.muted) || window.sfxVolume <= 0) {
-                var target = previousVolume > 0 ? previousVolume : 0.5;
-                if (bgm) {
-                    bgm.muted = false;
-                    bgm.volume = target;
-                }
+            if (window.sfxMuted || window.masterVolume <= 0) {
+                var target = previousVolume > 0 ? previousVolume : 1.0;
                 window.sfxMuted = false;
-                window.sfxVolume = target;
-                updateVolumeUI(target);
+                window.masterVolume = target;
+                applyAudioVolumes();
                 tryStartAudio();
             } else {
-                var cur = bgm ? bgm.volume : window.sfxVolume;
-                if (cur > 0) previousVolume = cur;
-                if (bgm) {
-                    bgm.muted = true;
-                    bgm.volume = 0;
-                }
+                if (window.masterVolume > 0) previousVolume = window.masterVolume;
                 window.sfxMuted = true;
-                window.sfxVolume = 0;
-                updateVolumeUI(0);
+                applyAudioVolumes();
             }
         }
         
@@ -697,7 +714,8 @@
             overlay.style.overflow = 'hidden';
 
             var canvas = document.createElement('canvas');
-            var w = 960, h = 540;
+            // Grano grueso de alta visibilidad exactamente como la imagen de referencia
+            var w = 384, h = 216;
             canvas.width = w;
             canvas.height = h;
             canvas.style.position = 'absolute';
@@ -706,6 +724,7 @@
             canvas.style.width = '100%';
             canvas.style.height = '100%';
             canvas.style.display = 'block';
+            canvas.style.imageRendering = 'pixelated';
             overlay.appendChild(canvas);
             document.body.appendChild(overlay);
 
@@ -722,7 +741,7 @@
 
             function glitchLoop() {
                 var elapsed = performance.now() - startTime;
-                if (elapsed >= 500) {
+                if (elapsed >= 350) {
                     if (animId) cancelAnimationFrame(animId);
                     overlay.style.opacity = '0';
                     overlay.style.transition = 'opacity 0.04s ease-out';
@@ -730,35 +749,34 @@
                         if (overlay && overlay.parentNode) {
                             overlay.parentNode.removeChild(overlay);
                         }
-                    }, 50);
+                    }, 45);
 
                     // Arrancar musica BGM inmediatamente tras el glitch
                     var bgm = document.getElementById('bgm');
-                    var slider = document.getElementById('vol-slider');
-                    var curVol = slider ? parseFloat(slider.value) : 0.5;
-                    if (bgm && !bgm.muted && window.sfxVolume > 0) {
-                        bgm.volume = curVol;
+                    var effectiveBgm = window.sfxMuted ? 0 : (window.masterVolume * window.musicTrackVolume);
+                    if (bgm && !bgm.muted && effectiveBgm > 0) {
+                        bgm.volume = effectiveBgm;
                         bgm.play().catch(function(e) {});
                     }
                     return;
                 }
 
                 if (ctx) {
-                    var phase = elapsed * 0.016;
+                    var phase = elapsed * 0.025;
                     for (var y = 0; y < h; y++) {
-                        // Ondas de zumbido de red (hum bars) que se desplazan verticalmente
-                        var w1 = Math.sin((y + phase * 45) * 0.022) * 44;
-                        var w2 = Math.sin((y + phase * 45) * 0.051 + 1.4) * 20;
-                        var scanline = (y & 1) ? 5 : -5;
-                        var bias = 100 + w1 + w2 + scanline;
+                        // Ondas de interferencia y zumbido (hum bars) gruesas y visibles
+                        var w1 = Math.sin((y + phase * 25) * 0.045) * 60;
+                        var w2 = Math.sin((y + phase * 25) * 0.09 + 1.2) * 28;
+                        var scanline = (y & 1) ? 8 : -8;
+                        var bias = 110 + w1 + w2 + scanline;
                         var prev = bias;
                         var rowOffset = y * w;
 
                         for (var x = 0; x < w; x++) {
                             seed = (seed * 1664525 + 1013904223) | 0;
                             var r = (seed >>> 24);
-                            var raw = bias + (r - 128) * 0.88;
-                            var val = (0.68 * raw + 0.32 * prev) | 0;
+                            var raw = bias + (r - 128) * 1.3;
+                            var val = (0.7 * raw + 0.3 * prev) | 0;
                             prev = val;
 
                             var clp = val < 0 ? 0 : (val > 255 ? 255 : val);
@@ -779,11 +797,10 @@
                 return;
             }
             var bgm = document.getElementById('bgm');
-            var slider = document.getElementById('vol-slider');
-            var curVol = slider ? parseFloat(slider.value) : 0.5;
+            var effectiveBgm = window.sfxMuted ? 0 : (window.masterVolume * window.musicTrackVolume);
             if (bgm) {
-                bgm.volume = curVol;
-                if (bgm.paused && !bgm.muted && window.sfxVolume > 0) {
+                bgm.volume = effectiveBgm;
+                if (bgm.paused && !bgm.muted && effectiveBgm > 0) {
                     bgm.play().catch(function(e) {});
                 }
             }
