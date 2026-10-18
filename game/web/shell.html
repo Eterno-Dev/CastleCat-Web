@@ -219,6 +219,62 @@
             transform: scale(1.15);
         }
 
+        /* Indicador / Botón Retro [TAB] (Saltar / Menú / Salir) */
+        #tab-btn, .tab-badge {
+            background: transparent !important;
+            border: none !important;
+            box-shadow: none !important;
+            outline: none !important;
+            padding: 2px 4px !important;
+            margin: 0 !important;
+            margin-right: 6px !important;
+            cursor: pointer;
+            font-family: 'CastlePixel', monospace !important;
+            font-size: 18px !important;
+            line-height: 1 !important;
+            color: #ffffff !important;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            user-select: none;
+            -webkit-font-smoothing: none !important;
+            -moz-osx-font-smoothing: none !important;
+            font-smooth: never !important;
+            text-shadow: 1px 1px 0px rgba(0, 0, 0, 0.9);
+            position: relative;
+            top: 2px;
+            transition: transform 0.1s ease, color 0.15s ease;
+        }
+
+        #tab-btn:hover, .tab-badge:hover {
+            color: #ffff55 !important;
+            transform: scale(1.05);
+        }
+
+        .tab-cap {
+            color: #ffffff !important;
+            font-weight: bold !important;
+            font-family: 'CastlePixel', monospace !important;
+            font-size: 18px !important;
+            line-height: 1 !important;
+        }
+
+        #tab-label {
+            color: #cccccc !important;
+            font-family: 'CastlePixel', monospace !important;
+            font-size: 18px !important;
+            line-height: 1 !important;
+            transition: color 0.15s ease;
+        }
+
+        #tab-btn:hover .tab-cap {
+            color: #ffffff !important;
+        }
+
+        #tab-btn:hover #tab-label {
+            color: #ffff55 !important;
+        }
+
         /* Barra de volumen Pixel Art con rayitas compactas (idéntica al menú del juego) */
         #vol-pixel-bar {
             display: inline-flex;
@@ -305,9 +361,7 @@
 
 <body>
     <div id="top-bar">
-        <button id="tab-btn" class="tab-badge" onclick="handleTabAction()" style="display: none;">
-            <span class="tab-cap">[TAB]</span> <span id="tab-label">Saltar</span>
-        </button>
+        <button id="tab-btn" class="tab-badge" onclick="handleTabAction()" style="display: none;"><span class="tab-cap">[TAB]</span><span id="tab-label">Saltar</span></button>
         <div id="vol-control">
             <button id="mute-btn" onclick="toggleMute()" title="Silenciar / Activar sonido">
                 <svg id="vol-icon" width="22" height="22" viewBox="0 0 20 20" fill="currentColor" style="shape-rendering: crispEdges;"><rect x="1" y="6" width="4" height="8"/><rect x="5" y="5" width="2" height="10"/><rect x="7" y="4" width="2" height="12"/><rect x="9" y="3" width="2" height="14"/><rect x="12" y="7" width="2" height="1"/><rect x="13" y="8" width="2" height="4"/><rect x="12" y="12" width="2" height="1"/><rect x="15" y="4" width="2" height="1"/><rect x="16" y="5" width="2" height="1"/><rect x="17" y="6" width="2" height="8"/><rect x="16" y="14" width="2" height="1"/><rect x="15" y="15" width="2" height="1"/></svg>
@@ -348,13 +402,18 @@
             if (mode === 'skip') {
                 btn.style.display = 'inline-flex';
                 btn.className = 'tab-badge tab-skip-mode';
-                btn.innerHTML = '<span class="tab-cap">[TAB]</span> <span id="tab-label">Saltar</span>';
+                btn.innerHTML = '<span class="tab-cap">[TAB]</span><span id="tab-label">Saltar</span>';
                 btn.title = "Pulsa TAB o haz clic para saltar la historia";
             } else if (mode === 'menu') {
                 btn.style.display = 'inline-flex';
                 btn.className = 'tab-badge tab-menu-mode';
-                btn.innerHTML = '<span class="tab-cap">[TAB]</span> <span id="tab-label">Menú</span>';
+                btn.innerHTML = '<span class="tab-cap">[TAB]</span><span id="tab-label">Menú</span>';
                 btn.title = "Pulsa TAB o haz clic para abrir el menú";
+            } else if (mode === 'exit') {
+                btn.style.display = 'inline-flex';
+                btn.className = 'tab-badge tab-exit-mode';
+                btn.innerHTML = '<span class="tab-cap">[TAB]</span><span id="tab-label">Salir</span>';
+                btn.title = "Pulsa TAB o haz clic para salir";
             } else {
                 btn.style.display = 'none';
             }
@@ -366,7 +425,7 @@
                 if (typeof window.playSound === 'function') {
                     window.playSound('confirm');
                 }
-            } else if (window.tabMode === 'menu') {
+            } else if (window.tabMode === 'menu' || window.tabMode === 'exit') {
                 if (typeof Module !== 'undefined' && Module._triggerMenuTab) {
                     Module._triggerMenuTab();
                 } else if (typeof triggerMenuTab === 'function') {
