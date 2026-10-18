@@ -193,97 +193,93 @@
         #vol-control {
             display: flex;
             align-items: center;
-            gap: 8px;
-            background: rgba(25, 25, 25, 0.85);
-            padding: 4px 10px;
-            border-radius: 20px;
-            border: 1px solid #444;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.5);
-            user-select: none;
-        }
-
-        /* Botón interactivo TAB con tipografía del juego (Sin recuadro exterior, con [TAB]) */
-        .tab-badge {
-            font-family: 'CastlePixel', monospace;
-            font-size: 16px;
-            font-weight: bold;
-            display: none;
-            align-items: center;
-            gap: 7px;
+            gap: 6px;
             background: transparent;
             padding: 0;
             border: none;
-            color: #ffffff;
-            cursor: pointer;
             box-shadow: none;
-            margin-right: 20px;
-            transition: transform 0.15s ease;
-            outline: none;
             user-select: none;
-            animation: tabMonochromePulse 1.4s infinite ease-in-out;
-            -webkit-font-smoothing: none;
         }
 
-        .tab-cap {
-            display: inline-block;
-            font-size: 16px;
-            font-weight: bold;
-            color: #ffffff;
-            letter-spacing: 0.5px;
-        }
-
-        .tab-badge:hover {
-            transform: scale(1.08);
-        }
-
-        .tab-skip-mode {
-            color: #ffffff;
-        }
-
-        .tab-menu-mode {
-            color: #eeeeee;
-        }
-
-        @keyframes tabMonochromePulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.45; }
-        }
-
-        #vol-slider {
-            -webkit-appearance: none;
-            appearance: none;
-            width: 75px;
-            height: 5px;
-            background: #555;
-            border-radius: 3px;
-            outline: none;
-            cursor: pointer;
-            vertical-align: middle;
-        }
-
-        #vol-slider::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            appearance: none;
-            width: 13px;
-            height: 13px;
-            border-radius: 50%;
-            background: #ffffff;
-            cursor: pointer;
-            box-shadow: 0 0 3px rgba(0,0,0,0.6);
-            transition: transform 0.1s;
-        }
-        #vol-slider::-webkit-slider-thumb:hover {
-            transform: scale(1.2);
-        }
-
-        #vol-slider::-moz-range-thumb {
-            width: 13px;
-            height: 13px;
-            border-radius: 50%;
-            background: #ffffff;
-            cursor: pointer;
+        #mute-btn, #fs-btn {
+            background: transparent;
+            color: #cccccc;
             border: none;
-            box-shadow: 0 0 3px rgba(0,0,0,0.6);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2px;
+            transition: color 0.15s, transform 0.15s;
+            outline: none;
+        }
+
+        #mute-btn:hover, #fs-btn:hover {
+            color: #ffffff;
+            transform: scale(1.15);
+        }
+
+        /* Barra de volumen Pixel Art con rayitas (idéntica al menú del juego) */
+        #vol-pixel-bar {
+            display: inline-flex;
+            align-items: center;
+            font-family: 'CastlePixel', monospace;
+            font-size: 18px;
+            line-height: 1;
+            color: #ffffff;
+            cursor: pointer;
+            user-select: none;
+            letter-spacing: 0.5px;
+            -webkit-font-smoothing: none;
+            text-shadow: 1px 1px 0px rgba(0, 0, 0, 0.9);
+            padding: 2px 4px;
+            transition: transform 0.1s ease;
+        }
+
+        #vol-pixel-bar:hover {
+            transform: scale(1.04);
+        }
+
+        #vol-bars {
+            display: inline-flex;
+            align-items: center;
+        }
+
+        .v-bracket {
+            color: #ffffff;
+            font-weight: bold;
+        }
+
+        .v-bar {
+            display: inline-block;
+            font-family: 'CastlePixel', monospace;
+            font-size: 18px;
+            line-height: 1;
+            padding: 0 0.5px;
+            user-select: none;
+        }
+
+        .v-bar.active {
+            color: #ff55ff; /* Morado ANSI 1;35 */
+            font-weight: bold;
+            text-shadow: 0 0 2px rgba(255, 85, 255, 0.5), 1px 1px 0px #000;
+        }
+
+        .v-bar.dim {
+            color: #444444; /* Gris oscuro ANSI 1;30 */
+            font-weight: bold;
+        }
+
+        #vol-pct {
+            margin-left: 6px;
+            color: #ffffff;
+            font-family: 'CastlePixel', monospace;
+            font-size: 17px;
+            font-weight: bold;
+            min-width: 38px;
+            display: inline-block;
+            text-align: right;
+            -webkit-font-smoothing: none;
         }
 
         /* Efecto ambiental Retro Arcade CRT (Viñeta y fósforo sutil) */
@@ -316,12 +312,20 @@
             <span class="tab-cap">[TAB]</span> <span id="tab-label">Saltar</span>
         </button>
         <div id="vol-control">
-            <button id="mute-btn" style="background:transparent; color:#ccc; border:none; cursor:pointer; display:flex; align-items:center; justify-content:center; padding:0;" onclick="toggleMute()" title="Silenciar / Activar">
-                <svg id="vol-icon" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="18" height="18"><path stroke-linecap="round" stroke-linejoin="round" d="M19.114 5.636a9 9 0 0 1 0 12.728M16.463 8.288a5.25 5.25 0 0 1 0 7.424M6.75 8.25l4.72-4.72a.75.75 0 0 1 1.28.53v15.88a.75.75 0 0 1-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.009 9.009 0 0 1 2.25 12c0-.83.112-1.633.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75Z" /></svg>
+            <button id="mute-btn" onclick="toggleMute()" title="Silenciar / Activar sonido">
+                <svg id="vol-icon" width="18" height="18" viewBox="0 0 16 16" fill="currentColor" style="shape-rendering: crispEdges;"><rect x="1" y="5" width="3" height="6"/><rect x="4" y="4" width="2" height="8"/><rect x="6" y="3" width="2" height="10"/><rect x="8" y="2" width="1" height="12"/><rect x="11" y="5" width="1" height="6"/><rect x="10" y="4" width="1" height="1"/><rect x="10" y="11" width="1" height="1"/><rect x="14" y="3" width="1" height="10"/><rect x="13" y="2" width="1" height="1"/><rect x="13" y="13" width="1" height="1"/></svg>
             </button>
-            <input type="range" id="vol-slider" min="0" max="1" step="0.05" value="0.5" title="Sonido General" oninput="setWebVolume(this.value)">
+            <div id="vol-pixel-bar" title="Sonido General (Clic o arrastra para ajustar)">
+                <span class="v-bracket">[</span>
+                <span id="vol-bars"></span>
+                <span class="v-bracket">]</span>
+                <span id="vol-pct">50%</span>
+            </div>
+            <input type="range" id="vol-slider" min="0" max="1" step="0.05" value="0.5" style="display: none;" oninput="setWebVolume(this.value)">
         </div>
-        <button id="fs-btn" style="background:transparent; color:white; border:none; cursor:pointer; display:flex; align-items:center; justify-content:center; padding:0;" onclick="toggleFS()"><svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="24" height="24"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 3.75v4.5m0-4.5h4.5m-4.5 0L9 9M3.75 20.25v-4.5m0 4.5h4.5m-4.5 0L9 15M20.25 3.75h-4.5m4.5 0v4.5m0-4.5L15 9m5.25 11.25h-4.5m4.5 0v-4.5m0 4.5L15 15" /></svg></button>
+        <button id="fs-btn" onclick="toggleFS()" title="Pantalla completa">
+            <svg id="fs-icon" width="18" height="18" viewBox="0 0 16 16" fill="currentColor" style="shape-rendering: crispEdges;"><rect x="1" y="1" width="5" height="2"/><rect x="1" y="3" width="2" height="3"/><rect x="10" y="1" width="5" height="2"/><rect x="13" y="3" width="2" height="3"/><rect x="1" y="10" width="2" height="3"/><rect x="1" y="13" width="5" height="2"/><rect x="13" y="10" width="2" height="3"/><rect x="10" y="13" width="5" height="2"/></svg>
+        </button>
     </div>
     <audio id="bgm" loop>
         <source src="Music.mp3" type="audio/mpeg">
@@ -670,23 +674,55 @@
             applyAudioVolumes();
         };
 
+        var PIXEL_ICON_SOUND = '<svg width="18" height="18" viewBox="0 0 16 16" fill="currentColor" style="shape-rendering: crispEdges;"><rect x="1" y="5" width="3" height="6"/><rect x="4" y="4" width="2" height="8"/><rect x="6" y="3" width="2" height="10"/><rect x="8" y="2" width="1" height="12"/><rect x="11" y="5" width="1" height="6"/><rect x="10" y="4" width="1" height="1"/><rect x="10" y="11" width="1" height="1"/><rect x="14" y="3" width="1" height="10"/><rect x="13" y="2" width="1" height="1"/><rect x="13" y="13" width="1" height="1"/></svg>';
+
+        var PIXEL_ICON_MUTE = '<svg width="18" height="18" viewBox="0 0 16 16" fill="currentColor" style="shape-rendering: crispEdges;"><rect x="1" y="5" width="3" height="6"/><rect x="4" y="4" width="2" height="8"/><rect x="6" y="3" width="2" height="10"/><rect x="8" y="2" width="1" height="12"/><rect x="11" y="5" width="1" height="2"/><rect x="15" y="5" width="1" height="2"/><rect x="12" y="7" width="1" height="2"/><rect x="14" y="7" width="1" height="2"/><rect x="13" y="8" width="1" height="1"/><rect x="12" y="9" width="1" height="2"/><rect x="14" y="9" width="1" height="2"/><rect x="11" y="10" width="1" height="2"/><rect x="15" y="10" width="1" height="2"/></svg>';
+
+        var ICON_ENTER_FS = '<svg width="18" height="18" viewBox="0 0 16 16" fill="currentColor" style="shape-rendering: crispEdges;"><rect x="1" y="1" width="5" height="2"/><rect x="1" y="3" width="2" height="3"/><rect x="10" y="1" width="5" height="2"/><rect x="13" y="3" width="2" height="3"/><rect x="1" y="10" width="2" height="3"/><rect x="1" y="13" width="5" height="2"/><rect x="13" y="10" width="2" height="3"/><rect x="10" y="13" width="5" height="2"/></svg>';
+
+        var ICON_EXIT_FS = '<svg width="18" height="18" viewBox="0 0 16 16" fill="currentColor" style="shape-rendering: crispEdges;"><rect x="5" y="2" width="2" height="4"/><rect x="2" y="5" width="4" height="2"/><rect x="9" y="2" width="2" height="4"/><rect x="10" y="5" width="4" height="2"/><rect x="5" y="10" width="2" height="4"/><rect x="2" y="9" width="4" height="2"/><rect x="9" y="10" width="2" height="4"/><rect x="10" y="9" width="4" height="2"/></svg>';
+
         function updateVolumeUI(v) {
             var btn = document.getElementById('mute-btn');
             var slider = document.getElementById('vol-slider');
             if (slider && Math.abs(parseFloat(slider.value) - v) > 0.01) {
                 slider.value = v;
             }
-            if (!btn) return;
-            if (v <= 0 || window.sfxMuted) {
-                btn.innerHTML = '<svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="18" height="18"><path stroke-linecap="round" stroke-linejoin="round" d="M11.25 15.352 15 11.603m0 0 3.75-3.75M15 11.603l3.75 3.75m-3.75-3.75-3.75-3.75M6.75 8.25l4.72-4.72a.75.75 0 0 1 1.28.53v15.88a.75.75 0 0 1-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.009 9.009 0 0 1 2.25 12c0-.83.112-1.633.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75Z" /></svg>';
-            } else {
-                btn.innerHTML = '<svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="18" height="18"><path stroke-linecap="round" stroke-linejoin="round" d="M19.114 5.636a9 9 0 0 1 0 12.728M16.463 8.288a5.25 5.25 0 0 1 0 7.424M6.75 8.25l4.72-4.72a.75.75 0 0 1 1.28.53v15.88a.75.75 0 0 1-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.009 9.009 0 0 1 2.25 12c0-.83.112-1.633.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75Z" /></svg>';
+            if (btn) {
+                if (v <= 0 || window.sfxMuted) {
+                    btn.innerHTML = PIXEL_ICON_MUTE;
+                    btn.title = "Activar sonido";
+                } else {
+                    btn.innerHTML = PIXEL_ICON_SOUND;
+                    btn.title = "Silenciar sonido";
+                }
+            }
+
+            var barsElem = document.getElementById('vol-bars');
+            var pctElem = document.getElementById('vol-pct');
+            var effectivePct = (window.sfxMuted || v <= 0) ? 0 : Math.round(v * 100);
+            var activeCount = Math.round(effectivePct / 10);
+
+            if (barsElem) {
+                var html = '';
+                for (var i = 0; i < 10; i++) {
+                    if (i < activeCount) {
+                        html += '<span class="v-bar active" data-step="' + (i + 1) + '">|</span>';
+                    } else {
+                        html += '<span class="v-bar dim" data-step="' + (i + 1) + '">|</span>';
+                    }
+                }
+                barsElem.innerHTML = html;
+            }
+
+            if (pctElem) {
+                pctElem.textContent = effectivePct + '%';
             }
         }
 
         function toggleMute() {
             if (window.sfxMuted || window.masterVolume <= 0) {
-                var target = previousVolume > 0 ? previousVolume : 1.0;
+                var target = previousVolume > 0 ? previousVolume : 0.5;
                 window.sfxMuted = false;
                 window.masterVolume = target;
                 if (window.inOptionsMenu) window.volumeSliderChanged = true;
@@ -699,9 +735,6 @@
                 applyAudioVolumes();
             }
         }
-        
-        var ICON_ENTER_FS = '<svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="24" height="24"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 3.75v4.5m0-4.5h4.5m-4.5 0L9 9M3.75 20.25v-4.5m0 4.5h4.5m-4.5 0L9 15M20.25 3.75h-4.5m4.5 0v4.5m0-4.5L15 9m5.25 11.25h-4.5m4.5 0v-4.5m0 4.5L15 15" /></svg>';
-        var ICON_EXIT_FS = '<svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="24" height="24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 9V4.5M9 9H4.5M9 9 3.75 3.75M9 15v4.5M9 15H4.5M9 15l-5.25 5.25M15 9h4.5M15 9V4.5M15 9l5.25-5.25M15 15h4.5M15 15v4.5m0-4.5 5.25 5.25" /></svg>';
 
         function isFullscreen() {
             var standardFS = !!(
@@ -734,7 +767,7 @@
                 document.body.classList.add('fullscreen-mode');
                 document.documentElement.classList.add('fullscreen-mode');
                 if (consoleDiv) {
-                    var calcSize = Math.min(26, Math.max(22, Math.floor(window.innerHeight / 40)));
+                    var calcSize = Math.min(30, Math.max(26, Math.floor(window.innerHeight / 35)));
                     consoleDiv.style.fontSize = calcSize + 'px';
                     consoleDiv.style.lineHeight = '1.25';
                     consoleDiv.scrollTop = consoleDiv.scrollHeight;
@@ -747,8 +780,8 @@
                 document.body.classList.remove('fullscreen-mode');
                 document.documentElement.classList.remove('fullscreen-mode');
                 if (consoleDiv) {
-                    consoleDiv.style.fontSize = '16px';
-                    consoleDiv.style.lineHeight = '1.1';
+                    consoleDiv.style.fontSize = '';
+                    consoleDiv.style.lineHeight = '';
                     consoleDiv.scrollTop = consoleDiv.scrollHeight;
                 }
                 if (btn) {
@@ -757,6 +790,64 @@
                 }
             }
         }
+
+        // Interactividad para la barra de volumen Pixel Art con rayitas
+        (function initPixelVolBar() {
+            var barContainer = document.getElementById('vol-pixel-bar');
+            var barsElem = document.getElementById('vol-bars');
+            if (!barContainer) return;
+
+            function updateFromMouse(clientX) {
+                var rect = barsElem ? barsElem.getBoundingClientRect() : barContainer.getBoundingClientRect();
+                var fraction = Math.max(0, Math.min(1, (clientX - rect.left) / rect.width));
+                var steps = Math.round(fraction * 10);
+                setWebVolume(steps / 10.0);
+            }
+
+            var isDragging = false;
+            barContainer.addEventListener('mousedown', function(e) {
+                isDragging = true;
+                updateFromMouse(e.clientX);
+            });
+
+            window.addEventListener('mousemove', function(e) {
+                if (isDragging) {
+                    updateFromMouse(e.clientX);
+                }
+            });
+
+            window.addEventListener('mouseup', function() {
+                isDragging = false;
+            });
+
+            barContainer.addEventListener('touchstart', function(e) {
+                if (e.touches && e.touches[0]) {
+                    isDragging = true;
+                    updateFromMouse(e.touches[0].clientX);
+                }
+            }, { passive: true });
+
+            window.addEventListener('touchmove', function(e) {
+                if (isDragging && e.touches && e.touches[0]) {
+                    updateFromMouse(e.touches[0].clientX);
+                }
+            }, { passive: true });
+
+            window.addEventListener('touchend', function() {
+                isDragging = false;
+            });
+
+            barContainer.addEventListener('wheel', function(e) {
+                e.preventDefault();
+                var delta = e.deltaY < 0 ? 0.1 : -0.1;
+                var current = (window.sfxMuted || window.masterVolume <= 0) ? 0 : window.masterVolume;
+                var target = Math.max(0, Math.min(1, Math.round((current + delta) * 10) / 10.0));
+                setWebVolume(target);
+            }, { passive: false });
+
+            // Inicializar barras en la primera carga
+            updateVolumeUI(window.masterVolume);
+        })();
 
         function toggleFS() {
             var bgm = document.getElementById('bgm');
