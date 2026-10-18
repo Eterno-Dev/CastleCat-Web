@@ -598,14 +598,6 @@
         updateFullscreenUI();
         
         window.glitchPlayed = false;
-        var glitchImg = new Image();
-        glitchImg.onerror = function() {
-            if (glitchImg.src.indexOf('assets/') === -1) {
-                glitchImg.src = 'assets/glitch.png';
-            }
-        };
-        glitchImg.src = 'glitch.png';
-
         function triggerGlitchIntro() {
             if (window.glitchPlayed) return;
             window.glitchPlayed = true;
@@ -623,36 +615,39 @@
             overlay.style.overflow = 'hidden';
 
             var canvas = document.createElement('canvas');
-            var w = 480, h = 270;
+            var w = 960, h = 540;
             canvas.width = w;
             canvas.height = h;
             canvas.style.width = '100vw';
             canvas.style.height = '100vh';
             canvas.style.display = 'block';
-            canvas.style.imageRendering = 'pixelated';
             overlay.appendChild(canvas);
             document.body.appendChild(overlay);
 
-            // Reproducir sonido de glitch potente y autentico
+            // Reproducir sonido de estatica de TV CRT autentica
             window.playSound('glitch');
 
             var ctx = canvas.getContext('2d');
             var startTime = performance.now();
             var animId;
+            var seed = (Math.random() * 0xFFFFFF) | 0;
+
+            var imgData = ctx.createImageData(w, h);
+            var buf32 = new Uint32Array(imgData.data.buffer);
 
             function glitchLoop() {
                 var elapsed = performance.now() - startTime;
                 if (elapsed >= 500) {
                     if (animId) cancelAnimationFrame(animId);
                     overlay.style.opacity = '0';
-                    overlay.style.transition = 'opacity 0.03s linear';
+                    overlay.style.transition = 'opacity 0.04s ease-out';
                     setTimeout(function() {
                         if (overlay && overlay.parentNode) {
                             overlay.parentNode.removeChild(overlay);
                         }
-                    }, 40);
+                    }, 50);
 
-                    // Arrancar música BGM inmediatamente tras el glitch
+                    // Arrancar musica BGM inmediatamente tras el glitch
                     var bgm = document.getElementById('bgm');
                     var slider = document.getElementById('vol-slider');
                     var curVol = slider ? parseFloat(slider.value) : 0.5;
@@ -664,88 +659,45 @@
                 }
 
                 if (ctx) {
-                    // 1. Fondo base negro
-                    ctx.fillStyle = '#050505';
-                    ctx.fillRect(0, 0, w, h);
+                    var phase = elapsed * 0.016;
+                    for (var y = 0; y < h; y++) {
+                        // Ondas de zumbido de red (hum bars) que se desplazan verticalmente
+                        var w1 = Math.sin((y + phase * 45) * 0.022) * 44;
+                        var w2 = Math.sin((y + phase * 45) * 0.051 + 1.4) * 20;
+                        var scanline = (y & 1) ? 5 : -5;
+                        var bias = 100 + w1 + w2 + scanline;
+                        var prev = bias;
+                        var ny = (y - 270) / 270;
+                        var ny2 = ny * ny;
+                        var ny8 = ny2 * ny2 * ny2 * ny2;
+                        var rowOffset = y * w;
 
-                    var hasImg = glitchImg.complete && glitchImg.naturalWidth > 0;
+                        for (var x = 0; x < w; x++) {
+                            seed = (seed * 1664525 + 1013904223) | 0;
+                            var r = (seed >>> 24);
+                            var raw = bias + (r - 128) * 0.88;
+                            var val = (0.68 * raw + 0.32 * prev) | 0;
+                            prev = val;
 
-                    // 2. Si la textura real de glitch está lista, rebanar tiras con desplazamiento horizontal y aberración cromática
-                    if (hasImg) {
-                        var stripCount = Math.floor(Math.random() * 12) + 14;
-                        for (var s = 0; s < stripCount; s++) {
-                            var sy = Math.floor(Math.random() * glitchImg.naturalHeight);
-                            var sh = Math.floor(Math.random() * 32) + 3;
-                            if (sy + sh > glitchImg.naturalHeight) sh = glitchImg.naturalHeight - sy;
-                            
-                            var dy = sy + (Math.random() - 0.5) * 16;
-                            var dx = (Math.random() - 0.5) * 70;
-                            var dw = w + (Math.random() - 0.5) * 50;
-
-                            // Efecto RGB Split / Aberración cromática en algunas bandas
-                            if (Math.random() < 0.35) {
-                                ctx.save();
-                                ctx.globalAlpha = 0.8;
-                                ctx.drawImage(glitchImg, 0, sy, glitchImg.naturalWidth, sh, dx - 6, dy, dw, sh);
-                                ctx.fillStyle = 'rgba(255, 0, 40, 0.35)';
-                                ctx.globalCompositeOperation = 'source-atop';
-                                ctx.fillRect(dx - 6, dy, dw, sh);
-                                ctx.restore();
-
-                                ctx.save();
-                                ctx.globalAlpha = 0.8;
-                                ctx.drawImage(glitchImg, 0, sy, glitchImg.naturalWidth, sh, dx + 6, dy, dw, sh);
-                                ctx.fillStyle = 'rgba(0, 230, 255, 0.35)';
-                                ctx.globalCompositeOperation = 'source-atop';
-                                ctx.fillRect(dx + 6, dy, dw, sh);
-                                ctx.restore();
-                            } else {
-                                ctx.drawImage(glitchImg, 0, sy, glitchImg.naturalWidth, sh, dx, dy, dw, sh);
+                            // Curvatura sutil de pantalla CRT en bordes y esquinas
+                            var nx = (x - 480) / 480;
+                            var nx2 = nx * nx;
+                            var nx8 = nx2 * nx2 * nx2 * nx2;
+                            var d = nx8 + ny8;
+                            if (d > 0.88) {
+                                var edge = 1.0 - (d - 0.88) * 15.0;
+                                if (edge < 0) edge = 0;
+                                val = (val * edge) | 0;
                             }
+                            var clp = val < 0 ? 0 : (val > 255 ? 255 : val);
+                            buf32[rowOffset + x] = (255 << 24) | (clp << 16) | (clp << 8) | clp;
                         }
                     }
+                    ctx.putImageData(imgData, 0, 0);
 
-                    // 3. Bloques de corrupción VRAM (estilo exacto de datos digitales corrompidos)
-                    var blockCount = Math.floor(Math.random() * 16) + 10;
-                    for (var b = 0; b < blockCount; b++) {
-                        var bx = Math.floor(Math.random() * w);
-                        var by = Math.floor(Math.random() * h);
-                        var bw = Math.floor(Math.random() * 180) + 12;
-                        var bh = Math.floor(Math.random() * 7) + 1;
-                        var r = Math.random();
-                        if (r < 0.35) {
-                            ctx.fillStyle = '#ffffff';
-                        } else if (r < 0.55) {
-                            ctx.fillStyle = 'rgba(255, 255, 255, 0.55)';
-                        } else if (r < 0.75) {
-                            ctx.fillStyle = '#000000';
-                        } else if (r < 0.88) {
-                            ctx.fillStyle = 'rgba(0, 255, 240, 0.85)';
-                        } else {
-                            ctx.fillStyle = 'rgba(255, 20, 110, 0.85)';
-                        }
-                        ctx.fillRect(bx, by, bw, bh);
-                    }
-
-                    // 4. Líneas finas horizontales de desgarro de sincronía (tear lines)
-                    for (var t = 0; t < 4; t++) {
-                        var ty = Math.floor(Math.random() * h);
-                        ctx.fillStyle = (Math.random() < 0.5) ? 'rgba(255, 255, 255, 0.95)' : 'rgba(0, 255, 255, 0.8)';
-                        ctx.fillRect(0, ty, w, Math.random() < 0.4 ? 2 : 1);
-                    }
-
-                    // 5. Destello de inversión de fotograma único (pérdida de sync analógica / digital)
-                    if ((elapsed > 80 && elapsed < 120) || (elapsed > 260 && elapsed < 295)) {
-                        ctx.save();
-                        ctx.globalCompositeOperation = 'difference';
-                        ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
-                        ctx.fillRect(0, 0, w, h);
-                        ctx.restore();
-                    }
-
-                    // 6. Jitter de pantalla (vibración errática de sincronismo)
-                    var jx = (Math.random() - 0.5) * 8;
-                    var jy = (Math.random() - 0.5) * 4;
+                    // Micro-vibracion de sincronia analogica
+                    var jx = (Math.random() - 0.5) * 4;
+                    var jy = (Math.random() - 0.5) * 2;
                     overlay.style.transform = 'translate(' + jx.toFixed(1) + 'px, ' + jy.toFixed(1) + 'px)';
                 }
                 animId = requestAnimationFrame(glitchLoop);
