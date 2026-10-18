@@ -8,16 +8,24 @@ struct Skills {
 };
 
 //Asigna las habilidades segun el id
-int asignarHabilidades(int id, char nombre[100], char descrip[100], int* tipo, float* multi, int* coste)
+int asignarHabilidades(int id, char nombre[100], char descrip[100], int* tipo, float* multi, int* coste, int claseJugador)
 {
 	// Asignamos atributos según el id
 	switch (id) {
 	case 0:
 		strcpy(nombre, "\033[1;3mGolpe Normal\033[0m /");
-		strcpy(descrip, "Un golpe con tu arma. /");
-		*tipo = 1;
+		strcpy(descrip, "Golpea con tu arma. /");
 		*multi = 1;
-		*coste = -3;
+		if (claseJugador == 1) { // Mago
+			*tipo = 2; // Mágico (Inteligencia)
+			*coste = -5; // Recupera 5 de maná
+		} else if (claseJugador == 2) { // Asesino
+			*tipo = 3; // Agilidad
+			*coste = -4; // Recupera 4 de maná
+		} else { // Guerrero u otros
+			*tipo = 1; // Físico (Fuerza)
+			*coste = -3; // Recupera 3 de maná
+		}
 		break;
 	case 1:
 		strcpy(nombre, "\033[1;3;31mCorte Fino\033[0m /");
@@ -175,7 +183,7 @@ int asignarHabilidades(int id, char nombre[100], char descrip[100], int* tipo, f
 }
 
 //Muestra las Habilidades
-void habilidades(int hueco[3], int opcionActiva)
+void habilidades(int hueco[3], int opcionActiva, int claseJugador)
 {
 	printf("\033[1;2;3;4;37m\nHABILIDADES DISPONIBLES\033[0m\n");
 
@@ -191,7 +199,7 @@ void habilidades(int hueco[3], int opcionActiva)
             if (i == opcionActiva) printf("\033[1;31m > \033[0m");
             else printf("   ");
             printf("\033[1mEquipa \033[1;35mArma %i\033[0m\n", i);
-        } else if (asignarHabilidades(id, nombre, descrip, &tipoS, &multi, &coste)) {
+        } else if (asignarHabilidades(id, nombre, descrip, &tipoS, &multi, &coste, claseJugador)) {
             if (i == opcionActiva) printf("\033[1;31m > \033[0m");
             else printf("   ");
 			printf("\033[0m");

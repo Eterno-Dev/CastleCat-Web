@@ -11,7 +11,7 @@ void combate(int* hp, int* hpEne, int* hpMaxEne, int* hpMax, int* mana, int* mpM
 	while (ok == 0) {
         limpiarPantalla();
         mostrarInformacion(hpEne, hpMaxEne, hp, hpMax, mana, mpMax, stat, enemigoImagen, enemigoNombre, claseJugador, nomJugador);
-        habilidades(id, opcionActiva);
+        habilidades(id, opcionActiva, claseJugador);
 
         fflush(stdout);
 
@@ -42,7 +42,7 @@ void combate(int* hp, int* hpEne, int* hpMaxEne, int* hpMax, int* mana, int* mpM
                 reproducirSonido("confirm");
                 printf("\n\033[1;31mTe falta equipar el arma para poder realizar el ataque.\033[0m\n");
                 enterContinuar();
-            } else if (asignarHabilidades(id[resp], nombre, descrip, &tipox, &mult, &coste)) {
+            } else if (asignarHabilidades(id[resp], nombre, descrip, &tipox, &mult, &coste, claseJugador)) {
                 if (coste > *mana) {
                     reproducirSonido("confirm");
                     printf("\n\033[1;31mNo tienes suficiente mana para usar esta habilidad (%i/%i).\033[0m\n", *mana, coste);
@@ -58,9 +58,7 @@ void combate(int* hp, int* hpEne, int* hpMaxEne, int* hpMax, int* mana, int* mpM
         }
 	}
 
-    if (id[resp] == 0) {
-        reproducirSonido("atk_basic");
-    } else if (tipox == 1) {
+    if (tipox == 1) {
         reproducirSonido("atk_str");
     } else if (tipox == 2) {
         reproducirSonido("atk_mag");

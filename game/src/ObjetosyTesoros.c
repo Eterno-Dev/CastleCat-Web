@@ -663,12 +663,32 @@ void informacionItemInventario(TItem statsItem[], int accederObj)
     printf("\033[1m\033[1;31m═════════════\033[0m\n");
 
     printf("Nombre del objeto: \033[0;1m%s\033[0m\n", statsItem[accederObj].nombreObjeto);
-    printf("Es consumible: \033[0;1m%s\033[0m\n", statsItem[accederObj].itemConsumible ? "Sí" : "No");
-    printf("Recuperación de Vida: \033[0;1m+%d\033[0m\n", statsItem[accederObj].otorgarVida);
-    printf("Aumento de Vida Máxima: \033[0;1m+%d\033[0m\n", statsItem[accederObj].otorgarExtraVidaMax);
-    printf("Aumento de Fuerza Máxima: \033[0;1m+%d\033[0m\n", statsItem[accederObj].fueArmaExtra);
-    printf("Aumento de Inteligencia Máxima: \033[0;1m+%d\033[0m\n", statsItem[accederObj].intArmaExtra);
-    printf("Aumento de Agilidad Máxima: \033[0;1m+%d\033[0m\n", statsItem[accederObj].agiArmaExtra);
+    printf("Tipo: \033[0;1m%s\033[0m\n", statsItem[accederObj].itemConsumible ? "Consumible" : "Equipable");
+    
+    int tieneStats = 0;
+    if (statsItem[accederObj].otorgarVida > 0) {
+        printf("Recuperación de Vida: \033[0;1;32m+%d\033[0m\n", statsItem[accederObj].otorgarVida);
+        tieneStats++;
+    }
+    if (statsItem[accederObj].otorgarExtraVidaMax > 0) {
+        printf("Aumento de Vida Máxima: \033[0;1;32m+%d\033[0m\n", statsItem[accederObj].otorgarExtraVidaMax);
+        tieneStats++;
+    }
+    if (statsItem[accederObj].fueArmaExtra > 0) {
+        printf("Aumento de Fuerza: \033[0;1;31m+%d\033[0m\n", statsItem[accederObj].fueArmaExtra);
+        tieneStats++;
+    }
+    if (statsItem[accederObj].intArmaExtra > 0) {
+        printf("Aumento de Inteligencia: \033[0;1;34m+%d\033[0m\n", statsItem[accederObj].intArmaExtra);
+        tieneStats++;
+    }
+    if (statsItem[accederObj].agiArmaExtra > 0) {
+        printf("Aumento de Agilidad: \033[0;1;33m+%d\033[0m\n", statsItem[accederObj].agiArmaExtra);
+        tieneStats++;
+    }
+    if (!tieneStats) {
+        printf("Efecto: \033[0;1;30mSin atributos adicionales\033[0m\n");
+    }
 }
 
 /* Usar Item del Inventario */
@@ -700,12 +720,31 @@ void usarItemInventario(TItem statsItem[], int accederObj, int *hp, int *hpMax, 
         statsItem[accederObj].numItemsInventario = -1;
     }
     
+    int tieneStats = 0;
     printf("\n\033[1m\033[1;33m════════════ INFORMACIÓN ════════════\033[0m\n");
-    printf("Vida recuperada: \033[0;1m+%d\033[0m\n", statsItem[accederObj].otorgarVida);
-    printf("Aumento de Vida: \033[0;1m+%d\033[0m\n", statsItem[accederObj].otorgarExtraVidaMax);
-    printf("Aumento de Fuerza: \033[0;1m+%d\033[0m\n", statsItem[accederObj].fueArmaExtra);
-    printf("Aumento de Inteligencia: \033[0;1m+%d\033[0m\n", statsItem[accederObj].intArmaExtra);
-    printf("Aumento de Agilidad: \033[0;1m+%d\033[0m\n", statsItem[accederObj].agiArmaExtra);
+    if (statsItem[accederObj].otorgarVida > 0) {
+        printf("Vida recuperada: \033[0;1;32m+%d\033[0m\n", statsItem[accederObj].otorgarVida);
+        tieneStats++;
+    }
+    if (statsItem[accederObj].otorgarExtraVidaMax > 0) {
+        printf("Aumento de Vida: \033[0;1;32m+%d\033[0m\n", statsItem[accederObj].otorgarExtraVidaMax);
+        tieneStats++;
+    }
+    if (statsItem[accederObj].fueArmaExtra > 0) {
+        printf("Aumento de Fuerza: \033[0;1;31m+%d\033[0m\n", statsItem[accederObj].fueArmaExtra);
+        tieneStats++;
+    }
+    if (statsItem[accederObj].intArmaExtra > 0) {
+        printf("Aumento de Inteligencia: \033[0;1;34m+%d\033[0m\n", statsItem[accederObj].intArmaExtra);
+        tieneStats++;
+    }
+    if (statsItem[accederObj].agiArmaExtra > 0) {
+        printf("Aumento de Agilidad: \033[0;1;33m+%d\033[0m\n", statsItem[accederObj].agiArmaExtra);
+        tieneStats++;
+    }
+    if (!tieneStats) {
+        printf("\033[0;1;30mSin atributos adicionales\033[0m\n");
+    }
 }
 
 /* Desequipar Arma del Inventario Jugador */
