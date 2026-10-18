@@ -340,87 +340,169 @@
             bgmInit.volume = 0.5;
         }
         
+        // ==========================================
+        // SISTEMA DE AUDIO DE BAJA LATENCIA (Web Audio API)
+        // ==========================================
+        var audioCtx = null;
+        function getAudioContext() {
+            if (!audioCtx) {
+                var AudioCtx = window.AudioContext || window.webkitAudioContext;
+                if (AudioCtx) {
+                    audioCtx = new AudioCtx();
+                }
+            }
+            if (audioCtx && audioCtx.state === 'suspended') {
+                audioCtx.resume().catch(function() {});
+            }
+            return audioCtx;
+        }
+
+        // Desbloquear AudioContext en la primera interaccion
+        ['keydown', 'mousedown', 'touchstart', 'click'].forEach(function(evt) {
+            window.addEventListener(evt, function() {
+                if (audioCtx && audioCtx.state === 'suspended') {
+                    audioCtx.resume().catch(function() {});
+                }
+            }, { capture: true, passive: true });
+        });
+
+        // Búferes precargados en memoria RAM
+        var soundBuffers = {};
+
+        // Sintetizar inmediatamente en memoria el sonido del glitch a t=0 (0ms delay)
+        function getGlitchBuffer(ctx) {
+            if (!ctx) return null;
+            if (soundBuffers['glitch']) return soundBuffers['glitch'];
+            var dur = 0.50;
+            var sr = ctx.sampleRate || 44100;
+            var len = Math.floor(sr * dur);
+            var buf = ctx.createBuffer(1, len, sr);
+            var data = buf.getChannelData(0);
+            for (var i = 0; i < len; i++) {
+                var t = i / sr;
+                var env = 1.0;
+                if (i < 200) env = i / 200.0;
+                else if (i > len - 800) env = (len - i) / 800.0;
+                var white = (Math.random() * 2.0 - 1.0);
+                var hum = 0.22 * Math.sin(2 * Math.PI * 60 * t) + 0.12 * Math.sin(2 * Math.PI * 120 * t);
+                var crackle = (Math.random() < 0.08) ? (Math.random() * 2.0 - 1.0) * 0.45 : 0;
+                data[i] = (white * 0.65 + hum + crackle) * env * 0.85;
+            }
+            soundBuffers['glitch'] = buf;
+            return buf;
+        }
+
+        // Precargar archivo de audio en un AudioBuffer
+        function preloadAudioBuffer(name, paths) {
+            var ctx = getAudioContext();
+            if (!ctx) return;
+            function tryFetch(idx) {
+                if (idx >= paths.length) return;
+                fetch(paths[idx])
+                    .then(function(res) {
+                        if (!res.ok) throw new Error("HTTP " + res.status);
+                        return res.arrayBuffer();
+                    })
+                    .then(function(ab) {
+                        return ctx.decodeAudioData(ab);
+                    })
+                    .then(function(decoded) {
+                        soundBuffers[name] = decoded;
+                    })
+                    .catch(function() {
+                        tryFetch(idx + 1);
+                    });
+            }
+            tryFetch(0);
+        }
+
+        // Definición de sonidos del juego
+        var soundPathsMap = {
+            'confirm': ["Confirm.mp3", "confirm.mp3", "assets/Confirm.mp3", "assets/confirm.mp3"],
+            'next_option': ["NextOption.mp3", "nextoption.mp3", "assets/NextOption.mp3", "assets/nextoption.mp3"],
+            'volume': ["Volume.mp3", "volume.mp3", "assets/Volume.mp3", "assets/volume.mp3"],
+            'potion': ["sfx_potion.wav", "SFX/sfx_potion.wav", "assets/sfx_potion.wav", "assets/SFX/sfx_potion.wav"],
+            'platano': ["sfx_platano.wav", "SFX/sfx_platano.wav", "assets/sfx_platano.wav", "assets/SFX/sfx_platano.wav"],
+            'death': ["sfx_death.wav", "SFX/sfx_death.wav", "assets/sfx_death.wav", "assets/SFX/sfx_death.wav"],
+            'glitch': ["sfx_glitch.wav", "SFX/sfx_glitch.wav", "assets/sfx_glitch.wav", "assets/SFX/sfx_glitch.wav"]
+        };
+        for (var i = 1; i <= 3; i++) {
+            soundPathsMap['sfx_hit_' + i] = ["sfx_hit_" + i + ".wav", "SFX/sfx_hit_" + i + ".wav", "assets/sfx_hit_" + i + ".wav"];
+            soundPathsMap['sfx_chest_' + i] = ["sfx_chest_" + i + ".wav", "SFX/sfx_chest_" + i + ".wav", "assets/sfx_chest_" + i + ".wav"];
+            soundPathsMap['sfx_atk_basic_' + i] = ["sfx_atk_basic_" + i + ".wav", "SFX/sfx_atk_basic_" + i + ".wav", "assets/sfx_atk_basic_" + i + ".wav"];
+        }
+        for (var i = 1; i <= 2; i++) {
+            soundPathsMap['sfx_atk_str_' + i] = ["sfx_atk_str_" + i + ".wav", "SFX/sfx_atk_str_" + i + ".wav", "assets/sfx_atk_str_" + i + ".wav"];
+            soundPathsMap['sfx_atk_mag_' + i] = ["sfx_atk_mag_" + i + ".wav", "SFX/sfx_atk_mag_" + i + ".wav", "assets/sfx_atk_mag_" + i + ".wav"];
+            soundPathsMap['sfx_atk_agi_' + i] = ["sfx_atk_agi_" + i + ".wav", "SFX/sfx_atk_agi_" + i + ".wav", "assets/sfx_atk_agi_" + i + ".wav"];
+        }
+
+        // Iniciar precarga de todos los sonidos inmediatamente
+        for (var k in soundPathsMap) {
+            preloadAudioBuffer(k, soundPathsMap[k]);
+        }
+
         window.playSound = function(type) {
             if (window.sfxMuted) return;
-            
-            var pathsToTry = [];
-            if (type === 'confirm') {
-                pathsToTry = [
-                    "Confirm.mp3",
-                    "confirm.mp3",
-                    "assets/Confirm.mp3",
-                    "assets/confirm.mp3",
-                    "../assets/Confirm.mp3"
-                ];
-            } else if (type === 'next_option') {
-                pathsToTry = [
-                    "NextOption.mp3",
-                    "nextoption.mp3",
-                    "assets/NextOption.mp3",
-                    "assets/nextoption.mp3",
-                    "../assets/NextOption.mp3"
-                ];
+
+            var resolvedKey = "";
+            if (type === 'confirm' || type === 'next_option' || type === 'death' || type === 'potion' || type === 'glitch') {
+                resolvedKey = type;
+            } else if (type === 'platano' || type === 'banana') {
+                resolvedKey = 'platano';
             } else if (type === 'volume' || type === 'less_volume' || type === 'more_volume') {
-                pathsToTry = [
-                    "Volume.mp3",
-                    "volume.mp3",
-                    "assets/Volume.mp3",
-                    "assets/volume.mp3",
-                    "../assets/Volume.mp3"
-                ];
+                resolvedKey = 'volume';
+            } else if (type === 'hit') {
+                resolvedKey = 'sfx_hit_' + (Math.floor(Math.random() * 3) + 1);
+            } else if (type === 'chest') {
+                resolvedKey = 'sfx_chest_' + (Math.floor(Math.random() * 3) + 1);
+            } else if (type === 'atk_basic') {
+                resolvedKey = 'sfx_atk_basic_' + (Math.floor(Math.random() * 3) + 1);
+            } else if (type === 'atk_str') {
+                resolvedKey = 'sfx_atk_str_' + (Math.floor(Math.random() * 2) + 1);
+            } else if (type === 'atk_mag') {
+                resolvedKey = 'sfx_atk_mag_' + (Math.floor(Math.random() * 2) + 1);
+            } else if (type === 'atk_agi') {
+                resolvedKey = 'sfx_atk_agi_' + (Math.floor(Math.random() * 2) + 1);
             } else {
-                var filename = "";
-                if (type === 'hit') {
-                    filename = 'sfx_hit_' + (Math.floor(Math.random() * 3) + 1) + '.wav';
-                } else if (type === 'chest') {
-                    filename = 'sfx_chest_' + (Math.floor(Math.random() * 3) + 1) + '.wav';
-                } else if (type === 'atk_basic') {
-                    filename = 'sfx_atk_basic_' + (Math.floor(Math.random() * 3) + 1) + '.wav';
-                } else if (type === 'atk_str') {
-                    filename = 'sfx_atk_str_' + (Math.floor(Math.random() * 2) + 1) + '.wav';
-                } else if (type === 'atk_mag') {
-                    filename = 'sfx_atk_mag_' + (Math.floor(Math.random() * 2) + 1) + '.wav';
-                } else if (type === 'atk_agi') {
-                    filename = 'sfx_atk_agi_' + (Math.floor(Math.random() * 2) + 1) + '.wav';
-                } else if (type === 'potion') {
-                    filename = 'sfx_potion.wav';
-                } else if (type === 'platano' || type === 'banana') {
-                    filename = 'sfx_platano.wav';
-                } else if (type === 'glitch') {
-                    filename = 'sfx_glitch.wav';
-                } else {
-                    filename = 'sfx_' + type + '.wav';
-                }
-                pathsToTry = [
-                    filename,
-                    "SFX/" + filename,
-                    "sfx/" + filename,
-                    "assets/" + filename,
-                    "assets/SFX/" + filename,
-                    "assets/sfx/" + filename,
-                    "../assets/SFX/" + filename
-                ];
+                resolvedKey = type.startsWith('sfx_') ? type : 'sfx_' + type;
             }
-            
+
+            var ctx = getAudioContext();
+            var targetVol = (typeof window.sfxVolume === 'number') ? window.sfxVolume : 0.5;
+
+            // Reproduccion con Web Audio API: 0ms de latencia
+            if (ctx) {
+                var buf = (resolvedKey === 'glitch') ? (soundBuffers['glitch'] || getGlitchBuffer(ctx)) : soundBuffers[resolvedKey];
+                if (buf) {
+                    try {
+                        var src = ctx.createBufferSource();
+                        src.buffer = buf;
+                        var gain = ctx.createGain();
+                        gain.gain.value = targetVol;
+                        src.connect(gain);
+                        gain.connect(ctx.destination);
+                        src.start(0);
+                        return;
+                    } catch(e) {}
+                }
+            }
+
+            // Fallback con HTML5 Audio si aun no ha terminado de decodificar en RAM
+            var pathsToTry = soundPathsMap[resolvedKey] || [resolvedKey + '.wav', 'SFX/' + resolvedKey + '.wav'];
             function tryPlay(idx) {
                 if (idx >= pathsToTry.length) return;
                 var audio = new Audio();
                 var failed = false;
                 audio.onerror = function() {
-                    if (!failed) {
-                        failed = true;
-                        tryPlay(idx + 1);
-                    }
+                    if (!failed) { failed = true; tryPlay(idx + 1); }
                 };
                 audio.src = pathsToTry[idx];
-                audio.volume = (typeof window.sfxVolume === 'number') ? window.sfxVolume : 0.5;
+                audio.volume = targetVol;
                 var p = audio.play();
                 if (p && typeof p.catch === 'function') {
-                    p.catch(function(e) {
-                        if (!failed) {
-                            failed = true;
-                            tryPlay(idx + 1);
-                        }
+                    p.catch(function() {
+                        if (!failed) { failed = true; tryPlay(idx + 1); }
                     });
                 }
             }
@@ -618,13 +700,16 @@
             var w = 960, h = 540;
             canvas.width = w;
             canvas.height = h;
-            canvas.style.width = '100vw';
-            canvas.style.height = '100vh';
+            canvas.style.position = 'absolute';
+            canvas.style.top = '0';
+            canvas.style.left = '0';
+            canvas.style.width = '100%';
+            canvas.style.height = '100%';
             canvas.style.display = 'block';
             overlay.appendChild(canvas);
             document.body.appendChild(overlay);
 
-            // Reproducir sonido de estatica de TV CRT autentica
+            // Reproducir sonido de estatica de TV CRT instantaneo
             window.playSound('glitch');
 
             var ctx = canvas.getContext('2d');
@@ -667,9 +752,6 @@
                         var scanline = (y & 1) ? 5 : -5;
                         var bias = 100 + w1 + w2 + scanline;
                         var prev = bias;
-                        var ny = (y - 270) / 270;
-                        var ny2 = ny * ny;
-                        var ny8 = ny2 * ny2 * ny2 * ny2;
                         var rowOffset = y * w;
 
                         for (var x = 0; x < w; x++) {
@@ -679,26 +761,11 @@
                             var val = (0.68 * raw + 0.32 * prev) | 0;
                             prev = val;
 
-                            // Curvatura sutil de pantalla CRT en bordes y esquinas
-                            var nx = (x - 480) / 480;
-                            var nx2 = nx * nx;
-                            var nx8 = nx2 * nx2 * nx2 * nx2;
-                            var d = nx8 + ny8;
-                            if (d > 0.88) {
-                                var edge = 1.0 - (d - 0.88) * 15.0;
-                                if (edge < 0) edge = 0;
-                                val = (val * edge) | 0;
-                            }
                             var clp = val < 0 ? 0 : (val > 255 ? 255 : val);
                             buf32[rowOffset + x] = (255 << 24) | (clp << 16) | (clp << 8) | clp;
                         }
                     }
                     ctx.putImageData(imgData, 0, 0);
-
-                    // Micro-vibracion de sincronia analogica
-                    var jx = (Math.random() - 0.5) * 4;
-                    var jy = (Math.random() - 0.5) * 2;
-                    overlay.style.transform = 'translate(' + jx.toFixed(1) + 'px, ' + jy.toFixed(1) + 'px)';
                 }
                 animId = requestAnimationFrame(glitchLoop);
             }
