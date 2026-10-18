@@ -352,8 +352,16 @@ int menuIntro()
         {
             if (i == opcion)
             {
-                // Opción resaltada en rojo
-                printf(" > \033[1;31m%s\033[0m\n", opciones[i]);
+                if (g_hayPartida && i == 0)
+                {
+                    // Opción CONTINUAR resaltada en azul
+                    printf(" > \033[1;34m%s\033[0m\n", opciones[i]);
+                }
+                else
+                {
+                    // Resto de opciones resaltadas en rojo
+                    printf(" > \033[1;31m%s\033[0m\n", opciones[i]);
+                }
             }
             else
             {
