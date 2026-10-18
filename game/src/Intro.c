@@ -693,20 +693,19 @@ void introHistoriaJuego(char *nombreJugador, int *jugadorClase)
     printf("║                   PRÓLOGO: LA HISTORIA                   ║\n");
     printf("╚══════════════════════════════════════════════════════════╝\033[0m\n\n");
 
-    printR("\033[1m- En el reino de \033[34m'Nekovania'\033[0m, algunos ciudadanos desaparecen sin dejar rastro.\033[0m\n");
-    printR("Habla la leyenda de un\033[33m dragón colosal\033[0m, \033[1mel \033[35m'Shadow Meow'\033[0m\033[1m, que ha vencido grandes héroes.\n");
-    printR("Desde su castillo, el\033[33m Castle Cat\033[0m, secuestra a los inocentes.\n\n");
-
-    printR("\033[1mEn los \033[34msuburbios\033[0m, un joven\033[1m\033[34m felino\033[0m, llamado ");
+    /* Se Narra la Historia Inicial */
+    printR("\033[1m- En el reino de \033[34m'Nekovania'\033[0m, de tanto en tanto, los ciudadanos desaparecen sin dejar rastro.\033[0m\n");
+    printR("Las viejas leyendas hablan de un\033[33m dragón colosal\033[0m\033[0m, \033[1mel \033[35m'Shadow Lord'\033[0m\033[1m, cuyo poder ha hecho morir\na los más fieros héroes. ");
+    printR("Desde su castillo, el\033[33m Castle Cat\033[0m, secuestra a ciudadanos inocentes.\n\n");
     
+    printR("\033[1mSin embargo, de los \033[34msuburbios\033[0m de la ciudad, un inesperado\033[1m\033[34m joven felino\033[0m, conocido\ncomo ");
     char name_buffer[256];
     sprintf(name_buffer, "\033[1m\033[31m'%s'\033[0m, ", nombreJugador);
     printR(name_buffer);
+    printR("decide desafiar la peligrosa mazmorra.\n");
+    printR("\033[1mTiene su objetivo muy claro: \033[33msalvará a su amada\033[0m de las \033[35mfauces del dragón.\033[0m\n\n");
     
-    printR("decide enfrentar la mazmorra.\n");
-    printR("\033[1mCon el único objetivo de \033[33msalvar a su amada\033[0m del \033[35mtemible dragón.\033[0m\n\n");
-
-    printP("\033[1m¿Podrá sobrevivir en el castillo?\033[0m\n\n");
+    printP("\033[1m¿Tendrá habilidad suficiente para sobrevivir en el castillo?\033[0m\n\n");
 
     enterContinuar();
     setModoNarrativa(0);
