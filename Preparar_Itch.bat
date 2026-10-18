@@ -45,13 +45,32 @@ node game\web\parche_emscripten.js "%DEST_DIR%\index.js"
 echo [*] 3/5 Generando terminal.html ...
 copy /y "%DEST_DIR%\index.html" "%DEST_DIR%\terminal.html" >nul
 
-echo [*] 4/5 Copiando assets de audio (music.mp3 y SFX/) ...
-copy /y "game\assets\music.mp3" "%DEST_DIR%\music.mp3" >nul
+echo [*] 4/5 Copiando assets de audio (Musica, Efectos, SFX) ...
+copy /y "game\assets\*.mp3" "%DEST_DIR%\" >nul 2>nul
+copy /y "game\assets\*.wav" "%DEST_DIR%\" >nul 2>nul
+
+:: Generar aliases en minusculas para servidores web sensibles a mayusculas (Linux / Itch.io)
+if exist "%DEST_DIR%\Music.mp3" copy /y "%DEST_DIR%\Music.mp3" "%DEST_DIR%\music.mp3" >nul 2>nul
+if exist "%DEST_DIR%\Confirm.mp3" copy /y "%DEST_DIR%\Confirm.mp3" "%DEST_DIR%\confirm.mp3" >nul 2>nul
+if exist "%DEST_DIR%\NextOption.mp3" copy /y "%DEST_DIR%\NextOption.mp3" "%DEST_DIR%\nextoption.mp3" >nul 2>nul
+if exist "%DEST_DIR%\Volume.mp3" copy /y "%DEST_DIR%\Volume.mp3" "%DEST_DIR%\volume.mp3" >nul 2>nul
+
+:: Copiar carpeta SFX tanto como SFX como sfx
 if not exist "%DEST_DIR%\SFX" mkdir "%DEST_DIR%\SFX"
 xcopy /e /i /y "game\assets\SFX" "%DEST_DIR%\SFX" >nul
+if not exist "%DEST_DIR%\sfx" mkdir "%DEST_DIR%\sfx"
+xcopy /e /i /y "game\assets\SFX" "%DEST_DIR%\sfx" >nul
+
+:: Tambien asegurar subcarpeta assets/
+if not exist "%DEST_DIR%\assets" mkdir "%DEST_DIR%\assets"
+copy /y "game\assets\*.mp3" "%DEST_DIR%\assets\" >nul 2>nul
+if not exist "%DEST_DIR%\assets\SFX" mkdir "%DEST_DIR%\assets\SFX"
+xcopy /e /i /y "game\assets\SFX" "%DEST_DIR%\assets\SFX" >nul
+if not exist "%DEST_DIR%\assets\sfx" mkdir "%DEST_DIR%\assets\sfx"
+xcopy /e /i /y "game\assets\SFX" "%DEST_DIR%\assets\sfx" >nul
 
 echo [*] 5/5 Generando archivo ZIP comprimido para Itch.io ...
-powershell -NoProfile -Command "Compress-Archive -Path '%DEST_DIR%\*' -DestinationPath '%~dp0CastleCat_itch.zip' -Force; Copy-Item '%~dp0CastleCat_itch.zip' 'C:\Users\paucr\Desktop\CastleCat_itch.zip' -Force" >nul
+powershell -NoProfile -Command "Compress-Archive -Path '%DEST_DIR%\*' -DestinationPath '%~dp0CastleCat (Web).zip' -Force; Copy-Item '%~dp0CastleCat (Web).zip' 'C:\Users\paucr\Desktop\CastleCat (Web).zip' -Force" >nul
 
 echo/
 echo ========================================================
@@ -61,7 +80,7 @@ echo Carpeta descomprimida:
 echo   %DEST_DIR%
 echo/
 echo Archivo ZIP listo para subir a Itch.io:
-echo   %~dp0CastleCat_itch.zip
-echo   C:\Users\paucr\Desktop\CastleCat_itch.zip
+echo   %~dp0CastleCat (Web).zip
+echo   C:\Users\paucr\Desktop\CastleCat (Web).zip
 echo/
 pause

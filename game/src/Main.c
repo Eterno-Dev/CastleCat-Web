@@ -176,43 +176,102 @@ int main()
     int skill[3] = {0,0,0};
     int turno = 0;
     
-    /*INICIO JUEGO*/
-
-    //Intro del Juego (Menu, Selector de clase, Historia Inicial...)
-    introHistoriaJuego(nomJugador, &claseJugador);
-
-    //Bloque principal del Juego
-    for (i = 0; i < 1; i++)
+    /* BUCLE PRINCIPAL DEL JUEGO CON MENÚ Y GUARDADO */
+    while (1)
     {
-    	//Cambios de Fase con sus títulos
-        while (ok == 0)
+        int accion = menuIntro();
+
+        if (accion == 2) // JUGAR o NUEVA PARTIDA
+        {
+            // Resetear estado completo
+            definirItems(statsItem);
+            inicializaJugador(statsJugador);
+
+            plantaCastillo = 1;
+            entradaPlanta = 1;
+            fase = 1;
+            cambioPlanta = 1;
+            ok = 0;
+            finEvento = 0;
+            turno = 0;
+            g_solicitarMenu = 0;
+
+            arma1[0] = '\0';
+            arma2[0] = '\0';
+            skill[0] = 0; skill[1] = 0; skill[2] = 0;
+            g_enemigosDerrotados = 0;
+            g_tesorosAbiertos = 0;
+
+            // Reiniciar mapa base
+            for (int r = 0; r < 7; r++) {
+                for (int c = 0; c < 7; c++) {
+                    if (r == 0 || r == 6 || c == 0 || c == 6) map[r][c] = 6;
+                    else map[r][c] = 0;
+                    posicion[r][c] = 0;
+                }
+            }
+            posicion[1][1] = 1;
+
+            // Intro del juego y creación de personaje
+            introHistoriaJuego(nomJugador, &claseJugador);
+
+            // Cargar estadísticas iniciales según clase
+            atkIn = statsJugador[claseJugador].fueJugador;
+            atkMagIn = statsJugador[claseJugador].intJugador;
+            agiIn = statsJugador[claseJugador].agiJugador;
+            defIn = statsJugador[claseJugador].defJugador;
+
+            atk = 0;
+            atkMag = 0;
+            agi = 0;
+            def = 0;
+
+            hpMax = statsJugador[claseJugador].hpMax;
+            hp = hpMax;
+
+            mpMax = statsJugador[claseJugador].mpMax;
+            mp = mpMax;
+
+            stat[0] = atkIn; stat[1] = atkMagIn; stat[2] = agiIn; stat[3] = defIn;
+            statIn[0] = atk; statIn[1] = atkMag; statIn[2] = agi; statIn[3] = def;
+
+            g_hayPartida = 1;
+        }
+        else if (accion == 1) // CONTINUAR
+        {
+            g_solicitarMenu = 0;
+            limpiarPantalla();
+            // No reseteamos nada, se reanuda la partida con el estado actual
+        }
+
+        // Bucle de juego de la partida activa
+        while (ok == 0 && g_solicitarMenu == 0)
         {
             if(plantaCastillo == 1)
             {
-            	if(entradaPlanta == 1)
-                tituloPlantaDungeon(1, &entradaPlanta);
+                if(entradaPlanta == 1)
+                    tituloPlantaDungeon(1, &entradaPlanta);
                 fase = 1;
-
             }
 
             if(plantaCastillo > 1 && plantaCastillo < 5)
             {
-            	if(entradaPlanta == 0)
-                tituloPlantaDungeon(2, &entradaPlanta);
+                if(entradaPlanta == 0)
+                    tituloPlantaDungeon(2, &entradaPlanta);
                 fase = 2;
             }
 
             if(plantaCastillo > 4)
             {
-            	if(entradaPlanta == 1)
-                tituloPlantaDungeon(3, &entradaPlanta);
+                if(entradaPlanta == 1)
+                    tituloPlantaDungeon(3, &entradaPlanta);
                 fase = 3;
             }
 
-            //Generador de Habitaciones Aleatorias
+            // Generador de Habitaciones Aleatorias
             if(cambioPlanta == 1)
             {
-                for(x = 1; x < 6;x++)
+                for(x = 1; x < 6; x++)
                 {
                     for(y = 1; y < 6; y++)
                     {
@@ -226,90 +285,92 @@ int main()
                 cambioPlanta = 0;
             }
             
-            //Actualizar Estadísticas y Posición del Jugador en el Mapa
-            do
+            // Movimiento en el Mapa (solo si no estamos en medio de un evento)
+            if (finEvento == 0)
             {
-                stat[0] = atkIn;
-                stat[1] = atkMagIn;
-                stat[2] = agiIn;
-                stat[3] = defIn;
-                actualizarStatsEquipo(&atkIn, &atkMagIn, &agiIn, &defIn, statsItem, skill, arma1, arma2, &atk, &atkMag, &agi, &def);
-                statIn[0] = atk;
-                statIn[1] = atkMag;
-                statIn[2] = agi;
-                statIn[3] = def;
+                limpiarPantalla();
+                do
+                {
+                    stat[0] = atkIn;
+                    stat[1] = atkMagIn;
+                    stat[2] = agiIn;
+                    stat[3] = defIn;
+                    actualizarStatsEquipo(&atkIn, &atkMagIn, &agiIn, &defIn, statsItem, skill, arma1, arma2, &atk, &atkMag, &agi, &def);
+                    statIn[0] = atk;
+                    statIn[1] = atkMag;
+                    statIn[2] = agi;
+                    statIn[3] = def;
 
-                finEvento = 1;
+                    mostrarMapa(map, posicion, &tipoHabitacion);
+                    
+                    if (g_solicitarMenu) {
+                        break;
+                    }
 
-                mostrarMapa(map, posicion, &tipoHabitacion);
-                
-                if (tipoHabitacion == 0) {
-                    limpiarPantalla();
+                    if (tipoHabitacion == 0) {
+                        limpiarPantalla();
+                    }
+                } while (tipoHabitacion == 0);
+
+                if (g_solicitarMenu) {
+                    g_hayPartida = 1;
+                    break;
                 }
-            } while (tipoHabitacion == 0);
 
-			//Se encuentra un Evento (Enemigo o Tesoro)
-            evento();
-            turno = 0;
+                // Se encuentra un Evento (Enemigo o Tesoro)
+                finEvento = 1;
+                evento();
+                turno = 0;
+            }
 
-			//Se encuentra un Evento (Enemigo o Tesoro)
-            while (finEvento == 1)
+            // Se resuelve el Evento (Combate o Tesoro)
+            while (finEvento == 1 && g_solicitarMenu == 0)
             {
-                
-                //Se encuentra un Enemigo
+                // Se encuentra un Enemigo
                 if (tipoHabitacion == 1)
                 {
-                	//Se inician las estadisticas del enemigo y se selecciona según su fase
                     if(turno == 0)
                     {
-                        if(fase == 1)
-                        {
-                            enemigosFase = 1;
-                        }
-                        if(fase == 2)
-                        {
-                            enemigosFase = 4;
-                        }
-                        if(fase == 3)
-                        {
-                            enemigosFase = 7;
-                        }
+                        if(fase == 1) enemigosFase = 1;
+                        if(fase == 2) enemigosFase = 4;
+                        if(fase == 3) enemigosFase = 7;
 
                         escogerEnemigo(enemigoImagen, enemigoNombre, rand() % 3 + enemigosFase, &hpMaxEne, &ataqueEne);
                         hpEne = hpMaxEne;
                     }
 
                     combate(&hp, &hpEne, &hpMaxEne, &hpMax, &mp, &mpMax, ataqueEne, atk, atkMag, agi, def, skill, stat, enemigoImagen, enemigoNombre, claseJugador, nomJugador);
+                    if (g_solicitarMenu) break;
                     turno++;
 
-
-                    if (hpEne < 0 || hpEne == 0)
+                    if (hpEne <= 0)
                     {
                         hpEne = 0;
                         finEvento = 0;
                         vaciarHabitacion(map, posicion);
                         turno = 0;
+                        g_enemigosDerrotados++;
                     }
-                    if (hp < 0 || hp == 0) {
+                    if (hp <= 0) {
                         hp = 0;
                         ok = 1;
                         finEvento = 0;
+                        g_hayPartida = 0;
                         vaciarHabitacion(map, posicion);
-                        muerteJugador(nomJugador);
-                         // Finaliza el programa
+                        muerteJugador(nomJugador, claseJugador, plantaCastillo);
+                        break;
                     }
                 }
 
-                //Se encuentra un Tesoro
+                // Se encuentra un Tesoro
                 if (tipoHabitacion == 2)
                 {
                     habitacionTesoro(statsItem, fase);
-                    
                     vaciarHabitacion(map, posicion);
                     finEvento = 0;
                 }
 
-                //Se encuentra un Boss
+                // Se encuentra un Boss
                 if (tipoHabitacion == 3)
                 {
                     if(turno == 0)
@@ -319,9 +380,10 @@ int main()
                     }
 
                     combate(&hp, &hpEne, &hpMaxEne, &hpMax, &mp, &mpMax, ataqueEne, atk, atkMag, agi, def, skill, stat, enemigoImagen, enemigoNombre, claseJugador, nomJugador);
+                    if (g_solicitarMenu) break;
                     turno++;
 
-                    if (hpEne < 0 || hpEne == 0)
+                    if (hpEne <= 0)
                     {
                         hpEne = 0;
                         finEvento = 0;
@@ -329,46 +391,47 @@ int main()
                         cambioPlanta = 1;
                         plantaCastillo = plantaCastillo + 1;
                         turno = 0;
+                        g_enemigosDerrotados++;
 
-                        //Introducción Boss Final
                         if(plantaCastillo == 9)
                         {
-                          faseFinalSadowLord();
+                            faseFinalSadowLord();
                         }
-
-                        //Fin del Juego
                         else if (plantaCastillo > 9)
                         {
                             hp = 0;
                             ok = 1;
                             finEvento = 0;
+                            g_hayPartida = 0;
                             vaciarHabitacion(map, posicion);
-    						finDelJuego(nomJugador); //Fin del Juego
+                            finDelJuego(nomJugador, claseJugador, plantaCastillo, hp);
+                            break;
                         }
                     }
 
-                    if (hp < 0 || hp == 0) {
+                    if (hp <= 0) {
                         hp = 0;
                         ok = 1;
                         finEvento = 0;
+                        g_hayPartida = 0;
                         vaciarHabitacion(map, posicion);
-                        muerteJugador(nomJugador);
+                        muerteJugador(nomJugador, claseJugador, plantaCastillo);
+                        break;
                     }
                 }
-
-                
             }
 
-            inventarioJugador(statsItem, &hp, &hpMax, &atkIn, &atkMagIn, &agiIn, &defIn, nomJugador);
-            limpiarPantalla();
+            if (g_solicitarMenu) {
+                g_hayPartida = 1;
+                break;
+            }
+
+            if (ok == 0) {
+                inventarioJugador(statsItem, &hp, &hpMax, &atkIn, &atkMagIn, &agiIn, &defIn, nomJugador);
+                limpiarPantalla();
+            }
         }
     }
 
-    //Si tu vida llega a 0 mueres...
-    if (hp == 0)
-    {
-        muerteJugador(nomJugador);
-    }
-    
     return 0;
 }

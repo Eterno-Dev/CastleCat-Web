@@ -1,6 +1,6 @@
 #include <stdbool.h>
 
-void menuIntro();
+int menuIntro();
 void menuMusica();
 
 /* Título y Creditos */
@@ -55,7 +55,6 @@ void controlesJuego()
     printf("- \033[31mSi tu vida llega a 0, la partida acaba. ♥\033[0m \n");
 
     enterContinuar();
-    menuIntro();
 }
 
 /* Creditos del Juego */
@@ -72,7 +71,7 @@ void creditosJuego()
     
     printf("\033[1mAgradecimientos:\n\033[0m");
     printf("- José Fernando Pérez\n");
-    printf("- A ChatGPT y \033[1;34mAntigravity\033[0m por ayudar con\n los errores de código.\n\n");
+    printf("- ChatGPT y \033[1;34mAntigravity\033[0m\n\n");
 
     printf("\033[1mLenguaje utilizado:\033[0m\n");
     printf("- C\n\n");
@@ -90,7 +89,6 @@ void creditosJuego()
     printf("\033[1mCastleCat (C)\n");
 
     enterContinuar();
-    menuIntro();
 }
 
 /* Menu de Musica */
@@ -108,8 +106,11 @@ void menuMusica()
         printf("║  AJUSTES DE SONIDO  ║\n");
         printf("╚═════════════════════╝\033[0m\n\n");
         
-        if (opcion == 0) printf("\033[1;36m> "); else printf("  ");
-        printf("\033[1mVolumen Música:\033[0m [");
+        if (opcion == 0) {
+            printf("\033[1;37m> \033[1;31mVolumen Música:\033[0m [");
+        } else {
+            printf("  \033[1;37mVolumen Música:\033[0m [");
+        }
         for (int i = 0; i < 10; i++) {
             if (i < volumenGlobal / 10) {
                 printf("\033[1;32m|\033[0m");
@@ -119,8 +120,11 @@ void menuMusica()
         }
         printf("] %d%%\n\n", volumenGlobal);
 
-        if (opcion == 1) printf("\033[1;36m> "); else printf("  ");
-        printf("\033[1mVolumen Efectos:\033[0m [");
+        if (opcion == 1) {
+            printf("\033[1;37m> \033[1;31mVolumen Efectos:\033[0m [");
+        } else {
+            printf("  \033[1;37mVolumen Efectos:\033[0m [");
+        }
         for (int i = 0; i < 10; i++) {
             if (i < volumenSFX / 10) {
                 printf("\033[1;32m|\033[0m");
@@ -141,74 +145,94 @@ void menuMusica()
         {
             tecla = getch();
             if (tecla == 72) { // Up
-                if (opcion > 0) opcion--;
+                if (opcion > 0) { opcion--; reproducirSonido("next_option"); }
             } else if (tecla == 80) { // Down
-                if (opcion < 1) opcion++;
+                if (opcion < 1) { opcion++; reproducirSonido("next_option"); }
             } else if (tecla == 77) { // Right
                 if (opcion == 0) { if (volumenGlobal < 100) volumenGlobal += 10; }
                 else { if (volumenSFX < 100) volumenSFX += 10; }
+                reproducirSonido("volume");
             } else if (tecla == 75) { // Left
                 if (opcion == 0) { if (volumenGlobal > 0) volumenGlobal -= 10; }
                 else { if (volumenSFX > 0) volumenSFX -= 10; }
+                reproducirSonido("volume");
             }
         }
         else if (tecla == 'w' || tecla == 'W') 
         {
-            if (opcion > 0) opcion--;
+            if (opcion > 0) { opcion--; reproducirSonido("next_option"); }
         }
         else if (tecla == 's' || tecla == 'S') 
         {
-            if (opcion < 1) opcion++;
+            if (opcion < 1) { opcion++; reproducirSonido("next_option"); }
         }
         else if (tecla == 'd' || tecla == 'D') 
         {
             if (opcion == 0) { if (volumenGlobal < 100) volumenGlobal += 10; }
             else { if (volumenSFX < 100) volumenSFX += 10; }
+            reproducirSonido("volume");
         }
         else if (tecla == 'a' || tecla == 'A') 
         {
             if (opcion == 0) { if (volumenGlobal > 0) volumenGlobal -= 10; }
             else { if (volumenSFX > 0) volumenSFX -= 10; }
+            reproducirSonido("volume");
         }
-        else if (tecla == 13) 
+        else if (tecla == 13 || tecla == 9 || tecla == 27) 
         {
+            reproducirSonido("confirm");
             enMenu = false;
         }
 
         #ifdef __EMSCRIPTEN__
         EM_ASM({
             var audio = document.getElementById('bgm');
+            var vol = $0 / 100.0;
             if (audio) {
-                audio.volume = $0 / 100.0;
+                audio.volume = vol;
             }
             if (typeof window !== 'undefined') {
                 window.sfxVolume = $1 / 100.0;
             }
+            if (typeof updateVolumeUI === 'function') {
+                updateVolumeUI(vol);
+            }
         }, volumenGlobal, volumenSFX);
         #endif
     }
-    
-    // Al salir, volvemos al menú principal
-    menuIntro();
 }
 
 /* Menu del Juego */
-void menuIntro()
+int menuIntro()
 {
-    int opcion = 0;                 // índice de la opción actual
-    bool opcionSeleccionada = false;
-    const char *opciones[] = {
-        "JUGAR",
-        "CONTROLES",
-        "CREDITOS",
-        "MÚSICA"
-    };
-    int totalOpciones = 4;
+    int opcion = 0;
 
-    while (!opcionSeleccionada)
+    while (1)
     {
-        limpiarPantalla();  // Tu método propio
-        tituloJuego(true);      // Tu método propio (no lo cambio)
+        int totalOpciones;
+        const char *opciones[6];
+
+        if (g_hayPartida) {
+            opciones[0] = "CONTINUAR";
+            opciones[1] = "NUEVA PARTIDA";
+            opciones[2] = "CONTROLES";
+            opciones[3] = "RÉCORDS";
+            opciones[4] = "CREDITOS";
+            opciones[5] = "MÚSICA";
+            totalOpciones = 6;
+        } else {
+            opciones[0] = "JUGAR";
+            opciones[1] = "CONTROLES";
+            opciones[2] = "RÉCORDS";
+            opciones[3] = "CREDITOS";
+            opciones[4] = "MÚSICA";
+            totalOpciones = 5;
+        }
+
+        if (opcion >= totalOpciones) opcion = 0;
+
+        limpiarPantalla();
+        tituloJuego(true);
 
         // Dibujar opciones
         for (int i = 0; i < totalOpciones; i++)
@@ -233,48 +257,76 @@ void menuIntro()
             if (tecla == 72) // Flecha arriba
             {
                 opcion = (opcion - 1 + totalOpciones) % totalOpciones;
+                reproducirSonido("next_option");
             }
             else if (tecla == 80) // Flecha abajo
             {
                 opcion = (opcion + 1) % totalOpciones;
+                reproducirSonido("next_option");
             }
         }
         else if (tecla == 'w' || tecla == 'W') // W para subir
         {
             opcion = (opcion - 1 + totalOpciones) % totalOpciones;
+            reproducirSonido("next_option");
         }
         else if (tecla == 's' || tecla == 'S') // S para bajar
         {
             opcion = (opcion + 1) % totalOpciones;
+            reproducirSonido("next_option");
         }
-
-        else if (tecla == 13) // Enter
+        else if (tecla == 13 || tecla == 10) // Enter
         {
+            reproducirSonido("confirm");
             limpiarPantalla();
 
-            switch (opcion)
-            {
-                case 0:
-                    printP("\033[1m\033[31mCargando Juego...\033[0m\n");
-                    break;
-
-                case 1:
+            if (g_hayPartida) {
+                if (opcion == 0) {
+                    // CONTINUAR
+                    printP("\033[1m\033[32mReanudando Partida...\033[0m\n");
+                    #ifdef __EMSCRIPTEN__
+                    emscripten_sleep(400);
+                    #elif defined(_WIN32)
+                    Sleep(400);
+                    #endif
+                    limpiarPantalla();
+                    return 1;
+                } else if (opcion == 1) {
+                    // NUEVA PARTIDA
+                    printP("\033[1m\033[31mIniciando Nueva Partida...\033[0m\n");
+                    return 2;
+                } else if (opcion == 2) {
                     printP("\033[1m\033[31mCargando...\033[0m\n");
                     controlesJuego();
-                    break;
-
-                case 2:
+                } else if (opcion == 3) {
+                    printP("\033[1m\033[31mCargando Récords...\033[0m\n");
+                    mostrarRecords();
+                } else if (opcion == 4) {
                     printP("\033[1m\033[31mCargando...\033[0m\n");
                     creditosJuego();
-                    break;
-
-                case 3:
+                } else if (opcion == 5) {
                     printP("\033[1m\033[31mCargando Música...\033[0m\n");
                     menuMusica();
-                    break;
+                }
+            } else {
+                if (opcion == 0) {
+                    // JUGAR
+                    printP("\033[1m\033[31mCargando Juego...\033[0m\n");
+                    return 2;
+                } else if (opcion == 1) {
+                    printP("\033[1m\033[31mCargando...\033[0m\n");
+                    controlesJuego();
+                } else if (opcion == 2) {
+                    printP("\033[1m\033[31mCargando Récords...\033[0m\n");
+                    mostrarRecords();
+                } else if (opcion == 3) {
+                    printP("\033[1m\033[31mCargando...\033[0m\n");
+                    creditosJuego();
+                } else if (opcion == 4) {
+                    printP("\033[1m\033[31mCargando Música...\033[0m\n");
+                    menuMusica();
+                }
             }
-
-            opcionSeleccionada = true;
         }
     }
 }
@@ -325,6 +377,7 @@ void nombreGatoJugador(char *nombreJugador)
             if (i > 0) // Al menos un caracter
             {
                 nombreJugador[i] = '\0';
+                reproducirSonido("confirm");
                 break;
             }
         }
@@ -408,22 +461,27 @@ void claseJugador(int *jugadorClase, char *nombreJugador)
             if (tecla == 72) // Flecha arriba
             {
                 opcion = (opcion - 1 + totalClases) % totalClases;
+                reproducirSonido("next_option");
             }
             else if (tecla == 80) // Flecha abajo
             {
                 opcion = (opcion + 1) % totalClases;
+                reproducirSonido("next_option");
             }
         }
         else if (tecla == 'w' || tecla == 'W') // W para subir
         {
             opcion = (opcion - 1 + totalClases) % totalClases;
+            reproducirSonido("next_option");
         }
         else if (tecla == 's' || tecla == 'S') // S para bajar
         {
             opcion = (opcion + 1) % totalClases;
+            reproducirSonido("next_option");
         }
         else if (tecla == 13) // Enter
         {
+            reproducirSonido("confirm");
             switch (opcion)
             {
                 case 0:
@@ -453,12 +511,6 @@ void claseJugador(int *jugadorClase, char *nombreJugador)
 /* Recoge toda la introducción del juego */
 void introHistoriaJuego(char *nombreJugador, int *jugadorClase)
 {  
-    /* Limpia la Consola */
-    limpiarPantalla();
-    
-    /* Aparece Menu del Juego */
-    menuIntro();
-
     /* Limpia la Consola */
     limpiarPantalla();
     

@@ -1,12 +1,7 @@
-void muerteJugador(char nombreJugador[])
+void muerteJugador(char nombreJugador[], int claseJugador, int plantaCastillo)
 {
-    #ifdef __EMSCRIPTEN__
-    EM_ASM({
-        if (typeof window.playSound === 'function') {
-            window.playSound('death');
-        }
-    });
-    #endif
+    reproducirSonido("death");
+    temblorPantallaMuerte();
     printP("\033[31m!  H A S   M U E R T O  !\033[0m\n\n");
     printP("En ese preciso momento ");
     printf("\033[1m'%s'\033[0m", nombreJugador);
@@ -38,19 +33,31 @@ void muerteJugador(char nombreJugador[])
     printf("                        |/. |          -< o\n");
     printf("                        `\\ `0|     v      |O00\n");
     printf("                         .o0o|     |       OooO\n");
-    printf("                       _.oO0oOo  _/ \\____o0oO0oOo\n");
+    printf("                       _.oO0oOo  _/ \\____o0oO0oOo\n\n");
+
+    int puntos = calcularPuntuacion(plantaCastillo, 0);
+    int puesto = comprobarYGuardarRecord(nombreJugador, claseJugador, plantaCastillo, puntos);
+
+    printf("  \033[1;36m╔═══════════════════════════════════════════╗\033[0m\n");
+    printf("  \033[1;36m║           RESUMEN DE LA PARTIDA           ║\033[0m\n");
+    printf("  \033[1;36m╚═══════════════════════════════════════════╝\033[0m\n");
+    printf("    Planta alcanzada:       \033[1;33m%d\033[0m\n", plantaCastillo);
+    printf("    Enemigos derrotados:    \033[1;31m%d\033[0m\n", g_enemigosDerrotados);
+    printf("    Tesoros abiertos:       \033[1;32m%d\033[0m\n", g_tesorosAbiertos);
+    printf("    ─────────────────────────────────────────\n");
+    printf("    \033[1mPUNTUACIÓN TOTAL:\033[0m       \033[1;32m%d pts\033[0m\n", puntos);
+    if (puesto > 0) {
+        printf("    \033[1;33m★ ¡NUEVO RÉCORD! Entraste al Top %d (#%d) ★\033[0m\n", MAX_RECORDS, puesto);
+    }
+    printf("  \033[1;36m═══════════════════════════════════════════\033[0m\n");
 
     printP("\nPulsa \033[40mENTER\033[0;1;37m para volver al menú principal...\n");
     fflush(stdout);
     waitForEnter();
 
-    #ifdef __EMSCRIPTEN__
-    EM_ASM({
-        window.location.reload();
-    });
-    #else
-    exit(0);
-    #endif
+    g_hayPartida = 0;
+    g_solicitarMenu = 0;
+    limpiarPantalla();
 }
 
 void animacionFinal(int *frameAnimacion)
@@ -122,16 +129,17 @@ void animacionFinal(int *frameAnimacion)
             printf("| | | | | | |                       *\n");
             printf("|_| |_|_| |_|     *\n\n");
 
-            printP("\033[1m\033[31mGracias por Jugar...\033[0m");
-            exit(0);
+            printP("\033[1m\033[31mGracias por Jugar...\033[0m\n");
+            g_hayPartida = 0;
+            g_solicitarMenu = 0;
+            enterContinuar();
         break;
     }
 }
 
-void finDelJuego(char nombreJugador[])
+void finDelJuego(char nombreJugador[], int claseJugador, int plantaCastillo, int hpRestante)
 {
     int frameAnimacion = 1, i;
-    char enter;
 
     printP("\033[1mCon un último golpe certero, ");
     printf("\033[34m'%s'\033[0m", nombreJugador);
@@ -155,4 +163,22 @@ void finDelJuego(char nombreJugador[])
 
         animacionFinal(&frameAnimacion);
     }
+
+    int puntos = calcularPuntuacion(plantaCastillo, hpRestante) + 5000;
+    int puesto = comprobarYGuardarRecord(nombreJugador, claseJugador, plantaCastillo, puntos);
+
+    printf("  \033[1;33m╔═══════════════════════════════════════════╗\033[0m\n");
+    printf("  \033[1;33m║          ¡VICTORIA COMPLETADA!            ║\033[0m\n");
+    printf("  \033[1;33m╚═══════════════════════════════════════════╝\033[0m\n");
+    printf("    Enemigos derrotados:    \033[1;31m%d\033[0m\n", g_enemigosDerrotados);
+    printf("    Tesoros abiertos:       \033[1;32m%d\033[0m\n", g_tesorosAbiertos);
+    printf("    Bonus de Victoria:      \033[1;35m+5000 pts\033[0m\n");
+    printf("    ─────────────────────────────────────────\n");
+    printf("    \033[1mPUNTUACIÓN FINAL:\033[0m       \033[1;32m%d pts\033[0m\n", puntos);
+    if (puesto > 0) {
+        printf("    \033[1;33m★ ¡NUEVO RÉCORD! Entraste al Top %d (#%d) ★\033[0m\n", MAX_RECORDS, puesto);
+    }
+    printf("  \033[1;33m═══════════════════════════════════════════\033[0m\n");
+    enterContinuar();
+    g_hayPartida = 0;
 }

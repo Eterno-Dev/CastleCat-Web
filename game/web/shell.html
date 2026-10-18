@@ -26,6 +26,66 @@
             line-height: 1.1;
         }
 
+        /* Reglas individuales para pantalla completa (evita descarte de selectores por el navegador) */
+        :fullscreen #console {
+            font-size: 25px !important;
+            line-height: 1.25 !important;
+        }
+
+        :-webkit-full-screen #console {
+            font-size: 25px !important;
+            line-height: 1.25 !important;
+        }
+
+        :-moz-full-screen #console {
+            font-size: 25px !important;
+            line-height: 1.25 !important;
+        }
+
+        @media (display-mode: fullscreen) {
+            #console {
+                font-size: 25px !important;
+                line-height: 1.25 !important;
+            }
+        }
+
+        body.fullscreen-mode #console,
+        html.fullscreen-mode #console {
+            font-size: 25px !important;
+            line-height: 1.25 !important;
+        }
+
+        @keyframes screen-shake {
+            0% { transform: translate(0, 0); }
+            20% { transform: translate(-4px, 3px); }
+            40% { transform: translate(4px, -3px); }
+            60% { transform: translate(-3px, -2px); }
+            80% { transform: translate(3px, 3px); }
+            100% { transform: translate(0, 0); }
+        }
+
+        .shake {
+            animation: screen-shake 0.2s ease-in-out;
+        }
+
+        @keyframes screen-shake-death {
+            0% { transform: translate(0, 0) rotate(0deg) scale(1); filter: contrast(100%); }
+            10% { transform: translate(-20px, 16px) rotate(-3.5deg) scale(1.04); filter: contrast(180%) brightness(1.2); }
+            20% { transform: translate(22px, -18px) rotate(3.5deg) scale(1.06); filter: contrast(220%) hue-rotate(25deg); }
+            30% { transform: translate(-24px, 20px) rotate(-4deg) scale(1.05); filter: contrast(200%); }
+            40% { transform: translate(22px, -16px) rotate(3deg) scale(1.04); }
+            50% { transform: translate(-18px, 14px) rotate(-2.5deg) scale(1.03); filter: contrast(160%); }
+            60% { transform: translate(16px, -12px) rotate(2deg) scale(1.02); }
+            70% { transform: translate(-12px, 8px) rotate(-1.5deg) scale(1.01); }
+            80% { transform: translate(8px, -6px) rotate(1deg) scale(1.01); }
+            90% { transform: translate(-4px, 3px) rotate(-0.5deg) scale(1); }
+            100% { transform: translate(0, 0) rotate(0deg) scale(1); filter: contrast(100%); }
+        }
+
+        .shake-death {
+            animation: screen-shake-death 0.85s cubic-bezier(.36,.07,.19,.97) both;
+        }
+
         /* ANSI Colors */
         .ansi-30 {
             color: #000000;
@@ -114,90 +174,348 @@
             font-size: 24px;
             z-index: 100;
         }
+
+        #vol-control {
+            position: absolute;
+            top: 10px;
+            right: 48px;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(25, 25, 25, 0.85);
+            padding: 4px 10px;
+            border-radius: 20px;
+            border: 1px solid #444;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.5);
+            user-select: none;
+        }
+
+        #vol-slider {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 75px;
+            height: 5px;
+            background: #555;
+            border-radius: 3px;
+            outline: none;
+            cursor: pointer;
+            vertical-align: middle;
+        }
+
+        #vol-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 13px;
+            height: 13px;
+            border-radius: 50%;
+            background: #ff5555;
+            cursor: pointer;
+            box-shadow: 0 0 3px rgba(0,0,0,0.6);
+            transition: transform 0.1s;
+        }
+        #vol-slider::-webkit-slider-thumb:hover {
+            transform: scale(1.2);
+        }
+
+        #vol-slider::-moz-range-thumb {
+            width: 13px;
+            height: 13px;
+            border-radius: 50%;
+            background: #ff5555;
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 0 3px rgba(0,0,0,0.6);
+        }
     </style>
 </head>
 
 <body>
-    <button id="mute-btn" style="position:absolute; top:12px; right:50px; z-index:1000; background:transparent; color:white; border:none; cursor:pointer; display:flex; align-items:center; justify-content:center; padding:0;" onclick="toggleMute()"><svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="24" height="24"><path stroke-linecap="round" stroke-linejoin="round" d="M19.114 5.636a9 9 0 0 1 0 12.728M16.463 8.288a5.25 5.25 0 0 1 0 7.424M6.75 8.25l4.72-4.72a.75.75 0 0 1 1.28.53v15.88a.75.75 0 0 1-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.009 9.009 0 0 1 2.25 12c0-.83.112-1.633.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75Z" /></svg></button>
+    <div id="vol-control">
+        <button id="mute-btn" style="background:transparent; color:#ccc; border:none; cursor:pointer; display:flex; align-items:center; justify-content:center; padding:0;" onclick="toggleMute()" title="Silenciar / Activar">
+            <svg id="vol-icon" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="18" height="18"><path stroke-linecap="round" stroke-linejoin="round" d="M19.114 5.636a9 9 0 0 1 0 12.728M16.463 8.288a5.25 5.25 0 0 1 0 7.424M6.75 8.25l4.72-4.72a.75.75 0 0 1 1.28.53v15.88a.75.75 0 0 1-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.009 9.009 0 0 1 2.25 12c0-.83.112-1.633.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75Z" /></svg>
+        </button>
+        <input type="range" id="vol-slider" min="0" max="1" step="0.05" value="0.5" title="Ajustar volumen" oninput="setWebVolume(this.value)">
+    </div>
     <button id="fs-btn" style="position:absolute; top:12px; right:10px; z-index:1000; background:transparent; color:white; border:none; cursor:pointer; display:flex; align-items:center; justify-content:center; padding:0;" onclick="toggleFS()"><svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="24" height="24"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 3.75v4.5m0-4.5h4.5m-4.5 0L9 9M3.75 20.25v-4.5m0 4.5h4.5m-4.5 0L9 15M20.25 3.75h-4.5m4.5 0v4.5m0-4.5L15 9m5.25 11.25h-4.5m4.5 0v-4.5m0 4.5L15 15" /></svg></button>
     <audio id="bgm" loop>
+        <source src="Music.mp3" type="audio/mpeg">
         <source src="music.mp3" type="audio/mpeg">
+        <source src="assets/Music.mp3" type="audio/mpeg">
         <source src="assets/music.mp3" type="audio/mpeg">
+        <source src="../assets/Music.mp3" type="audio/mpeg">
         <source src="../assets/music.mp3" type="audio/mpeg">
     </audio>
     <script>
         window.sfxVolume = 0.5;
         window.sfxMuted = false;
+        var previousVolume = 0.5;
+
+        // Set initial BGM volume to 50%
+        var bgmInit = document.getElementById('bgm');
+        if (bgmInit) {
+            bgmInit.volume = 0.5;
+        }
         
         window.playSound = function(type) {
             if (window.sfxMuted) return;
             
-            var filename = "";
-            if (type === 'hit') {
-                filename = 'sfx_hit_' + (Math.floor(Math.random() * 3) + 1) + '.wav';
-            } else if (type === 'chest') {
-                filename = 'sfx_chest_' + (Math.floor(Math.random() * 3) + 1) + '.wav';
-            } else if (type === 'atk_basic') {
-                filename = 'sfx_atk_basic_' + (Math.floor(Math.random() * 3) + 1) + '.wav';
-            } else if (type === 'atk_str') {
-                filename = 'sfx_atk_str_' + (Math.floor(Math.random() * 2) + 1) + '.wav';
-            } else if (type === 'atk_mag') {
-                filename = 'sfx_atk_mag_' + (Math.floor(Math.random() * 2) + 1) + '.wav';
-            } else if (type === 'atk_agi') {
-                filename = 'sfx_atk_agi_' + (Math.floor(Math.random() * 2) + 1) + '.wav';
+            var pathsToTry = [];
+            if (type === 'confirm') {
+                pathsToTry = [
+                    "Confirm.mp3",
+                    "confirm.mp3",
+                    "assets/Confirm.mp3",
+                    "assets/confirm.mp3",
+                    "../assets/Confirm.mp3"
+                ];
+            } else if (type === 'next_option') {
+                pathsToTry = [
+                    "NextOption.mp3",
+                    "nextoption.mp3",
+                    "assets/NextOption.mp3",
+                    "assets/nextoption.mp3",
+                    "../assets/NextOption.mp3"
+                ];
+            } else if (type === 'volume' || type === 'less_volume' || type === 'more_volume') {
+                pathsToTry = [
+                    "Volume.mp3",
+                    "volume.mp3",
+                    "assets/Volume.mp3",
+                    "assets/volume.mp3",
+                    "../assets/Volume.mp3"
+                ];
             } else {
-                filename = 'sfx_' + type + '.wav';
+                var filename = "";
+                if (type === 'hit') {
+                    filename = 'sfx_hit_' + (Math.floor(Math.random() * 3) + 1) + '.wav';
+                } else if (type === 'chest') {
+                    filename = 'sfx_chest_' + (Math.floor(Math.random() * 3) + 1) + '.wav';
+                } else if (type === 'atk_basic') {
+                    filename = 'sfx_atk_basic_' + (Math.floor(Math.random() * 3) + 1) + '.wav';
+                } else if (type === 'atk_str') {
+                    filename = 'sfx_atk_str_' + (Math.floor(Math.random() * 2) + 1) + '.wav';
+                } else if (type === 'atk_mag') {
+                    filename = 'sfx_atk_mag_' + (Math.floor(Math.random() * 2) + 1) + '.wav';
+                } else if (type === 'atk_agi') {
+                    filename = 'sfx_atk_agi_' + (Math.floor(Math.random() * 2) + 1) + '.wav';
+                } else {
+                    filename = 'sfx_' + type + '.wav';
+                }
+                pathsToTry = [
+                    "SFX/" + filename,
+                    "sfx/" + filename,
+                    "assets/SFX/" + filename,
+                    "assets/sfx/" + filename,
+                    "../assets/SFX/" + filename,
+                    filename
+                ];
             }
             
-            var pathsToTry = ["SFX/" + filename, "assets/SFX/" + filename, "../assets/SFX/" + filename];
             function tryPlay(idx) {
                 if (idx >= pathsToTry.length) return;
-                var audio = new Audio(pathsToTry[idx]);
-                audio.volume = window.sfxVolume;
-                audio.play().catch(function(e) {
-                    tryPlay(idx + 1);
-                });
+                var audio = new Audio();
+                audio.src = pathsToTry[idx];
+                audio.volume = (typeof window.sfxVolume === 'number') ? window.sfxVolume : 0.5;
+                var p = audio.play();
+                if (p && typeof p.catch === 'function') {
+                    p.catch(function(e) {
+                        tryPlay(idx + 1);
+                    });
+                }
             }
             tryPlay(0);
         };
 
+        window.screenShake = function(heavy) {
+            var c = document.getElementById('console');
+            if (!c) return;
+            c.classList.remove('shake');
+            c.classList.remove('shake-death');
+            void c.offsetWidth; // trigger reflow
+            if (heavy) {
+                c.classList.add('shake-death');
+                setTimeout(function() {
+                    c.classList.remove('shake-death');
+                }, 900);
+            } else {
+                c.classList.add('shake');
+                setTimeout(function() {
+                    c.classList.remove('shake');
+                }, 250);
+            }
+        };
+
+        function setWebVolume(val) {
+            var v = parseFloat(val);
+            if (isNaN(v)) v = 0.5;
+            var bgm = document.getElementById('bgm');
+            if (bgm) {
+                bgm.volume = v;
+                if (v > 0) bgm.muted = false;
+            }
+            window.sfxVolume = v;
+            window.sfxMuted = (v <= 0);
+            updateVolumeUI(v);
+            tryStartAudio();
+        }
+
+        function updateVolumeUI(v) {
+            var btn = document.getElementById('mute-btn');
+            var slider = document.getElementById('vol-slider');
+            if (slider && Math.abs(parseFloat(slider.value) - v) > 0.01) {
+                slider.value = v;
+            }
+            if (!btn) return;
+            if (v <= 0 || window.sfxMuted) {
+                btn.innerHTML = '<svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="18" height="18"><path stroke-linecap="round" stroke-linejoin="round" d="M11.25 15.352 15 11.603m0 0 3.75-3.75M15 11.603l3.75 3.75m-3.75-3.75-3.75-3.75M6.75 8.25l4.72-4.72a.75.75 0 0 1 1.28.53v15.88a.75.75 0 0 1-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.009 9.009 0 0 1 2.25 12c0-.83.112-1.633.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75Z" /></svg>';
+            } else {
+                btn.innerHTML = '<svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="18" height="18"><path stroke-linecap="round" stroke-linejoin="round" d="M19.114 5.636a9 9 0 0 1 0 12.728M16.463 8.288a5.25 5.25 0 0 1 0 7.424M6.75 8.25l4.72-4.72a.75.75 0 0 1 1.28.53v15.88a.75.75 0 0 1-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.009 9.009 0 0 1 2.25 12c0-.83.112-1.633.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75Z" /></svg>';
+            }
+        }
+
         function toggleMute() {
             var bgm = document.getElementById('bgm');
-            var btn = document.getElementById('mute-btn');
-            bgm.muted = !bgm.muted;
-            window.sfxMuted = bgm.muted;
-            
-            if (bgm.muted) {
-                btn.innerHTML = '<svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="24" height="24"><path stroke-linecap="round" stroke-linejoin="round" d="M11.25 15.352 15 11.603m0 0 3.75-3.75M15 11.603l3.75 3.75m-3.75-3.75-3.75-3.75M6.75 8.25l4.72-4.72a.75.75 0 0 1 1.28.53v15.88a.75.75 0 0 1-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.009 9.009 0 0 1 2.25 12c0-.83.112-1.633.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75Z" /></svg>';
+            if (window.sfxMuted || (bgm && bgm.muted) || window.sfxVolume <= 0) {
+                var target = previousVolume > 0 ? previousVolume : 0.5;
+                if (bgm) {
+                    bgm.muted = false;
+                    bgm.volume = target;
+                }
+                window.sfxMuted = false;
+                window.sfxVolume = target;
+                updateVolumeUI(target);
+                tryStartAudio();
             } else {
-                btn.innerHTML = '<svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="24" height="24"><path stroke-linecap="round" stroke-linejoin="round" d="M19.114 5.636a9 9 0 0 1 0 12.728M16.463 8.288a5.25 5.25 0 0 1 0 7.424M6.75 8.25l4.72-4.72a.75.75 0 0 1 1.28.53v15.88a.75.75 0 0 1-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.009 9.009 0 0 1 2.25 12c0-.83.112-1.633.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75Z" /></svg>';
-            }
-            // Ensure audio is playing if they unmute via button and haven't pressed keys yet
-            if (!bgm.paused === false && !bgm.muted) {
-                bgm.play().catch(e => {});
+                var cur = bgm ? bgm.volume : window.sfxVolume;
+                if (cur > 0) previousVolume = cur;
+                if (bgm) {
+                    bgm.muted = true;
+                    bgm.volume = 0;
+                }
+                window.sfxMuted = true;
+                window.sfxVolume = 0;
+                updateVolumeUI(0);
             }
         }
         
-        function toggleFS() {
-            var bgm = document.getElementById('bgm');
-            if (bgm.paused) bgm.play().catch(e => console.log('Audio autoplay prevented'));
+        var ICON_ENTER_FS = '<svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="24" height="24"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 3.75v4.5m0-4.5h4.5m-4.5 0L9 9M3.75 20.25v-4.5m0 4.5h4.5m-4.5 0L9 15M20.25 3.75h-4.5m4.5 0v4.5m0-4.5L15 9m5.25 11.25h-4.5m4.5 0v-4.5m0 4.5L15 15" /></svg>';
+        var ICON_EXIT_FS = '<svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="24" height="24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 9V4.5M9 9H4.5M9 9 3.75 3.75M9 15v4.5M9 15H4.5M9 15l-5.25 5.25M15 9h4.5M15 9V4.5M15 9l5.25-5.25M15 15h4.5M15 15v4.5m0-4.5 5.25 5.25" /></svg>';
+
+        function isFullscreen() {
+            var standardFS = !!(
+                document.fullscreenElement ||
+                document.webkitFullscreenElement ||
+                document.mozFullScreenElement ||
+                document.msFullscreenElement
+            );
+            if (standardFS) return true;
+
+            if (window.matchMedia && window.matchMedia('(display-mode: fullscreen)').matches) {
+                return true;
+            }
+
+            var wDiff = Math.abs(window.innerWidth - screen.width);
+            var hDiff = Math.abs(window.innerHeight - screen.height);
+            if (wDiff <= 35 && hDiff <= 35) {
+                return true;
+            }
+
+            return false;
+        }
+
+        function updateFullscreenUI() {
+            var inFS = isFullscreen();
             var btn = document.getElementById('fs-btn');
-            if (!document.fullscreenElement) {
-                document.documentElement.requestFullscreen().catch(err => console.log(err));
-                btn.innerHTML = '<svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="24" height="24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" /></svg>';
+            var consoleDiv = document.getElementById('console');
+
+            if (inFS) {
+                document.body.classList.add('fullscreen-mode');
+                document.documentElement.classList.add('fullscreen-mode');
+                if (consoleDiv) {
+                    var calcSize = Math.min(26, Math.max(22, Math.floor(window.innerHeight / 40)));
+                    consoleDiv.style.fontSize = calcSize + 'px';
+                    consoleDiv.style.lineHeight = '1.25';
+                    consoleDiv.scrollTop = consoleDiv.scrollHeight;
+                }
+                if (btn) {
+                    btn.innerHTML = ICON_EXIT_FS;
+                    btn.title = "Salir de pantalla completa";
+                }
             } else {
-                if (document.exitFullscreen) {
-                    document.exitFullscreen();
-                    btn.innerHTML = '<svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="24" height="24"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 3.75v4.5m0-4.5h4.5m-4.5 0L9 9M3.75 20.25v-4.5m0 4.5h4.5m-4.5 0L9 15M20.25 3.75h-4.5m4.5 0v4.5m0-4.5L15 9m5.25 11.25h-4.5m4.5 0v-4.5m0 4.5L15 15" /></svg>';
+                document.body.classList.remove('fullscreen-mode');
+                document.documentElement.classList.remove('fullscreen-mode');
+                if (consoleDiv) {
+                    consoleDiv.style.fontSize = '16px';
+                    consoleDiv.style.lineHeight = '1.1';
+                    consoleDiv.scrollTop = consoleDiv.scrollHeight;
+                }
+                if (btn) {
+                    btn.innerHTML = ICON_ENTER_FS;
+                    btn.title = "Pantalla completa";
                 }
             }
         }
-        
-        // Start audio on first keydown if not already playing
-        window.addEventListener('keydown', function() {
+
+        function toggleFS() {
             var bgm = document.getElementById('bgm');
-            if (bgm.paused) bgm.play().catch(e => {});
-        }, { once: true });
+            if (bgm && bgm.paused) bgm.play().catch(e => console.log('Audio autoplay prevented'));
+            
+            if (!isFullscreen()) {
+                var el = document.documentElement;
+                var rfs = el.requestFullscreen || el.webkitRequestFullscreen || el.mozRequestFullScreen || el.msRequestFullscreen;
+                if (rfs) {
+                    var promise = rfs.call(el);
+                    if (promise && promise.catch) {
+                        promise.catch(function(err) {
+                            console.log('Error al entrar a pantalla completa:', err);
+                            updateFullscreenUI();
+                        });
+                    }
+                }
+            } else {
+                var efs = document.exitFullscreen || document.webkitExitFullscreen || document.mozCancelFullScreen || document.msExitFullscreen;
+                if (efs) {
+                    var promise = efs.call(document);
+                    if (promise && promise.catch) {
+                        promise.catch(function(err) {
+                            console.log('Error al salir de pantalla completa:', err);
+                            updateFullscreenUI();
+                        });
+                    }
+                }
+            }
+            setTimeout(updateFullscreenUI, 100);
+            setTimeout(updateFullscreenUI, 350);
+        }
+
+        ['fullscreenchange', 'webkitfullscreenchange', 'mozfullscreenchange', 'MSFullscreenChange'].forEach(function(evt) {
+            document.addEventListener(evt, updateFullscreenUI);
+        });
+        window.addEventListener('resize', updateFullscreenUI);
+        document.addEventListener('DOMContentLoaded', updateFullscreenUI);
+        window.addEventListener('load', updateFullscreenUI);
+        updateFullscreenUI();
+        
+        // Start audio on first interaction if not already playing
+        function tryStartAudio() {
+            var bgm = document.getElementById('bgm');
+            var slider = document.getElementById('vol-slider');
+            var curVol = slider ? parseFloat(slider.value) : 0.5;
+            if (bgm) {
+                bgm.volume = curVol;
+                if (bgm.paused && !bgm.muted && window.sfxVolume > 0) {
+                    bgm.play().catch(function(e) {});
+                }
+            }
+        }
+        window.addEventListener('keydown', function(e) {
+            if (e.key === 'Tab') {
+                e.preventDefault();
+            }
+            tryStartAudio();
+        });
+        window.addEventListener('click', tryStartAudio);
     </script>
     <div id="loading">Loading Castle Cat...</div>
     <div id="console"></div>

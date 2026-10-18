@@ -25,7 +25,11 @@ if (js.includes("INYECCIÓN NATIVA: MODO ESCRITURA")) {
     if (js.includes("_fd_write") && js.includes("printCharBuffers")) {
         const modernPatch = `
       // === INYECCIÓN NATIVA: MODO ESCRITURA EN TIEMPO REAL ===
-      if (printCharBuffers && printCharBuffers[fd] && printCharBuffers[fd].length > 0) {
+      if (typeof window !== 'undefined' && window.aboutToType && printCharBuffers && printCharBuffers[fd] && printCharBuffers[fd].length === 2 && printCharBuffers[fd][0] === 45 && printCharBuffers[fd][1] === 32) {
+        window.isTypingName = true;
+        window.aboutToType = false;
+      }
+      if (typeof window !== 'undefined' && window.isTypingName && printCharBuffers && printCharBuffers[fd] && printCharBuffers[fd].length > 0) {
         (fd === 1 ? out : err)(UTF8ArrayToString(printCharBuffers[fd]));
         printCharBuffers[fd].length = 0;
       }

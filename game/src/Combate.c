@@ -18,15 +18,26 @@ void combate(int* hp, int* hpEne, int* hpMaxEne, int* hpMax, int* mana, int* mpM
         int key = getch();
         if (key == 224) {
             key = getch();
-            if (key == 72) opcionActiva = (opcionActiva - 1 + 3) % 3; // Up
-            else if (key == 80) opcionActiva = (opcionActiva + 1) % 3; // Down
+            if (key == 72) {
+                opcionActiva = (opcionActiva - 1 + 3) % 3; // Up
+                reproducirSonido("next_option");
+            } else if (key == 80) {
+                opcionActiva = (opcionActiva + 1) % 3; // Down
+                reproducirSonido("next_option");
+            }
         } else if (key == 'w' || key == 'W') {
             opcionActiva = (opcionActiva - 1 + 3) % 3;
+            reproducirSonido("next_option");
         } else if (key == 's' || key == 'S') {
             opcionActiva = (opcionActiva + 1) % 3;
+            reproducirSonido("next_option");
+        } else if (key == 9) { // Solo TAB: volver al menú y guardar
+            g_solicitarMenu = 1;
+            return;
         }
         
         if (key == 13 || key == 10) { // Enter
+            reproducirSonido("confirm");
             resp = opcionActiva;
             if (id[resp] == 0 && resp > 0) {
                 printf("\n\033[1;31mTe falta equipar el arma para poder realizar el ataque.\033[0m\n");
@@ -45,17 +56,15 @@ void combate(int* hp, int* hpEne, int* hpMaxEne, int* hpMax, int* mana, int* mpM
         }
 	}
 
-    #ifdef __EMSCRIPTEN__
     if (id[resp] == 0) {
-        EM_ASM({ if (typeof window.playSound === 'function') window.playSound('atk_basic'); });
+        reproducirSonido("atk_basic");
     } else if (tipox == 1) {
-        EM_ASM({ if (typeof window.playSound === 'function') window.playSound('atk_str'); });
+        reproducirSonido("atk_str");
     } else if (tipox == 2) {
-        EM_ASM({ if (typeof window.playSound === 'function') window.playSound('atk_mag'); });
+        reproducirSonido("atk_mag");
     } else if (tipox == 3) {
-        EM_ASM({ if (typeof window.playSound === 'function') window.playSound('atk_agi'); });
+        reproducirSonido("atk_agi");
     }
-    #endif
 
 	switch (tipox) {
 	case 1:
@@ -94,14 +103,8 @@ void combate(int* hp, int* hpEne, int* hpMaxEne, int* hpMax, int* mana, int* mpM
 	    printf("\033[0m%i - \033[1;3;35m ♢ %i \033[0;1m = %i\n", atkEne, def, atkEne - def);
 	    
 	    printf("Recibes %i puntos de daño.\n", atkEne - def);
-        
-        #ifdef __EMSCRIPTEN__
-        EM_ASM({
-            if (typeof window.playSound === 'function') {
-                window.playSound('hit');
-            }
-        });
-        #endif
+        reproducirSonido("hit");
+        temblorPantalla();
 	}
 	else
 	{

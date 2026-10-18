@@ -398,13 +398,8 @@ void habitacionTesoro(TItem statsItem[], int habitacionTesoro)
     fflush(stdout);
     waitForEnter();
     
-    #ifdef __EMSCRIPTEN__
-    EM_ASM({
-        if (typeof window.playSound === 'function') {
-            window.playSound('chest');
-        }
-    });
-    #endif
+    reproducirSonido("chest");
+    g_tesorosAbiertos++;
     
     limpiarPantalla();
 
@@ -755,13 +750,23 @@ void opcionesInventarioJugador(TItem statsItem[], int accederObjeto, int *atk, i
         int key = getch();
         if (key == 224) {
             key = getch();
-            if (key == 72) opcionActiva = (opcionActiva - 1 + numOpciones) % numOpciones; // Up
-            else if (key == 80) opcionActiva = (opcionActiva + 1) % numOpciones; // Down
+            if (key == 72) {
+                opcionActiva = (opcionActiva - 1 + numOpciones) % numOpciones; // Up
+                reproducirSonido("next_option");
+            } else if (key == 80) {
+                opcionActiva = (opcionActiva + 1) % numOpciones; // Down
+                reproducirSonido("next_option");
+            }
         } else if (key == 'w' || key == 'W') {
             opcionActiva = (opcionActiva - 1 + numOpciones) % numOpciones;
+            reproducirSonido("next_option");
         } else if (key == 's' || key == 'S') {
             opcionActiva = (opcionActiva + 1) % numOpciones;
+            reproducirSonido("next_option");
+        } else if (key == 9 || key == 27) { // TAB o ESC: volver
+            salir = true;
         } else if (key == 13 || key == 10) { // Enter
+            reproducirSonido("confirm");
             if (opcionActiva == 0) {
                 if (statsItem[accederObjeto].numItemsInventario == -1) {
                     desequiparItemInventario(statsItem, accederObjeto);
@@ -850,13 +855,23 @@ int inventarioJugador(TItem statsItem[], int *hp, int *hpMax, int *atk, int *mag
         int key = getch();
         if (key == 224) {
             key = getch();
-            if (key == 72) opcionActiva = (opcionActiva - 1 + numOpciones) % numOpciones; // Up
-            else if (key == 80) opcionActiva = (opcionActiva + 1) % numOpciones; // Down
+            if (key == 72) {
+                opcionActiva = (opcionActiva - 1 + numOpciones) % numOpciones; // Up
+                reproducirSonido("next_option");
+            } else if (key == 80) {
+                opcionActiva = (opcionActiva + 1) % numOpciones; // Down
+                reproducirSonido("next_option");
+            }
         } else if (key == 'w' || key == 'W') {
             opcionActiva = (opcionActiva - 1 + numOpciones) % numOpciones;
+            reproducirSonido("next_option");
         } else if (key == 's' || key == 'S') {
             opcionActiva = (opcionActiva + 1) % numOpciones;
+            reproducirSonido("next_option");
+        } else if (key == 9 || key == 27) { // TAB o ESC: volver
+            salir = true;
         } else if (key == 13 || key == 10) { // Enter
+            reproducirSonido("confirm");
             if (opcionActiva == numAvailable) {
                 salir = true;
             } else {

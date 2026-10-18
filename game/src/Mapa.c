@@ -103,6 +103,11 @@ void moverseMapa(int map[7][7], int pos[7][7], int x, int y)
             }
         }
 
+        if (tecla == 9) { // Solo TAB: volver al menú y guardar
+            g_solicitarMenu = 1;
+            return;
+        }
+
     } while (tecla != 'w' && tecla != 'a' && tecla != 's' && tecla != 'd' &&
              tecla != 'W' && tecla != 'A' && tecla != 'S' && tecla != 'D');
 

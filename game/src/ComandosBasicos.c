@@ -1,12 +1,53 @@
 #include <stdio.h>
-
-int getch(void); 
+#include <string.h>
 
 #ifdef __EMSCRIPTEN__
     #include <emscripten.h>
     #include <emscripten/html5.h>
     #include <ctype.h>
+#endif
 
+int getch(void); 
+
+// Global variables for menu/pause and game state
+volatile int g_solicitarMenu = 0;
+volatile int g_hayPartida = 0;
+
+// Estadísticas de la partida actual para puntuación
+volatile int g_enemigosDerrotados = 0;
+volatile int g_tesorosAbiertos = 0;
+
+void reproducirSonido(const char* tipo) {
+#ifdef __EMSCRIPTEN__
+    EM_ASM({
+        if (typeof window.playSound === 'function') {
+            window.playSound(UTF8ToString($0));
+        }
+    }, tipo);
+#endif
+}
+
+void temblorPantalla(void) {
+#ifdef __EMSCRIPTEN__
+    EM_ASM({
+        if (typeof window.screenShake === 'function') {
+            window.screenShake(false);
+        }
+    });
+#endif
+}
+
+void temblorPantallaMuerte(void) {
+#ifdef __EMSCRIPTEN__
+    EM_ASM({
+        if (typeof window.screenShake === 'function') {
+            window.screenShake(true);
+        }
+    });
+#endif
+}
+
+#ifdef __EMSCRIPTEN__
     // Global variable to store the last key pressed
     volatile int last_key = 0;
 
@@ -17,6 +58,10 @@ int getch(void);
             last_key = 13; // Enter
         } else if (strcmp(e->key, "Backspace") == 0) {
             last_key = 8; // Backspace
+        } else if (strcmp(e->key, "Tab") == 0) {
+            last_key = 9; // Tab
+        } else if (strcmp(e->key, "Escape") == 0) {
+            last_key = 27; // Escape
         } else if (strcmp(e->key, "ArrowUp") == 0) {
             last_key = 'w';
         } else if (strcmp(e->key, "ArrowDown") == 0) {
@@ -50,7 +95,8 @@ int getch(void);
        int key = 0;
        do {
            key = getch();
-       } while (key != 13);
+       } while (key != 13 && key != 10);
+       reproducirSonido("confirm");
        // Clear any buffered input
        last_key = 0;
     }
@@ -278,13 +324,191 @@ void evento()
 /* Enter Para Pasar Planta */
 void pasarDePlanta()
 {
-    char enter;
-    
     printP("\n\033[1mPresiona \033[40mENTER\033[0;1;37m Para Entrar a la Sala... \033[0m\n");
     fflush(stdout);
     waitForEnter();
     
     limpiarPantalla();
+}
+
+/* ========================================================
+   SISTEMA DE PUNTUACIÓN Y SALÓN DE LA FAMA (RÉCORDS)
+   ======================================================== */
+
+#define MAX_RECORDS 5
+
+typedef struct {
+    char nombre[24];
+    int clase;
+    int planta;
+    int puntuacion;
+} TRecord;
+
+static TRecord g_records[MAX_RECORDS];
+static int g_numRecords = 0;
+static int g_recordsCargados = 0;
+
+int calcularPuntuacion(int planta, int hpRestante) {
+    int puntos = (planta * 1000) + (g_enemigosDerrotados * 250) + (g_tesorosAbiertos * 150) + (hpRestante * 50);
+    if (puntos < 0) puntos = 0;
+    return puntos;
+}
+
+void cargarRecords(void) {
+    if (g_recordsCargados) return;
+    g_numRecords = 0;
+#ifdef __EMSCRIPTEN__
+    EM_ASM({
+        try {
+            var raw = localStorage.getItem('castlecat_records');
+            if (raw) {
+                var arr = JSON.parse(raw);
+                if (Array.isArray(arr)) {
+                    // Limpiar datos de prueba anteriores si existen
+                    var esDummy = arr.some(function(r) {
+                        return (r.nombre === 'Michi' && r.puntuacion === 6200) ||
+                               (r.nombre === 'Garfield' && r.puntuacion === 1100);
+                    });
+                    if (esDummy) {
+                        localStorage.removeItem('castlecat_records');
+                        arr = [];
+                    }
+                    var count = Math.min(arr.length, 5);
+                    setValue($1, count, 'i32');
+                    for (var i = 0; i < count; i++) {
+                        stringToUTF8(arr[i].nombre || "", $0 + i * 36, 24);
+                        setValue($0 + i * 36 + 24, arr[i].clase || 0, 'i32');
+                        setValue($0 + i * 36 + 28, arr[i].planta || 1, 'i32');
+                        setValue($0 + i * 36 + 32, arr[i].puntuacion || 0, 'i32');
+                    }
+                }
+            } else {
+                setValue($1, 0, 'i32');
+            }
+        } catch(e) {
+            setValue($1, 0, 'i32');
+        }
+    }, g_records, &g_numRecords);
+#else
+    FILE *f = fopen("records.dat", "rb");
+    if (f) {
+        if (fread(&g_numRecords, sizeof(int), 1, f) == 1) {
+            if (g_numRecords > MAX_RECORDS) g_numRecords = MAX_RECORDS;
+            if (g_numRecords > 0) {
+                fread(g_records, sizeof(TRecord), g_numRecords, f);
+            }
+        } else {
+            g_numRecords = 0;
+        }
+        fclose(f);
+    }
+#endif
+    g_recordsCargados = 1;
+}
+
+void guardarRecords(void) {
+#ifdef __EMSCRIPTEN__
+    EM_ASM({
+        try {
+            var arr = [];
+            var count = $1;
+            for (var i = 0; i < count; i++) {
+                var ptr = $0 + i * 36;
+                var nom = UTF8ToString(ptr);
+                var cla = getValue(ptr + 24, 'i32');
+                var pla = getValue(ptr + 28, 'i32');
+                var pts = getValue(ptr + 32, 'i32');
+                arr.push({ nombre: nom, clase: cla, planta: pla, puntuacion: pts });
+            }
+            localStorage.setItem('castlecat_records', JSON.stringify(arr));
+        } catch(e) {}
+    }, g_records, g_numRecords);
+#else
+    FILE *f = fopen("records.dat", "wb");
+    if (f) {
+        fwrite(&g_numRecords, sizeof(int), 1, f);
+        if (g_numRecords > 0) {
+            fwrite(g_records, sizeof(TRecord), g_numRecords, f);
+        }
+        fclose(f);
+    }
+#endif
+}
+
+int comprobarYGuardarRecord(const char* nombre, int clase, int planta, int puntuacion) {
+    cargarRecords();
+    if (puntuacion <= 0) return 0;
+
+    int pos = -1;
+    if (g_numRecords < MAX_RECORDS) {
+        pos = g_numRecords;
+        for (int i = 0; i < g_numRecords; i++) {
+            if (puntuacion > g_records[i].puntuacion) {
+                pos = i;
+                break;
+            }
+        }
+        for (int j = g_numRecords; j > pos; j--) {
+            g_records[j] = g_records[j - 1];
+        }
+        g_numRecords++;
+    } else {
+        for (int i = 0; i < MAX_RECORDS; i++) {
+            if (puntuacion > g_records[i].puntuacion) {
+                pos = i;
+                break;
+            }
+        }
+        if (pos != -1) {
+            for (int j = MAX_RECORDS - 1; j > pos; j--) {
+                g_records[j] = g_records[j - 1];
+            }
+        }
+    }
+
+    if (pos != -1) {
+        strncpy(g_records[pos].nombre, nombre, 23);
+        g_records[pos].nombre[23] = '\0';
+        g_records[pos].clase = clase;
+        g_records[pos].planta = planta;
+        g_records[pos].puntuacion = puntuacion;
+        guardarRecords();
+        return pos + 1; // Posición obtenida (1..5)
+    }
+    return 0; // No entra en el Top 5
+}
+
+void mostrarRecords(void) {
+    cargarRecords();
+    limpiarPantalla();
+    printf("\033[1;33m╔═══════════════════════════════════════════════════╗\n");
+    printf("║             SALON DE LA FAMA - RECORDS            ║\n");
+    printf("╚═══════════════════════════════════════════════════╝\033[0m\n\n");
+
+    if (g_numRecords <= 0) {
+        printf("─────────────────────────────────────────────────────\n");
+        printf("          \033[1;37mNO HAY PUNTUACIONES REGISTRADAS\033[0m\n");
+        printf("       ¡Juega una partida para dejar tu marca!\n");
+        printf("─────────────────────────────────────────────────────\n\n");
+    } else {
+        printf("\033[1mPOS   NOMBRE              CLASE        PLANTA     PUNTOS\033[0m\n");
+        printf("─────────────────────────────────────────────────────\n");
+        const char* clasesStr[] = {"Guerrero", "Mago", "Asesino"};
+        for (int i = 0; i < g_numRecords; i++) {
+            const char* cNom = (g_records[i].clase >= 0 && g_records[i].clase < 3) ? clasesStr[g_records[i].clase] : "Gato";
+            if (i == 0) {
+                printf("\033[1;33m#1\033[0m    %-19s %-12s P.%-4d \033[1;32m%7d\033[0m\n", g_records[i].nombre, cNom, g_records[i].planta, g_records[i].puntuacion);
+            } else if (i == 1) {
+                printf("\033[1;37m#2\033[0m    %-19s %-12s P.%-4d \033[1;32m%7d\033[0m\n", g_records[i].nombre, cNom, g_records[i].planta, g_records[i].puntuacion);
+            } else if (i == 2) {
+                printf("\033[1;31m#3\033[0m    %-19s %-12s P.%-4d \033[1;32m%7d\033[0m\n", g_records[i].nombre, cNom, g_records[i].planta, g_records[i].puntuacion);
+            } else {
+                printf("\033[0;2m#%d\033[0m    %-19s %-12s P.%-4d \033[1;32m%7d\033[0m\n", i + 1, g_records[i].nombre, cNom, g_records[i].planta, g_records[i].puntuacion);
+            }
+        }
+        printf("─────────────────────────────────────────────────────\n\n");
+    }
+    enterContinuar();
 }
 
 

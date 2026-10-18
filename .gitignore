@@ -6,6 +6,7 @@
 CastleCat_test.exe
 *.zip
 build_itch/
+game/temp/
 
 # Carpetas de desarrollo y entorno
 .vscode/
