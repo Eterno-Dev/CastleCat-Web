@@ -607,7 +607,7 @@ void mostrarRecords(void) {
     cargarRecords();
     limpiarPantalla();
     printf("\033[1;33m╔═══════════════════════════════════════════════════╗\n");
-    printf("║             SALON DE LA FAMA - RECORDS            ║\n");
+    printf("║             SALÓN DE LA FAMA - RÉCORDS            ║\n");
     printf("╚═══════════════════════════════════════════════════╝\033[0m\n\n");
 
     if (g_numRecords <= 0) {
