@@ -306,8 +306,8 @@ void tituloPlantaDungeon(int plantaDungeon, int *entradaPlanta)
         
         printP("\033[1m\033[1;33m!Has Entrado en la Planta 1!\033[0m\n");
 
-        printP("\n\033[1m\033[1;35m[Shadow Meow] \033[0m");
-        printP("\033[1;35m¡Otra hormiga osa adentrarse en mi castillo!\033[0m\n");
+        printP("\n\033[1;35m[Shadow Lord]\033[0m ");
+        printP("\033[1;37m¡Otra hormiga osa adentrarse en mi castillo!\033[0m\n");
         pasarDePlanta();
 
         *entradaPlanta = 0;
@@ -320,8 +320,8 @@ void tituloPlantaDungeon(int plantaDungeon, int *entradaPlanta)
         printf("|_|   |____| /_/ \\_\\ |_|\\_|   |_|   /_/ \\_\\   /___|\n\n");
         printP("\033[1m\033[1;33m!Has Entrado en la Planta 2!\033[0m\n");
 
-        printP("\n\033[1m\033[1;35m[Shadow Meow] \033[0m");
-        printP("\033[1;35m¡No esta mal para un perdedor como tú!\033[0m\n");
+        printP("\n\033[1;35m[Shadow Lord]\033[0m ");
+        printP("\033[1;37m¡No está mal para un perdedor como tú!\033[0m\n");
         pasarDePlanta();
 
         *entradaPlanta = 1;
@@ -334,11 +334,11 @@ void tituloPlantaDungeon(int plantaDungeon, int *entradaPlanta)
         printf(" |_|   |____| /_/ \\_\\ |_|\\_|   |_|   /_/ \\_\\   |___/\n\n");
         printP("\033[1m\033[1;33m!Has Entrado en la Planta 3!\033[0m\n");
 
-        printP("\n\033[1m\033[1;35m[Shadow Meow] \033[0m");
-        printP("\033[1;35m¡De verdad me sorprendes!\033[0m\n");
+        printP("\n\033[1;35m[Shadow Lord]\033[0m ");
+        printP("\033[1;37m¡De verdad me sorprendes!\033[0m\n");
 
-        printP("\n\033[1m\033[1;35m[Shadow Meow] \033[0m");
-        printP("\033[1;35m¡Ahora te queda la parte díficil!\033[0m\n");
+        printP("\n\033[1;35m[Shadow Lord]\033[0m ");
+        printP("\033[1;37m¡Ahora te queda la parte difícil!\033[0m\n");
         pasarDePlanta();
         
         *entradaPlanta = 0;
@@ -351,13 +351,13 @@ void tituloPlantaDungeon(int plantaDungeon, int *entradaPlanta)
         printf(" |  _ <| |  | |\\___ \\___  \\   |  __|   | | | . ` | / /\\ \\ | |     \n");
         printf(" | |_) | |__| |____) |___) |  | |     _| |_| |\\  |/ ____ \\| |____ \n");
         printf(" |____/ \\____/|_____/_____/   |_|    |_____|_| \\_/_/    \\_\\______| \n\n");
-        printP("\033[1m\033[1;33m!Has Entrado en la Sala del Shadow Meow!\033[0m\n");
+        printP("\033[1m\033[1;33m!Has Entrado en la Sala del \033[1;35mShadow Lord\033[1;33m!\033[0m\n");
 
-        printP("\n\033[1m\033[1;35m[Shadow Meow] \033[0m");
-        printP("\033[1;35mHacía siglos que nadie llegaba a esta habitación...\033[0m\n");
+        printP("\n\033[1;35m[Shadow Lord]\033[0m ");
+        printP("\033[1;37mHacía siglos que nadie llegaba a esta habitación...\033[0m\n");
 
-        printP("\n\033[1m\033[1;35m[Shadow Meow] \033[0m");
-        printP("\033[1;35m¡Lástima que vayas a morir!\033[0m\n");
+        printP("\n\033[1;35m[Shadow Lord]\033[0m ");
+        printP("\033[1;37m¡Lástima que vayas a morir!\033[0m\n");
         pasarDePlanta();
         
         break; 
@@ -903,7 +903,7 @@ int inventarioJugador(TItem statsItem[], int *hp, int *hpMax, int *atk, int *mag
         barraDeVida(hp, hpMax);
         mostrarStatsInventario(statsItem, atk, mag, agi, def);
 
-        printf("\n\033[1m\033[1;33m╔═══════════════════╗\033[0m\n");
+        printf("\033[1m\033[1;33m╔═══════════════════╗\033[0m\n");
         printf("\033[1m\033[1;33m║    INVENTARIO:    ║\033[0m\n");
         printf("\033[1m\033[1;33m╚═══════════════════╝\033[0m\n");
 

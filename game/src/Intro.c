@@ -36,7 +36,7 @@ void controlesJuego()
     printf("╚═════════════════╝\033[0m\n");
 
    printf("\033[1mObjetivo:\033[0m\n");
-    printf("- Derrotar al 'Shadow Meow' y rescatar a tu amada.\n\n");
+    printf("- Derrotar al '\033[1;35mShadow Lord\033[0m' y rescatar a tu amada.\n\n");
 
     printf("\033[1mMecánicas:\033[0m\n");
     printf("- Usa ataques según tu clase y estadísticas:\n");
