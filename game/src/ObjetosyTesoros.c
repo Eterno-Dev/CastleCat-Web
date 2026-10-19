@@ -754,6 +754,34 @@ void desequiparItemInventario(TItem statsItem[], int accederObj)
     statsItem[accederObj].numItemsInventario = 1;
 }
 
+/* Muestra una fila compacta con las estadisticas del jugador en el inventario */
+void mostrarStatsInventario(TItem statsItem[], int *atk, int *mag, int *agi, int *def)
+{
+    int bAtk = 0, bMag = 0, bAgi = 0, bDef = 0;
+    for (int i = 0; i < NUM_TOTAL_ITEMS; i++) {
+        if (statsItem[i].numItemsInventario == -1) {
+            bAtk += statsItem[i].fueArmaExtra;
+            bMag += statsItem[i].intArmaExtra;
+            bAgi += statsItem[i].agiArmaExtra;
+            bDef += (statsItem[i].fueArmaExtra / 2);
+        }
+    }
+    int totAtk = *atk + bAtk;
+    int totMag = *mag + bMag;
+    int totAgi = *agi + bAgi;
+    int totDef = *def + bDef;
+
+    printf("\n\033[1;31mψ ATK:\033[0;1m %d\033[0m", totAtk);
+    if (bAtk > 0) printf(" \033[1;32m(+%d)\033[0m", bAtk);
+    printf("  \033[1;34m★ MAG:\033[0;1m %d\033[0m", totMag);
+    if (bMag > 0) printf(" \033[1;32m(+%d)\033[0m", bMag);
+    printf("  \033[1;33m➹ AGI:\033[0;1m %d\033[0m", totAgi);
+    if (bAgi > 0) printf(" \033[1;32m(+%d)\033[0m", bAgi);
+    printf("  \033[1;35m♢ DEF:\033[0;1m %d\033[0m", totDef);
+    if (bDef > 0) printf(" \033[1;32m(+%d)\033[0m", bDef);
+    printf("\n");
+}
+
 /* Opciones Inventario Jugador (Interactive) */
 void opcionesInventarioJugador(TItem statsItem[], int accederObjeto, int *atk, int *mag, int *agi, int *def, int *hp, int *hpMax, char nomJugador[])
 {
@@ -765,8 +793,9 @@ void opcionesInventarioJugador(TItem statsItem[], int accederObjeto, int *atk, i
     while (!salir)
     {
         limpiarPantalla();
-        printf("\033[1m[%s]\033[0;1m", nomJugador);
+        printf("\033[1m[%s]\033[0;1m  ", nomJugador);
         barraDeVida(hp, hpMax);
+        mostrarStatsInventario(statsItem, atk, mag, agi, def);
 
         printf("\n\033[1m\033[1;33m╔═══════════════════╗\033[0m\n");
         printf("\033[1m\033[1;33m║      OBJETO:      ║\033[0m\n");
@@ -870,8 +899,9 @@ int inventarioJugador(TItem statsItem[], int *hp, int *hpMax, int *atk, int *mag
         if (opcionActiva >= numOpciones) opcionActiva = numOpciones - 1;
 
         limpiarPantalla();
-        printf("\033[1m[%s]\033[0;1m", nomJugador);
+        printf("\033[1m[%s]\033[0;1m  ", nomJugador);
         barraDeVida(hp, hpMax);
+        mostrarStatsInventario(statsItem, atk, mag, agi, def);
 
         printf("\n\033[1m\033[1;33m╔═══════════════════╗\033[0m\n");
         printf("\033[1m\033[1;33m║    INVENTARIO:    ║\033[0m\n");

@@ -303,6 +303,10 @@ int main()
                     statIn[1] = atkMag;
                     statIn[2] = agi;
                     statIn[3] = def;
+                    stat[0] = atk;
+                    stat[1] = atkMag;
+                    stat[2] = agi;
+                    stat[3] = def;
 
                     mostrarMapa(map, posicion, &tipoHabitacion);
                     

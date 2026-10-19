@@ -68,7 +68,7 @@ void moverseMapa(int map[7][7], int pos[7][7], int x, int y)
     int direcciones[4] = {0,0,0,0};
     int tecla = 0;
 
-    printf("\033[1;2m(Usa W/A/S/D o flechas para moverte)\n");
+    printf("Usa \033[1;35mW\033[0m/\033[1;35mA\033[0m/\033[1;35mS\033[0m/\033[1;35mD\033[0m o \033[1;35mFlechas\033[0m para moverte:\n");
 
     // Detectar posibles movimientos
     if ((map[y][x + 1] < 6 && map[y][x + 1] > 0) || map[y][x + 1] < 0) {
