@@ -95,14 +95,34 @@ void mostrarStats(int stats[4], int id)
 
 void barraDeVidaEnemigo(int *vida, int *vidaMax)
 {
+	if (*vida > *vidaMax)
+	{
+		*vida = *vidaMax;
+	}
+	if (*vida < 0)
+	{
+		*vida = 0;
+	}
+
+	int barVida = *vida;
+	int barMax = *vidaMax;
+
+	// Si el enemigo tiene 100 de vida o más (como Shadow Lord con 200 HP),
+	// la barra se reduce a la mitad: 100 de longitud máxima y cada bloque representa 2 puntos de vida
+	if (*vidaMax >= 100)
+	{
+		barMax = *vidaMax / 2;
+		barVida = (*vida > 0 && *vida < 2) ? 1 : (*vida / 2);
+	}
+
 	printf("\033[2;31m♥ \033[1;37;0m|\033[2;37;41m");
 	int i;
-	for(i = 1; i <= *vida; i++)
+	for(i = 1; i <= barVida; i++)
 	{
 		printf(" ");
 	}
 
-	for(i = 1; i <= *vidaMax-*vida; i++)
+	for(i = 1; i <= barMax - barVida; i++)
 	{
 		printf("\033[2;37;40m ");
 	}
