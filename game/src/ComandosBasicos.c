@@ -127,13 +127,13 @@ void triggerMenuTab(void) {
             });
         } else if (strcmp(e->key, "Escape") == 0) {
             last_key = 27; // Escape
-        } else if (strcmp(e->key, "ArrowUp") == 0) {
+        } else if (strcmp(e->key, "ArrowUp") == 0 || strcmp(e->key, "Up") == 0 || strcmp(e->code, "ArrowUp") == 0) {
             last_key = 'w';
-        } else if (strcmp(e->key, "ArrowDown") == 0) {
+        } else if (strcmp(e->key, "ArrowDown") == 0 || strcmp(e->key, "Down") == 0 || strcmp(e->code, "ArrowDown") == 0) {
             last_key = 's';
-        } else if (strcmp(e->key, "ArrowLeft") == 0) {
+        } else if (strcmp(e->key, "ArrowLeft") == 0 || strcmp(e->key, "Left") == 0 || strcmp(e->code, "ArrowLeft") == 0) {
             last_key = 'a';
-        } else if (strcmp(e->key, "ArrowRight") == 0) {
+        } else if (strcmp(e->key, "ArrowRight") == 0 || strcmp(e->key, "Right") == 0 || strcmp(e->code, "ArrowRight") == 0) {
             last_key = 'd';
         } else if (strlen(e->key) == 1) {
             last_key = e->key[0];

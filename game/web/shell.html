@@ -29,6 +29,7 @@
             box-sizing: border-box;
             overflow-y: auto;
             white-space: pre-wrap;
+            word-wrap: break-word;
             font-family: 'CastlePixel', monospace !important;
             font-size: 22px !important;
             line-height: 1.15 !important;
@@ -40,6 +41,7 @@
             image-rendering: pixelated;
             filter: contrast(1.28) brightness(1.05);
             text-shadow: 1px 1px 0px #000;
+            outline: none !important;
         }
 
         /* Reglas individuales para pantalla completa (escalado 2x exacto a 32px) */
@@ -1067,7 +1069,7 @@
         window.addEventListener('click', tryStartAudio);
     </script>
     <div id="loading">Loading Castle Cat...</div>
-    <div id="console"></div>
+    <div id="console" tabindex="0"></div>
 
     <script type='text/javascript'>
         var consoleDiv = document.getElementById('console');
@@ -1172,6 +1174,10 @@
             postRun: [function () {
                 loadingDiv.style.display = 'none';
                 triggerGlitchIntro();
+                try {
+                    window.focus();
+                    if (consoleDiv) consoleDiv.focus();
+                } catch(e) {}
             }],
             print: (function () {
                 return function (text) {
