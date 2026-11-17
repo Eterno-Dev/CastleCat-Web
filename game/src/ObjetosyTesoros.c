@@ -1020,8 +1020,11 @@ int inventarioJugador(TItem statsItem[], int *hp, int *hpMax, int *atk, int *mag
 void actualizarStatsEquipo(int *atkIn, int *magIn, int *agiIn, int *defIn, TItem statsItem[], int skill[3], char arma1[50], char arma2[50],int *atk, int *mag, int *agi, int *def)
 {
 
-    int atkInc = 0, magInc = 0, agiInc = 0, defInc = 0, count = 1,i;
-
+    int atkInc = 0, magInc = 0, agiInc = 0, defInc = 0, count = 1, i;
+    arma1[0] = '\0';
+    arma2[0] = '\0';
+    skill[1] = 0;
+    skill[2] = 0;
 
     for(i = 0; i < NUM_TOTAL_ITEMS; i++)
     {
@@ -1030,13 +1033,16 @@ void actualizarStatsEquipo(int *atkIn, int *magIn, int *agiIn, int *defIn, TItem
             atkInc = atkInc + statsItem[i].fueArmaExtra;
             magInc = magInc + statsItem[i].intArmaExtra;
             agiInc = agiInc + statsItem[i].agiArmaExtra;
-            defInc = defInc + (statsItem[i].fueArmaExtra/2);
-            skill[count] = statsItem[i].idAtaque;
-            if(count == 0)
+            defInc = defInc + (statsItem[i].fueArmaExtra/2) + (statsItem[i].intArmaExtra/3) + (statsItem[i].agiArmaExtra/3);
+            if (count < 3)
+            {
+                skill[count] = statsItem[i].idAtaque;
+            }
+            if(count == 1)
             {
                 strcpy(arma1, statsItem[i].nombreObjeto);
             }
-            if(count == 1)
+            else if(count == 2)
             {
                 strcpy(arma2, statsItem[i].nombreObjeto);
             }

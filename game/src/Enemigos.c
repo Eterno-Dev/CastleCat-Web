@@ -3,7 +3,6 @@ struct Enemigos {
 	char nombreEnemigo[100]; // Otra cadena
 	int vida; // Número entero
 	int ataque;
-	int xp;
 };
 
 void faseFinalSadowLord()
@@ -257,7 +256,7 @@ void escogerJefe(char img[2000], char nom[100], int id, int* vidaMax, int* atak)
 		strcpy(asignar.nombreEnemigo, "\033[1mÁguila\033[0m");
 
 
-		asignar.vida = 12;
+		asignar.vida = 16;
 
 		asignar.ataque = 4;
 		
@@ -279,7 +278,7 @@ void escogerJefe(char img[2000], char nom[100], int id, int* vidaMax, int* atak)
 
 		strcpy(asignar.nombreEnemigo, "Caracol");
 
-		asignar.vida = 20;
+		asignar.vida = 28;
 		
 		asignar.ataque = 8;
 		break;
@@ -302,7 +301,7 @@ void escogerJefe(char img[2000], char nom[100], int id, int* vidaMax, int* atak)
 
 		strcpy(asignar.nombreEnemigo, "Pantera");
 
-		asignar.vida = 22;
+		asignar.vida = 42;
 		
 		asignar.ataque = 12;
 		break;
@@ -325,9 +324,9 @@ void escogerJefe(char img[2000], char nom[100], int id, int* vidaMax, int* atak)
 
 		strcpy(asignar.nombreEnemigo, "Lobo");
 
-		asignar.vida = 26;
+		asignar.vida = 58;
 		
-		asignar.ataque =19;
+		asignar.ataque = 17;
 		break;
 
 	case 5:
@@ -348,9 +347,9 @@ void escogerJefe(char img[2000], char nom[100], int id, int* vidaMax, int* atak)
 
 		strcpy(asignar.nombreEnemigo, "Reina Serpiente");
 
-		asignar.vida = 40;
+		asignar.vida = 78;
 		
-		asignar.ataque = 22;
+		asignar.ataque = 23;
 		break;
 
 	case 6:
@@ -371,9 +370,9 @@ void escogerJefe(char img[2000], char nom[100], int id, int* vidaMax, int* atak)
 
 		strcpy(asignar.nombreEnemigo, "Rey Escorpión");
 
-		asignar.vida = 45;
+		asignar.vida = 105;
 		
-		asignar.ataque = 27;
+		asignar.ataque = 30;
 		break;
 
 	case 7:
@@ -394,9 +393,9 @@ void escogerJefe(char img[2000], char nom[100], int id, int* vidaMax, int* atak)
 
 		strcpy(asignar.nombreEnemigo, "Oso");
 
-		asignar.vida = 50;
+		asignar.vida = 130;
 		
-		asignar.ataque = 34;
+		asignar.ataque = 38;
 		break;
 
 	case 8:
@@ -417,9 +416,9 @@ void escogerJefe(char img[2000], char nom[100], int id, int* vidaMax, int* atak)
 
 		strcpy(asignar.nombreEnemigo, "Araña Gigante");
 
-		asignar.vida = 60;
+		asignar.vida = 150;
 		
-		asignar.ataque = 40;
+		asignar.ataque = 50;
 		break;
 
 	case 9:
@@ -442,9 +441,9 @@ void escogerJefe(char img[2000], char nom[100], int id, int* vidaMax, int* atak)
 
 		strcpy(asignar.nombreEnemigo, "Shadow Lord");
 
-		asignar.vida = 350;
+		asignar.vida = 300;
 		
-		asignar.ataque = 170;
+		asignar.ataque = 80;
 		break;
 
 	}
