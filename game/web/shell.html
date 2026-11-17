@@ -97,21 +97,18 @@
         }
 
         @keyframes screen-shake-death {
-            0% { transform: translate(0, 0) rotate(0deg) scale(1); filter: contrast(100%); }
-            10% { transform: translate(-20px, 16px) rotate(-3.5deg) scale(1.04); filter: contrast(180%) brightness(1.2); }
-            20% { transform: translate(22px, -18px) rotate(3.5deg) scale(1.06); filter: contrast(220%) hue-rotate(25deg); }
-            30% { transform: translate(-24px, 20px) rotate(-4deg) scale(1.05); filter: contrast(200%); }
-            40% { transform: translate(22px, -16px) rotate(3deg) scale(1.04); }
-            50% { transform: translate(-18px, 14px) rotate(-2.5deg) scale(1.03); filter: contrast(160%); }
-            60% { transform: translate(16px, -12px) rotate(2deg) scale(1.02); }
-            70% { transform: translate(-12px, 8px) rotate(-1.5deg) scale(1.01); }
-            80% { transform: translate(8px, -6px) rotate(1deg) scale(1.01); }
-            90% { transform: translate(-4px, 3px) rotate(-0.5deg) scale(1); }
-            100% { transform: translate(0, 0) rotate(0deg) scale(1); filter: contrast(100%); }
+            0% { transform: translate(0, 0); }
+            15% { transform: translate(-6px, 4px) rotate(-0.5deg); }
+            30% { transform: translate(5px, -5px) rotate(0.5deg); }
+            45% { transform: translate(-4px, 3px); }
+            60% { transform: translate(4px, -2px); }
+            75% { transform: translate(-2px, 2px); }
+            90% { transform: translate(2px, -1px); }
+            100% { transform: translate(0, 0); }
         }
 
         .shake-death {
-            animation: screen-shake-death 0.85s cubic-bezier(.36,.07,.19,.97) both;
+            animation: screen-shake-death 0.45s ease-out both;
         }
 
         /* ANSI Colors */
@@ -145,6 +142,10 @@
 
         .ansi-37 {
             color: #ffffff;
+        }
+
+        .ansi-orange, .ansi-38-5-208 {
+            color: #ff9900 !important;
         }
 
         .ansi-40 {
@@ -698,7 +699,7 @@
                 c.classList.add('shake-death');
                 setTimeout(function() {
                     c.classList.remove('shake-death');
-                }, 900);
+                }, 500);
             } else {
                 c.classList.add('shake');
                 setTimeout(function() {
@@ -1171,9 +1172,16 @@
                             if (code === 0) activeClasses = [];
                             else if (code === 1) activeClasses.push('ansi-1'); // Bold
                             else if (code === 4) activeClasses.push('ansi-4'); // Underline
+                            else if (code === 38) {
+                                if (codes[c + 1] === '5' && codes[c + 2] === '208') {
+                                    activeClasses = activeClasses.filter(cls => !cls.startsWith('ansi-3') && cls !== 'ansi-orange');
+                                    activeClasses.push('ansi-orange');
+                                    c += 2;
+                                }
+                            }
                             else if (code >= 30 && code <= 37) {
                                 // Remove existing fg colors
-                                activeClasses = activeClasses.filter(cls => !cls.startsWith('ansi-3'));
+                                activeClasses = activeClasses.filter(cls => !cls.startsWith('ansi-3') && cls !== 'ansi-orange');
                                 activeClasses.push('ansi-' + code);
                             }
                             else if (code >= 40 && code <= 47) {

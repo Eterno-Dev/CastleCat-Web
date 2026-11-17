@@ -115,9 +115,7 @@ void animacionFinal(int *frameAnimacion)
             printf("|_| |_|_| |_|     *\n\n");
 
             printP("\033[1m\033[31mGracias por Jugar...\033[0m\n");
-            g_hayPartida = 0;
-            g_solicitarMenu = 0;
-            enterContinuar();
+            *frameAnimacion = 4;
         break;
     }
 }
@@ -141,7 +139,7 @@ void finDelJuego(char nombreJugador[], int claseJugador, int plantaCastillo, int
     printP("Juntos regresaron a \033[31m'Nekovania'\033[0m, donde el pueblo los recibió como héroes.\n\n");
     setModoNarrativa(0);
 
-    for(i = 0; i <= 3; i++)
+    for(i = 1; i <= 3; i++)
     {     
         printP("\033[1m\nPresiona \033[33mENTER ♥\033[0m\n");
         waitForEnter();
@@ -150,6 +148,11 @@ void finDelJuego(char nombreJugador[], int claseJugador, int plantaCastillo, int
 
         animacionFinal(&frameAnimacion);
     }
+
+    printP("\nPulsa \033[40mENTER\033[0;1;37m para ver el resumen...\n");
+    fflush(stdout);
+    waitForEnter();
+    limpiarPantalla();
 
     int puntos = calcularPuntuacion(plantaCastillo, hpRestante) + 5000;
     int puesto = comprobarYGuardarRecord(nombreJugador, claseJugador, plantaCastillo, puntos);
@@ -166,6 +169,12 @@ void finDelJuego(char nombreJugador[], int claseJugador, int plantaCastillo, int
         printf("    \033[1;33m★ ¡NUEVO RÉCORD! Entraste al Top %d (#%d) ★\033[0m\n", MAX_RECORDS, puesto);
     }
     printf("  \033[1;33m═══════════════════════════════════════════\033[0m\n");
-    enterContinuar();
+
+    printP("\nPulsa \033[40mENTER\033[0;1;37m para volver al menú principal...\n");
+    fflush(stdout);
+    waitForEnter();
+
     g_hayPartida = 0;
+    g_solicitarMenu = 0;
+    limpiarPantalla();
 }

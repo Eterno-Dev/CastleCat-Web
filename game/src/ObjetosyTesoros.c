@@ -80,11 +80,11 @@ void definirItems(TItem statsItem[])
     // Consumible Especial: Plátano (Posición 5)
     statsItem[5].nombreObjeto = "Plátano";
     statsItem[5].itemConsumible = true;
-    statsItem[5].otorgarVida = 10;
+    statsItem[5].otorgarVida = 15;
     statsItem[5].otorgarExtraVidaMax = 0;
-    statsItem[5].fueArmaExtra = 1;
-    statsItem[5].intArmaExtra = 1;
-    statsItem[5].agiArmaExtra = 1;
+    statsItem[5].fueArmaExtra = 5;
+    statsItem[5].intArmaExtra = 5;
+    statsItem[5].agiArmaExtra = 5;
     statsItem[5].numItemsInventario = 0;
     statsItem[5].idAtaque = -1;
 
@@ -464,6 +464,14 @@ void recompensaNormal(TItem statsItem[])
         break;
     }
 
+    // Pequeña probabilidad secreta de encontrar el Plátano en cofre normal (1 entre 15: ~6.7%)
+    if ((rand() % 15) == 0)
+    {
+        printf("\033[1;33m¡Has encontrado un objeto secreto!\033[0m\n");
+        printf("\033[1m\033[38;5;208m+1:\033[0m %s\n", statsItem[5].nombreObjeto);
+        statsItem[5].numItemsInventario++;
+    }
+
 }
 
 /* Recompensas Raras Random */
@@ -530,6 +538,14 @@ void recompensaRara(TItem statsItem[])
 
         default:
         break;
+    }
+
+    // Probabilidad de encontrar el Plátano en cofre raro (1 entre 7: ~14.3%)
+    if ((rand() % 7) == 0)
+    {
+        printf("\033[1;33m¡Has encontrado un objeto secreto!\033[0m\n");
+        printf("\033[1m\033[38;5;208m+1:\033[0m %s\n", statsItem[5].nombreObjeto);
+        statsItem[5].numItemsInventario++;
     }
 
 }
@@ -608,11 +624,11 @@ void recompensaLegendaria(TItem statsItem[])
         break;
     }
 
-    // Probabilidad ínfima de encontrar el mítico Plátano en cofre legendario (1 entre 20 cofres legendarios: 5%)
-    if ((rand() % 20) == 0)
+    // Probabilidad de encontrar el mítico Plátano en cofre legendario (1 entre 4: 25%)
+    if ((rand() % 4) == 0)
     {
         printf("\033[1;33m¡Has encontrado un objeto legendario secreto!\033[0m\n");
-        printf("\033[1m\033[1;35m+1:\033[0m %s\n", statsItem[5].nombreObjeto);
+        printf("\033[1m\033[38;5;208m+1:\033[0m %s\n", statsItem[5].nombreObjeto);
         statsItem[5].numItemsInventario++;
     }
 
@@ -678,6 +694,13 @@ void calidadAleatoria(TItem statsItem[], int habitacionTesoro)
 /* Información del Item del Inventario */
 void informacionItemInventario(TItem statsItem[], int accederObj)
 {
+    bool esPlatano = (accederObj == 5) || 
+                     (statsItem[accederObj].nombreObjeto != NULL && 
+                      (strstr(statsItem[accederObj].nombreObjeto, "Plátano") != NULL ||
+                       strstr(statsItem[accederObj].nombreObjeto, "Platano") != NULL ||
+                       strstr(statsItem[accederObj].nombreObjeto, "banana") != NULL ||
+                       strstr(statsItem[accederObj].nombreObjeto, "Banana") != NULL));
+
     printf("\n\033[1m\033[1;31mINFORMACIÓN:\033[0m\n");
     printf("\033[1m\033[1;31m═════════════\033[0m\n");
 
@@ -705,6 +728,10 @@ void informacionItemInventario(TItem statsItem[], int accederObj)
         printf("Aumento de Agilidad: \033[0;1;33m+%d\033[0m\n", statsItem[accederObj].agiArmaExtra);
         tieneStats++;
     }
+    if (esPlatano) {
+        printf("Aumento de Defensa: \033[0;1;36m+10\033[0m\n");
+        tieneStats++;
+    }
     if (!tieneStats) {
         printf("Efecto: \033[0;1;30mSin atributos adicionales\033[0m\n");
     }
@@ -713,12 +740,16 @@ void informacionItemInventario(TItem statsItem[], int accederObj)
 /* Usar Item del Inventario */
 void usarItemInventario(TItem statsItem[], int accederObj, int *hp, int *hpMax, int *atk, int *mag, int *agi, int *def, char nomJugador[])
 {
+    bool esPlatano = (accederObj == 5) || 
+                     (statsItem[accederObj].nombreObjeto != NULL && 
+                      (strstr(statsItem[accederObj].nombreObjeto, "Plátano") != NULL ||
+                       strstr(statsItem[accederObj].nombreObjeto, "Platano") != NULL ||
+                       strstr(statsItem[accederObj].nombreObjeto, "banana") != NULL ||
+                       strstr(statsItem[accederObj].nombreObjeto, "Banana") != NULL));
+
     if(statsItem[accederObj].itemConsumible == true)
     {
-        if (strstr(statsItem[accederObj].nombreObjeto, "Plátano") != NULL ||
-            strstr(statsItem[accederObj].nombreObjeto, "Platano") != NULL ||
-            strstr(statsItem[accederObj].nombreObjeto, "banana") != NULL ||
-            strstr(statsItem[accederObj].nombreObjeto, "Banana") != NULL) {
+        if (esPlatano) {
             reproducirSonido("platano");
         } else {
             reproducirSonido("potion");
@@ -729,6 +760,9 @@ void usarItemInventario(TItem statsItem[], int accederObj, int *hp, int *hpMax, 
         *hp = *hp + statsItem[accederObj].otorgarVida;
         if (*hp > *hpMax) *hp = *hpMax;
         *def = *def + (statsItem[accederObj].otorgarExtraVidaMax/2);
+        if (esPlatano) {
+            *def = *def + 10;
+        }
         *atk = *atk + statsItem[accederObj].fueArmaExtra;
         *mag = *mag + statsItem[accederObj].intArmaExtra;
         *agi = *agi + statsItem[accederObj].agiArmaExtra;
@@ -759,6 +793,10 @@ void usarItemInventario(TItem statsItem[], int accederObj, int *hp, int *hpMax, 
     }
     if (statsItem[accederObj].agiArmaExtra > 0) {
         printf("Aumento de Agilidad: \033[0;1;33m+%d\033[0m\n", statsItem[accederObj].agiArmaExtra);
+        tieneStats++;
+    }
+    if (esPlatano) {
+        printf("Aumento de Defensa: \033[0;1;36m+10\033[0m\n");
         tieneStats++;
     }
     if (!tieneStats) {
@@ -935,7 +973,12 @@ int inventarioJugador(TItem statsItem[], int *hp, int *hpMax, int *atk, int *mag
                 else printf("   ");
 
                 if (statsItem[id].itemConsumible == true) {
-                    printf("\033[0;1m%s \033[1m\033[31m[%i]\033[0m\n", statsItem[id].nombreObjeto, statsItem[id].numItemsInventario);
+                    if (id == 5) {
+                        // Plátano: indicador de cantidad en color naranja
+                        printf("\033[0;1m%s \033[1m\033[38;5;208m[%i]\033[0m\n", statsItem[id].nombreObjeto, statsItem[id].numItemsInventario);
+                    } else {
+                        printf("\033[0;1m%s \033[1m\033[31m[%i]\033[0m\n", statsItem[id].nombreObjeto, statsItem[id].numItemsInventario);
+                    }
                 } else if (statsItem[id].numItemsInventario > 0) {
                     printf("\033[0;1m%s \033[1m\033[35m[%i]\033[0m\n", statsItem[id].nombreObjeto, 1);
                 } else if (statsItem[id].numItemsInventario == -1) {
