@@ -41,7 +41,7 @@ void inicializaJugador(TJugador statsJugador[])
     statsJugador[0].hp = statsJugador[0].hpMax;
 
     statsJugador[0].mpMax = 3;
-    statsJugador[0].mp = statsJugador[0].hpMax;
+    statsJugador[0].mp = statsJugador[0].mpMax;
     
     //Estadisticas Básicas
     statsJugador[0].fueJugador = 2;
@@ -59,7 +59,7 @@ void inicializaJugador(TJugador statsJugador[])
     statsJugador[1].hp = statsJugador[1].hpMax;
 
     statsJugador[1].mpMax = 10;
-    statsJugador[1].mp = statsJugador[0].hpMax;
+    statsJugador[1].mp = statsJugador[1].mpMax;
     
     //Estadisticas Básicas
     statsJugador[1].fueJugador = 2;
@@ -77,7 +77,7 @@ void inicializaJugador(TJugador statsJugador[])
     statsJugador[2].hp = statsJugador[2].hpMax;
 
     statsJugador[2].mpMax = 5;
-    statsJugador[2].mp = statsJugador[0].hpMax;
+    statsJugador[2].mp = statsJugador[2].mpMax;
     
     //Estadisticas Básicas
     statsJugador[2].fueJugador = 2;
