@@ -532,14 +532,6 @@ void recompensaRara(TItem statsItem[])
         break;
     }
 
-    // Probabilidad de encontrar el Plátano en cofre raro (15%)
-    if ((rand() % 100) < 15)
-    {
-        printf("\033[1;33m¡Has encontrado un objeto secreto!\033[0m\n");
-        printf("\033[1m\033[1;33m+1:\033[0m %s\n", statsItem[5].nombreObjeto);
-        statsItem[5].numItemsInventario++;
-    }
-
 }
 
 /* Recompensas Legendarias Random */
@@ -656,6 +648,14 @@ void calidadAleatoria(TItem statsItem[], int habitacionTesoro)
             {
                 printf("La recompensa es: \033[1m\033[34mNormal\033[0m\n");
                 recompensaNormal(statsItem); 
+            }
+
+            // Probabilidad secreta en cofres de la Planta 2 (5%)
+            if ((rand() % 100) < 5)
+            {
+                printf("\033[1;33m¡Has encontrado un objeto secreto!\033[0m\n");
+                printf("\033[1m\033[1;33m+1:\033[0m %s\n", statsItem[5].nombreObjeto);
+                statsItem[5].numItemsInventario++;
             }
         break;
 
