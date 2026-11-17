@@ -442,7 +442,7 @@ void escogerJefe(char img[2000], char nom[100], int id, int* vidaMax, int* atak)
 
 		strcpy(asignar.nombreEnemigo, "Shadow Lord");
 
-		asignar.vida = 200;
+		asignar.vida = 350;
 		
 		asignar.ataque = 170;
 		break;

@@ -80,7 +80,7 @@ void definirItems(TItem statsItem[])
     // Consumible Especial: Plátano (Posición 5)
     statsItem[5].nombreObjeto = "Plátano";
     statsItem[5].itemConsumible = true;
-    statsItem[5].otorgarVida = 15;
+    statsItem[5].otorgarVida = 10;
     statsItem[5].otorgarExtraVidaMax = 0;
     statsItem[5].fueArmaExtra = 5;
     statsItem[5].intArmaExtra = 5;
