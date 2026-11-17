@@ -443,7 +443,7 @@ void escogerJefe(char img[2000], char nom[100], int id, int* vidaMax, int* atak)
 
 		asignar.vida = 300;
 		
-		asignar.ataque = 80;
+		asignar.ataque = 120;
 		break;
 
 	}
