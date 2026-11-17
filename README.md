@@ -28,17 +28,11 @@ En el reino de **Nekovania**, algunos ciudadanos desaparecen sin dejar rastro en
 CastleCat-Web/
 ├── index.html               # Web oficial y panel interactivo en GitHub Pages
 ├── CastleCat.css            # Estilos de la web oficial
-├── styles.html              # Tipografías y estilos embebidos
 ├── sprites/                 # Sprites e ilustraciones (enemigos, jefes, iconos 1-4)
-├── data/                    # Tablas de datos y estadísticas CSV (bosses, enemigos, etc.)
 ├── .gitignore               # Configuración de exclusiones para Git
 ├── README.md                # Documentación del proyecto
-├── Subir_A_GitHub.bat       # Script para enviar cambios a GitHub
 │
 └── game/                    # Proyecto completo del juego en C y WebAssembly
-    ├── Compilar.bat         # Compila el juego a WebAssembly en game/temp/
-    ├── Compilar_Nativo.bat  # Compila el juego a ejecutable Windows en game/temp/
-    │
     ├── src/                 # Código fuente en C
     │   ├── Main.c           # Bucle principal del juego y lógica de estados
     │   ├── ComandosBasicos.c# Entrada de teclado, delays typewriter y utilidades
@@ -51,20 +45,17 @@ CastleCat-Web/
     │   ├── Mapa.c           # Generación procedural del mapa y movimiento
     │   └── ObjetosyTesoros.c# Sistema de ítems, armas e inventario
     │
-    ├── assets/              # Recursos de audio
+    ├── assets/              # Recursos de audio y efectos
     │   ├── music.mp3        # Banda sonora retro 8-bit
+    │   ├── Confirm.mp3
+    │   ├── NextOption.mp3
+    │   ├── Volume.mp3
+    │   ├── glitch.png
     │   └── SFX/             # Efectos de sonido (wav)
     │
-    ├── web/                 # Herramientas y plantillas para WebAssembly
-    │   ├── shell.html       # Shell HTML con terminal ANSI y reproductor de audio
-    │   ├── parche_emscripten.js # Inyector para sincronización de E/S en tiempo real
-    │   └── generate_temp_sfx.js # Utilidad de audio SFX
-    │
-    └── temp/                # Archivos generados y ejecutables de compilación
-        ├── CastleCat.exe    # Binario nativo para consola Windows
-        ├── index.html       # Interfaz WebAssembly con terminal ANSI
-        ├── index.js         # Runtime JavaScript de Emscripten
-        └── index.wasm       # Binario WebAssembly
+    └── web/                 # Plantillas e inyectores para WebAssembly
+        ├── shell.html       # Shell HTML con terminal ANSI y reproductor de audio
+        └── parche_emscripten.js # Inyector para sincronización de E/S en tiempo real
 ```
 
 ---
@@ -73,24 +64,23 @@ CastleCat-Web/
 
 ### 🌐 1. Versión Web (WebAssembly con Emscripten)
 
-1. Entra en la carpeta `game/` y ejecuta:
-   ```cmd
-   Compilar.bat
+1. Compila con `emcc` desde la raíz del proyecto:
+   ```bash
+   emcc game/src/Main.c -O2 -s WASM=1 -s ASYNCIFY -s ALLOW_MEMORY_GROWTH=1 --shell-file game/web/shell.html -o index.html
    ```
-2. Los archivos compilados se generarán limpiamente en `game/temp/`.
-3. Para probar el juego en tu navegador, inicia un servidor local desde la raíz:
+2. Para probar el juego en tu navegador, inicia un servidor local:
    ```bash
    python -m http.server 8080
-   # Abre en tu navegador: http://localhost:8080/game/temp/
+   # Abre en tu navegador: http://localhost:8080
    ```
 
 ### 💻 2. Versión Nativa (Windows)
 
-1. Entra en la carpeta `game/` y ejecuta:
-   ```cmd
-   Compilar_Nativo.bat
+1. Compila con GCC vinculando la librería de sonido de Windows (`winmm`):
+   ```bash
+   gcc game/src/Main.c -o CastleCat.exe -lwinmm
    ```
-2. Se generará `game/temp/CastleCat.exe` que podrás jugar directamente en tu consola de Windows.
+2. Ejecuta `CastleCat.exe` directamente en la terminal.
 
 ---
 

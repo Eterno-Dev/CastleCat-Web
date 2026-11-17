@@ -1,12 +1,25 @@
-# Compilación nativa y temporales
+# Compilación nativa, ejecutables y temporales
 *.o
 *.obj
 *.tmp
 *~
-CastleCat_test.exe
+*.exe
 *.zip
 build_itch/
 game/temp/
+
+# Scripts locales de compilación y despliegue
+*.bat
+**/*.bat
+
+# Demos, grabaciones, tests y datos de balanceo
+demo_youtube/
+data/
+*.csv
+
+# Archivos temporales de pruebas y generadores
+styles.html
+game/web/generate_temp_sfx.js
 
 # Carpetas de desarrollo y entorno
 .vscode/
@@ -20,6 +33,6 @@ desktop.ini
 Thumbs.db
 .DS_Store
 
-# Node (en caso de usar paquetes)
+# Node
 node_modules/
 npm-debug.log*
