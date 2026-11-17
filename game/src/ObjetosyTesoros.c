@@ -464,14 +464,6 @@ void recompensaNormal(TItem statsItem[])
         break;
     }
 
-    // Pequeña probabilidad secreta de encontrar el Plátano en cofre normal (1 entre 15: ~6.7%)
-    if ((rand() % 15) == 0)
-    {
-        printf("\033[1;33m¡Has encontrado un objeto secreto!\033[0m\n");
-        printf("\033[1m\033[38;5;208m+1:\033[0m %s\n", statsItem[5].nombreObjeto);
-        statsItem[5].numItemsInventario++;
-    }
-
 }
 
 /* Recompensas Raras Random */
@@ -540,11 +532,11 @@ void recompensaRara(TItem statsItem[])
         break;
     }
 
-    // Probabilidad de encontrar el Plátano en cofre raro (1 entre 7: ~14.3%)
-    if ((rand() % 7) == 0)
+    // Probabilidad de encontrar el Plátano en cofre raro (15%)
+    if ((rand() % 100) < 15)
     {
         printf("\033[1;33m¡Has encontrado un objeto secreto!\033[0m\n");
-        printf("\033[1m\033[38;5;208m+1:\033[0m %s\n", statsItem[5].nombreObjeto);
+        printf("\033[1m\033[1;33m+1:\033[0m %s\n", statsItem[5].nombreObjeto);
         statsItem[5].numItemsInventario++;
     }
 
@@ -624,11 +616,11 @@ void recompensaLegendaria(TItem statsItem[])
         break;
     }
 
-    // Probabilidad de encontrar el mítico Plátano en cofre legendario (1 entre 4: 25%)
-    if ((rand() % 4) == 0)
+    // Probabilidad de encontrar el mítico Plátano en cofre legendario (15%)
+    if ((rand() % 100) < 15)
     {
         printf("\033[1;33m¡Has encontrado un objeto legendario secreto!\033[0m\n");
-        printf("\033[1m\033[38;5;208m+1:\033[0m %s\n", statsItem[5].nombreObjeto);
+        printf("\033[1m\033[1;33m+1:\033[0m %s\n", statsItem[5].nombreObjeto);
         statsItem[5].numItemsInventario++;
     }
 
@@ -972,16 +964,26 @@ int inventarioJugador(TItem statsItem[], int *hp, int *hpMax, int *atk, int *mag
                 if (i == opcionActiva) printf("\033[1;31m > \033[0m");
                 else printf("   ");
 
+                bool esPlatano = (id == 5) || 
+                                 (statsItem[id].nombreObjeto != NULL && 
+                                  (strstr(statsItem[id].nombreObjeto, "Plátano") != NULL ||
+                                   strstr(statsItem[id].nombreObjeto, "Platano") != NULL ||
+                                   strstr(statsItem[id].nombreObjeto, "banana") != NULL ||
+                                   strstr(statsItem[id].nombreObjeto, "Banana") != NULL));
+
                 if (statsItem[id].itemConsumible == true) {
-                    if (id == 5) {
+                    if (esPlatano) {
                         // Plátano: indicador de cantidad en color naranja
                         printf("\033[0;1m%s \033[1m\033[38;5;208m[%i]\033[0m\n", statsItem[id].nombreObjeto, statsItem[id].numItemsInventario);
                     } else {
+                        // Consumibles: indicador en rojo como siempre
                         printf("\033[0;1m%s \033[1m\033[31m[%i]\033[0m\n", statsItem[id].nombreObjeto, statsItem[id].numItemsInventario);
                     }
                 } else if (statsItem[id].numItemsInventario > 0) {
+                    // Equipables: indicador en morado como siempre
                     printf("\033[0;1m%s \033[1m\033[35m[%i]\033[0m\n", statsItem[id].nombreObjeto, 1);
                 } else if (statsItem[id].numItemsInventario == -1) {
+                    // Equipado: indicador en morado como siempre
                     printf("\033[0;1m%s \033[1m\033[35m[Equipado]\033[0m\n", statsItem[id].nombreObjeto);
                 }
             }
