@@ -1,4 +1,4 @@
-#define NUM_TOTAL_ITEMS 26
+#define NUM_TOTAL_ITEMS 27
 
 /* Struct de los Objetos */
 typedef struct
@@ -77,219 +77,230 @@ void definirItems(TItem statsItem[])
     statsItem[4].numItemsInventario = 0;
     statsItem[4].idAtaque = -1;
 
-    // Armas Normales
-    statsItem[5].nombreObjeto = "Espada Fina";
-    statsItem[5].itemConsumible = false;
-    statsItem[5].otorgarVida = 0;
+    // Consumible Especial: Plátano (Posición 5)
+    statsItem[5].nombreObjeto = "Plátano";
+    statsItem[5].itemConsumible = true;
+    statsItem[5].otorgarVida = 10;
     statsItem[5].otorgarExtraVidaMax = 0;
-    statsItem[5].fueArmaExtra = 3;
-    statsItem[5].intArmaExtra = 0;
-    statsItem[5].agiArmaExtra = 0;
+    statsItem[5].fueArmaExtra = 1;
+    statsItem[5].intArmaExtra = 1;
+    statsItem[5].agiArmaExtra = 1;
     statsItem[5].numItemsInventario = 0;
-    statsItem[5].idAtaque = 1;
+    statsItem[5].idAtaque = -1;
 
-    statsItem[6].nombreObjeto = "Cetro de Roble Místico";
+    // Armas Normales (Posiciones 6 - 14)
+    statsItem[6].nombreObjeto = "Espada Fina";
     statsItem[6].itemConsumible = false;
     statsItem[6].otorgarVida = 0;
     statsItem[6].otorgarExtraVidaMax = 0;
-    statsItem[6].fueArmaExtra = 0;
-    statsItem[6].intArmaExtra = 3;
+    statsItem[6].fueArmaExtra = 3;
+    statsItem[6].intArmaExtra = 0;
     statsItem[6].agiArmaExtra = 0;
     statsItem[6].numItemsInventario = 0;
-    statsItem[6].idAtaque = 2;
+    statsItem[6].idAtaque = 1;
 
-    statsItem[7].nombreObjeto = "Daga de Sombra Rápida";
+    statsItem[7].nombreObjeto = "Cetro de Roble Místico";
     statsItem[7].itemConsumible = false;
     statsItem[7].otorgarVida = 0;
     statsItem[7].otorgarExtraVidaMax = 0;
     statsItem[7].fueArmaExtra = 0;
-    statsItem[7].intArmaExtra = 0;
-    statsItem[7].agiArmaExtra = 3;
+    statsItem[7].intArmaExtra = 3;
+    statsItem[7].agiArmaExtra = 0;
     statsItem[7].numItemsInventario = 0;
-    statsItem[7].idAtaque = 3;
+    statsItem[7].idAtaque = 2;
 
-    statsItem[8].nombreObjeto = "Espadón de Bronce";
+    statsItem[8].nombreObjeto = "Daga de Sombra Rápida";
     statsItem[8].itemConsumible = false;
     statsItem[8].otorgarVida = 0;
     statsItem[8].otorgarExtraVidaMax = 0;
-    statsItem[8].fueArmaExtra = 4;
+    statsItem[8].fueArmaExtra = 0;
     statsItem[8].intArmaExtra = 0;
-    statsItem[8].agiArmaExtra = 0;
+    statsItem[8].agiArmaExtra = 3;
     statsItem[8].numItemsInventario = 0;
-    statsItem[8].idAtaque = 4;
+    statsItem[8].idAtaque = 3;
 
-    statsItem[9].nombreObjeto = "Varita de Luz";
+    statsItem[9].nombreObjeto = "Espadón de Bronce";
     statsItem[9].itemConsumible = false;
     statsItem[9].otorgarVida = 0;
     statsItem[9].otorgarExtraVidaMax = 0;
-    statsItem[9].fueArmaExtra = 0;
-    statsItem[9].intArmaExtra = 4;
+    statsItem[9].fueArmaExtra = 4;
+    statsItem[9].intArmaExtra = 0;
     statsItem[9].agiArmaExtra = 0;
     statsItem[9].numItemsInventario = 0;
-    statsItem[9].idAtaque = 5;
+    statsItem[9].idAtaque = 4;
 
-    statsItem[10].nombreObjeto = "Cuchilla de Viento";
+    statsItem[10].nombreObjeto = "Varita de Luz";
     statsItem[10].itemConsumible = false;
     statsItem[10].otorgarVida = 0;
     statsItem[10].otorgarExtraVidaMax = 0;
     statsItem[10].fueArmaExtra = 0;
-    statsItem[10].intArmaExtra = 0;
-    statsItem[10].agiArmaExtra = 4;
+    statsItem[10].intArmaExtra = 4;
+    statsItem[10].agiArmaExtra = 0;
     statsItem[10].numItemsInventario = 0;
-    statsItem[10].idAtaque = 6;
+    statsItem[10].idAtaque = 5;
 
-    statsItem[11].nombreObjeto = "Mazo Rúnico";
+    statsItem[11].nombreObjeto = "Cuchilla de Viento";
     statsItem[11].itemConsumible = false;
     statsItem[11].otorgarVida = 0;
     statsItem[11].otorgarExtraVidaMax = 0;
-    statsItem[11].fueArmaExtra = 5;
+    statsItem[11].fueArmaExtra = 0;
     statsItem[11].intArmaExtra = 0;
-    statsItem[11].agiArmaExtra = 0;
+    statsItem[11].agiArmaExtra = 4;
     statsItem[11].numItemsInventario = 0;
-    statsItem[11].idAtaque = 7;
+    statsItem[11].idAtaque = 6;
 
-    statsItem[12].nombreObjeto = "Libro de Hechizos Elementales";
+    statsItem[12].nombreObjeto = "Mazo Rúnico";
     statsItem[12].itemConsumible = false;
     statsItem[12].otorgarVida = 0;
     statsItem[12].otorgarExtraVidaMax = 0;
-    statsItem[12].fueArmaExtra = 0;
-    statsItem[12].intArmaExtra = 5;
+    statsItem[12].fueArmaExtra = 5;
+    statsItem[12].intArmaExtra = 0;
     statsItem[12].agiArmaExtra = 0;
     statsItem[12].numItemsInventario = 0;
-    statsItem[12].idAtaque = 8;
+    statsItem[12].idAtaque = 7;
 
-    statsItem[13].nombreObjeto = "Dardos Envenenados";
+    statsItem[13].nombreObjeto = "Libro de Hechizos Elementales";
     statsItem[13].itemConsumible = false;
     statsItem[13].otorgarVida = 0;
     statsItem[13].otorgarExtraVidaMax = 0;
     statsItem[13].fueArmaExtra = 0;
-    statsItem[13].intArmaExtra = 0;
-    statsItem[13].agiArmaExtra = 5;
+    statsItem[13].intArmaExtra = 5;
+    statsItem[13].agiArmaExtra = 0;
     statsItem[13].numItemsInventario = 0;
-    statsItem[13].idAtaque = 9;
+    statsItem[13].idAtaque = 8;
 
-    // Armas Raras
-    statsItem[14].nombreObjeto = "Espada de la Sombra Creciente";
+    statsItem[14].nombreObjeto = "Dardos Envenenados";
     statsItem[14].itemConsumible = false;
     statsItem[14].otorgarVida = 0;
     statsItem[14].otorgarExtraVidaMax = 0;
-    statsItem[14].fueArmaExtra = 8;
+    statsItem[14].fueArmaExtra = 0;
     statsItem[14].intArmaExtra = 0;
-    statsItem[14].agiArmaExtra = 0;
+    statsItem[14].agiArmaExtra = 5;
     statsItem[14].numItemsInventario = 0;
-    statsItem[14].idAtaque = 10;
+    statsItem[14].idAtaque = 9;
 
-    statsItem[15].nombreObjeto = "Cetro de las Mareas";
+    // Armas Raras (Posiciones 15 - 20)
+    statsItem[15].nombreObjeto = "Espada de la Sombra Creciente";
     statsItem[15].itemConsumible = false;
     statsItem[15].otorgarVida = 0;
     statsItem[15].otorgarExtraVidaMax = 0;
-    statsItem[15].fueArmaExtra = 0;
-    statsItem[15].intArmaExtra = 8;
+    statsItem[15].fueArmaExtra = 8;
+    statsItem[15].intArmaExtra = 0;
     statsItem[15].agiArmaExtra = 0;
     statsItem[15].numItemsInventario = 0;
-    statsItem[15].idAtaque = 11;
+    statsItem[15].idAtaque = 10;
 
-    statsItem[16].nombreObjeto = "Cuchilla del Asesino Perdido";
+    statsItem[16].nombreObjeto = "Cetro de las Mareas";
     statsItem[16].itemConsumible = false;
     statsItem[16].otorgarVida = 0;
     statsItem[16].otorgarExtraVidaMax = 0;
     statsItem[16].fueArmaExtra = 0;
-    statsItem[16].intArmaExtra = 0;
-    statsItem[16].agiArmaExtra = 8;
+    statsItem[16].intArmaExtra = 8;
+    statsItem[16].agiArmaExtra = 0;
     statsItem[16].numItemsInventario = 0;
-    statsItem[16].idAtaque = 12;
+    statsItem[16].idAtaque = 11;
 
-    statsItem[17].nombreObjeto = "Martillo del Rompemundos";
+    statsItem[17].nombreObjeto = "Cuchilla del Asesino Perdido";
     statsItem[17].itemConsumible = false;
     statsItem[17].otorgarVida = 0;
     statsItem[17].otorgarExtraVidaMax = 0;
-    statsItem[17].fueArmaExtra = 10;
+    statsItem[17].fueArmaExtra = 0;
     statsItem[17].intArmaExtra = 0;
-    statsItem[17].agiArmaExtra = 0;
+    statsItem[17].agiArmaExtra = 8;
     statsItem[17].numItemsInventario = 0;
-    statsItem[17].idAtaque = 13;
+    statsItem[17].idAtaque = 12;
 
-    statsItem[18].nombreObjeto = "Varita de las Almas Perdidas";
+    statsItem[18].nombreObjeto = "Martillo del Rompemundos";
     statsItem[18].itemConsumible = false;
     statsItem[18].otorgarVida = 0;
     statsItem[18].otorgarExtraVidaMax = 0;
-    statsItem[18].fueArmaExtra = 0;
-    statsItem[18].intArmaExtra = 10;
+    statsItem[18].fueArmaExtra = 10;
+    statsItem[18].intArmaExtra = 0;
     statsItem[18].agiArmaExtra = 0;
     statsItem[18].numItemsInventario = 0;
-    statsItem[18].idAtaque = 14;
+    statsItem[18].idAtaque = 13;
 
-    statsItem[19].nombreObjeto = "Dardos del Silencio Eterno";
+    statsItem[19].nombreObjeto = "Varita de las Almas Perdidas";
     statsItem[19].itemConsumible = false;
     statsItem[19].otorgarVida = 0;
     statsItem[19].otorgarExtraVidaMax = 0;
     statsItem[19].fueArmaExtra = 0;
-    statsItem[19].intArmaExtra = 0;
-    statsItem[19].agiArmaExtra = 10;
+    statsItem[19].intArmaExtra = 10;
+    statsItem[19].agiArmaExtra = 0;
     statsItem[19].numItemsInventario = 0;
-    statsItem[19].idAtaque = 15;
+    statsItem[19].idAtaque = 14;
 
-    // Armas Míticas
-    statsItem[20].nombreObjeto = "Espada Ígnea del Dragón";
+    statsItem[20].nombreObjeto = "Dardos del Silencio Eterno";
     statsItem[20].itemConsumible = false;
     statsItem[20].otorgarVida = 0;
     statsItem[20].otorgarExtraVidaMax = 0;
-    statsItem[20].fueArmaExtra = 15;
+    statsItem[20].fueArmaExtra = 0;
     statsItem[20].intArmaExtra = 0;
-    statsItem[20].agiArmaExtra = 0;
+    statsItem[20].agiArmaExtra = 10;
     statsItem[20].numItemsInventario = 0;
-    statsItem[20].idAtaque = 16;
+    statsItem[20].idAtaque = 15;
 
-    statsItem[21].nombreObjeto = "Cetro del Archimago Supremo";
+    // Armas Míticas (Posiciones 21 - 23)
+    statsItem[21].nombreObjeto = "Espada Ígnea del Dragón";
     statsItem[21].itemConsumible = false;
     statsItem[21].otorgarVida = 0;
     statsItem[21].otorgarExtraVidaMax = 0;
-    statsItem[21].fueArmaExtra = 0;
-    statsItem[21].intArmaExtra = 15;
+    statsItem[21].fueArmaExtra = 15;
+    statsItem[21].intArmaExtra = 0;
     statsItem[21].agiArmaExtra = 0;
     statsItem[21].numItemsInventario = 0;
-    statsItem[21].idAtaque = 17;
+    statsItem[21].idAtaque = 16;
 
-    statsItem[22].nombreObjeto = "Daga de la Tormenta Nocturna";
+    statsItem[22].nombreObjeto = "Cetro del Archimago Supremo";
     statsItem[22].itemConsumible = false;
     statsItem[22].otorgarVida = 0;
     statsItem[22].otorgarExtraVidaMax = 0;
     statsItem[22].fueArmaExtra = 0;
-    statsItem[22].intArmaExtra = 0;
-    statsItem[22].agiArmaExtra = 15;
+    statsItem[22].intArmaExtra = 15;
+    statsItem[22].agiArmaExtra = 0;
     statsItem[22].numItemsInventario = 0;
-    statsItem[22].idAtaque = 18;
+    statsItem[22].idAtaque = 17;
 
-    // Armas Legendarias
-    statsItem[23].nombreObjeto = "Espada de las Llamas Eternas";
+    statsItem[23].nombreObjeto = "Daga de la Tormenta Nocturna";
     statsItem[23].itemConsumible = false;
     statsItem[23].otorgarVida = 0;
     statsItem[23].otorgarExtraVidaMax = 0;
-    statsItem[23].fueArmaExtra = 25;
+    statsItem[23].fueArmaExtra = 0;
     statsItem[23].intArmaExtra = 0;
-    statsItem[23].agiArmaExtra = 0;
+    statsItem[23].agiArmaExtra = 15;
     statsItem[23].numItemsInventario = 0;
-    statsItem[23].idAtaque = 19;
+    statsItem[23].idAtaque = 18;
 
-    statsItem[24].nombreObjeto = "Cetro de la Eternidad Arcana";
+    // Armas Legendarias (Posiciones 24 - 26)
+    statsItem[24].nombreObjeto = "Espada de las Llamas Eternas";
     statsItem[24].itemConsumible = false;
     statsItem[24].otorgarVida = 0;
     statsItem[24].otorgarExtraVidaMax = 0;
-    statsItem[24].fueArmaExtra = 0;
-    statsItem[24].intArmaExtra = 25;
+    statsItem[24].fueArmaExtra = 25;
+    statsItem[24].intArmaExtra = 0;
     statsItem[24].agiArmaExtra = 0;
     statsItem[24].numItemsInventario = 0;
-    statsItem[24].idAtaque = 20;
+    statsItem[24].idAtaque = 19;
 
-    statsItem[25].nombreObjeto = "Daga de la Velocidad Divina";
+    statsItem[25].nombreObjeto = "Cetro de la Eternidad Arcana";
     statsItem[25].itemConsumible = false;
     statsItem[25].otorgarVida = 0;
     statsItem[25].otorgarExtraVidaMax = 0;
     statsItem[25].fueArmaExtra = 0;
-    statsItem[25].intArmaExtra = 0;
-    statsItem[25].agiArmaExtra = 25;
+    statsItem[25].intArmaExtra = 25;
+    statsItem[25].agiArmaExtra = 0;
     statsItem[25].numItemsInventario = 0;
-    statsItem[25].idAtaque = 21;
+    statsItem[25].idAtaque = 20;
+
+    statsItem[26].nombreObjeto = "Daga de la Velocidad Divina";
+    statsItem[26].itemConsumible = false;
+    statsItem[26].otorgarVida = 0;
+    statsItem[26].otorgarExtraVidaMax = 0;
+    statsItem[26].fueArmaExtra = 0;
+    statsItem[26].intArmaExtra = 0;
+    statsItem[26].agiArmaExtra = 25;
+    statsItem[26].numItemsInventario = 0;
+    statsItem[26].idAtaque = 21;
 }
 
 /* Título Cambiar de Planta */
@@ -439,7 +450,7 @@ void recompensaNormal(TItem statsItem[])
             printf("\033[1m\033[1;33m+1:\033[0m %s\n", statsItem[itemConsumible].nombreObjeto);
             statsItem[itemConsumible].numItemsInventario++;
 
-            itemArmaNormal = rand() % 9 + 5;
+            itemArmaNormal = rand() % 9 + 6;
             printf("\033[1m\033[1;33m+1:\033[0m %s\n", statsItem[itemArmaNormal].nombreObjeto);
 
             if(statsItem[itemArmaNormal].numItemsInventario >= 0)
@@ -479,7 +490,7 @@ void recompensaRara(TItem statsItem[])
         break;
 
         case 2:
-            itemArmaRara = rand() % 9 + 11;
+            itemArmaRara = rand() % 6 + 15;
             printf("\033[1m\033[1;33m+1:\033[0m %s\n", statsItem[itemArmaRara].nombreObjeto);
 
             if(statsItem[itemArmaRara].numItemsInventario >= 0)
@@ -501,7 +512,7 @@ void recompensaRara(TItem statsItem[])
 
             for (i = 1; i <= 2; i++)
             {
-                itemArmaRara = rand() % 9 + 11;
+                itemArmaRara = rand() % 6 + 15;
                 printf("\033[1m\033[1;33m+1:\033[0m %s\n", statsItem[itemArmaRara].nombreObjeto);
 
                 if(statsItem[itemArmaRara].numItemsInventario >= 0)
@@ -553,7 +564,7 @@ void recompensaLegendaria(TItem statsItem[])
 
             for (i = 1; i <= 2; i++)
             {
-                itemArmaLegendaria = rand() % 9 + 17;
+                itemArmaLegendaria = rand() % 6 + 21;
                 printf("\033[1m\033[1;33m+1:\033[0m %s\n", statsItem[itemArmaLegendaria].nombreObjeto);
                     
                     if(statsItem[itemArmaLegendaria].numItemsInventario >= 0)
@@ -578,7 +589,7 @@ void recompensaLegendaria(TItem statsItem[])
 
             for (i = 1; i <= 3; i++)
             {
-                itemArmaLegendaria = rand() % 9 + 17;
+                itemArmaLegendaria = rand() % 6 + 21;
                 printf("\033[1m\033[1;33m+1:\033[0m %s\n", statsItem[itemArmaLegendaria].nombreObjeto);
                     
                     if(statsItem[itemArmaLegendaria].numItemsInventario >= 0)
@@ -595,6 +606,14 @@ void recompensaLegendaria(TItem statsItem[])
 
         default:
         break;
+    }
+
+    // Probabilidad ínfima de encontrar el mítico Plátano en cofre legendario (1 entre 20 cofres legendarios: 5%)
+    if ((rand() % 20) == 0)
+    {
+        printf("\033[1;33m¡Has encontrado un objeto legendario secreto!\033[0m\n");
+        printf("\033[1m\033[1;35m+1:\033[0m %s\n", statsItem[5].nombreObjeto);
+        statsItem[5].numItemsInventario++;
     }
 
 }

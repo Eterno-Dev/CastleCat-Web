@@ -49,7 +49,7 @@ void inicializaJugador(TJugador statsJugador[])
     statsJugador[0].agiJugador = 1;
     statsJugador[0].defJugador = 2;
 
-    statsJugador[0].armaInicialJugador = 5;
+    statsJugador[0].armaInicialJugador = 6;
     
     
     
@@ -68,7 +68,7 @@ void inicializaJugador(TJugador statsJugador[])
     statsJugador[1].defJugador = 1;
 
 
-    statsJugador[1].armaInicialJugador = 6;
+    statsJugador[1].armaInicialJugador = 7;
     
     
     /*Stats Asesino Inicio*/
@@ -85,7 +85,7 @@ void inicializaJugador(TJugador statsJugador[])
     statsJugador[2].agiJugador = 3;  
     statsJugador[2].defJugador = 1;
 
-    statsJugador[2].armaInicialJugador = 7; 
+    statsJugador[2].armaInicialJugador = 8; 
 }
 
 int main()
@@ -113,7 +113,7 @@ int main()
     
     //Inizializa Jugador según su Clase e Items del Juego
     TJugador statsJugador[3];
-    TItem statsItem[26];
+    TItem statsItem[27];
     definirItems(statsItem);
     inicializaJugador(statsJugador);
 

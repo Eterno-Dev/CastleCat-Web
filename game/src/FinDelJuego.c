@@ -5,38 +5,20 @@ void muerteJugador(char nombreJugador[], int claseJugador, int plantaCastillo)
     setModoJuego(0);
     setModoNarrativa(1);
     printP("\033[31m!  H A S   M U E R T O  !\033[0m\n\n");
-    printP("En ese preciso momento ");
-    printf("\033[1m'%s'\033[0m", nombreJugador);
-    printP(" cayó al suelo, derrotado. Sus fuerzas se desvanecieron mientras la oscuridad lo envolvía.\n\n");
+    
+    char bufferMuerte[512];
+    sprintf(bufferMuerte, "En ese preciso momento \033[1m'%s'\033[0m cayó al suelo, derrotado. Sus fuerzas se desvanecieron mientras la oscuridad lo envolvía.\n\n", nombreJugador);
+    printP(bufferMuerte);
     printP("\033[31m\"¿Por qué fui tan débil?\", pensó, sintiendo el peso de sus errores.\033[0m\n");
     printP("El rostro de su amada cruzó por su mente una última vez, y una lágrima silenciosa recorrió su mejilla.\n");
 
     printP("\033[1m\"Lo siento... No pude salvarte.\"\033[0m\n\n");
     setModoNarrativa(0);
 
-    printf("                              _____  _____\n");
-    printf("                             <     `/     |\n");
-    printf("                              >          (\n");
-    printf("                             |   _     _  |\n");
-    printf("                             |  |_) | |_) |\n");
-    printf("                             |  | \\ | |   |\n");
-    printf("                             |            |\n");
-    printf("              _______.______ _|            |__________  _____\n");
-    printf("            _/                                       \\|     |\n");
-    printf("           |               H A S   M U E R T O              <\n");
-    printf("           |_____.-._________              ____/|___________|\n");
-    printf("                             |            |\n");
-    printf("                             |            |\n");
-    printf("                             |            |\n");
-    printf("                             |            |\n");
-    printf("                             |   _        <\n");
-    printf("                             |__/         |\n");
-    printf("                              / `--.      |\n");
-    printf("                             |            |\n");
-    printf("                        |/. |          -< o\n");
-    printf("                        `\\ `0|     v      |O00\n");
-    printf("                         .o0o|     |       OooO\n");
-    printf("                       _.oO0oOo  _/ \\____o0oO0oOo\n\n");
+    printP("Pulsa \033[40mENTER\033[0;1;37m para continuar...\n");
+    fflush(stdout);
+    waitForEnter();
+    limpiarPantalla();
 
     int puntos = calcularPuntuacion(plantaCastillo, 0);
     int puesto = comprobarYGuardarRecord(nombreJugador, claseJugador, plantaCastillo, puntos);
@@ -146,15 +128,14 @@ void finDelJuego(char nombreJugador[], int claseJugador, int plantaCastillo, int
 
     setModoJuego(0);
     setModoNarrativa(1);
-    printP("\033[1mCon un último golpe certero, ");
-    printf("\033[34m'%s'\033[0m", nombreJugador);
-    printP(" atravesó el corazón del \033[35m'Shadow Lord'\033[0m.\033[0m\n");
+    char bufferFinal[512];
+    sprintf(bufferFinal, "\033[1mCon un último golpe certero, \033[34m'%s'\033[0m atravesó el corazón del \033[35m'Shadow Lord'\033[0m.\033[0m\n", nombreJugador);
+    printP(bufferFinal);
     printP("El dragón lanzó un rugido desgarrador antes de desplomarse, cubriendo la sala con un silencio sepulcral.\n\n");
     
     printP("Entre los escombros, \033[1muna figura conocida emergió era su amada.\033[0m\n");
-    printP("Ella corrió hacia él, lágrimas en los ojos, mientras ");
-    printf("\033[34m'%s'\033[0m", nombreJugador);
-    printP(" caía de rodillas, exhausto.\n\n");
+    sprintf(bufferFinal, "Ella corrió hacia él, lágrimas en los ojos, mientras \033[34m'%s'\033[0m caía de rodillas, exhausto.\n\n", nombreJugador);
+    printP(bufferFinal);
     
     printP("\033[33mLa maldición del 'Castle Cat' había terminado.\033[0m\n");
     printP("Juntos regresaron a \033[31m'Nekovania'\033[0m, donde el pueblo los recibió como héroes.\n\n");
